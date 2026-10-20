@@ -1,0 +1,142 @@
+/* Layout centrado vertical y horizontalmente */
+.verify-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: #FFFFFF; 
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Tarjeta principal con el azul celeste del UI Kit (#C0ECFF) */
+.verify-card {
+  background-color: var(--color-brand-claro); 
+  border-radius: 32px;
+  width: 90%;
+  max-width: 800px;
+  padding: 50px 60px;
+  display: flex;
+  flex-direction: column;
+  position: relative; 
+}
+
+/* Posición de la flecha de volver */
+.verify-back-container {
+  position: absolute;
+  top: 35px;
+  left: 50px;
+}
+
+.verify-back-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: var(--font-principal);
+  font-size: 14px;
+  font-weight: 600;
+  color: #0047AB; 
+}
+
+.verify-back-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Encabezado */
+.verify-header {
+  text-align: center;
+  margin-top: 15px; 
+  margin-bottom: 30px;
+}
+
+.verify-title {
+  font-family: var(--font-principal);
+  font-weight: 700;
+  font-size: 45px;
+  line-height: 1.15;
+  color: var(--color-tinta);
+  margin-bottom: 8px;
+}
+
+.verify-subtitle {
+  font-family: var(--font-principal);
+  font-size: 14px;
+  color: #333333;
+  margin: 0;
+}
+
+/* Caja contenedora interior para los inputs de PIN */
+.verify-form-box {
+  background-color: #FFFFFF; 
+  border: 1px solid var(--color-borde);
+  border-radius: 20px;
+  padding: 35px 40px;
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto; 
+}
+
+.verify-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+/* Los 4 recuadros grandes estilo PIN */
+.pin-inputs-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.pin-box {
+  width: 65px;
+  height: 75px;
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 16px;
+  font-family: var(--font-principal);
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  color: var(--color-tinta);
+  transition: all 0.2s ease;
+}
+
+.pin-box:focus {
+  border-color: var(--color-tinta);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Texto de reenvío de código */
+.resend-text {
+  font-family: var(--font-principal);
+  font-size: 13px;
+  color: var(--color-tinta);
+  margin-bottom: 25px;
+}
+
+.resend-text a {
+  color: #0047AB;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* Contenedor del botón inferior "Verificar" */
+.verify-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.verify-form .ui-btn-solid {
+  width: 65%; 
+}

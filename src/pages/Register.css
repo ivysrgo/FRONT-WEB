@@ -1,0 +1,117 @@
+/* Layout general para ocupar toda la pantalla */
+.register-layout {
+  display: flex;
+  height: 100vh; 
+  width: 100%;
+  background-color: #FFFFFF; 
+  position: relative; 
+  justify-content: center; 
+  align-items: center; 
+  overflow: hidden; 
+  padding: 0 20px; 
+}
+
+
+.register-floating-logo {
+  position: absolute;
+  top: -40px; 
+  left: -310px; 
+  width: 300px; 
+  height: auto;
+}
+
+/* El contenedor que agrupa el título y la caja azul */
+.register-center-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Asegura que el título y el enlace inferior se centren con la caja */
+  width: 100%;
+  max-width: 600px; 
+  z-index: 10; 
+  position: relative; 
+}
+
+/* El título general centrado por encima de la caja */
+.register-title {
+  font-family: var(--font-principal);
+  font-weight: 700;
+  font-size: 55px; 
+  line-height: 1.1;
+  margin-top: 0;
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center; 
+}
+
+/* La caja azul claro que envuelve los inputs */
+.register-box {
+  background-color: var(--color-brand-claro); 
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.register-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Barra de nivel de seguridad */
+.security-level {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 30px;
+  width: 100%;
+  text-align: left; /* Alinea el texto a la izquierda como los otros labels */
+}
+
+.security-label {
+  font-family: var(--font-principal);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-tinta);
+}
+
+.security-bar {
+  width: 100%;
+  height: 10px; 
+  background-color: var(--color-fondo); 
+  border: 1px solid var(--color-tinta); 
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.security-fill {
+  height: 100%;
+  background-color: transparent; 
+}
+
+/* Sección del botón de Registrarse */
+.button-section {
+  width: 100%;
+  display: flex;
+  justify-content: center; 
+}
+
+.register-form .ui-btn-solid {
+  width: 60%; 
+}
+
+/* El enlace de iniciar sesión por fuera de la caja */
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  width: 100%;
+  font-size: 12px;
+}
+
+.login-link a {
+  font-family: var(--font-principal);
+  color: var(--color-tinta);
+  text-decoration: underline;
+  font-weight: 600;
+}

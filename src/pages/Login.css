@@ -1,0 +1,96 @@
+/* ... el código inicial se mantiene igual hasta login-form-container ... */
+.login-layout {
+  display: flex;
+  min-height: 100vh; 
+  width: 100%;
+}
+
+.login-left {
+  flex: 1; 
+  background-color: #FFFFFF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-right {
+  flex: 1;
+  background-color: var(--color-brand);
+  display: flex;
+  justify-content: flex-start; 
+  align-items: flex-start; 
+  padding-top: 100px; 
+  /* Aumentamos un poco el padding izquierdo si quieres empujar todo más hacia la derecha, o déjalo en 60px */
+  padding-left: 60px; 
+}
+
+/* Este es el contenedor principal de los elementos del formulario */
+.login-form-container {
+  width: 100%;
+  /* 1. ACERCAMOS LOS INPUTS AL LADO DERECHO */
+  max-width: 750px; 
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; 
+}
+
+.login-welcome {
+  font-family: var(--font-principal);
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 0;
+  width: 100%;
+  text-align: left;
+}
+
+.login-title {
+  font-family: var(--font-principal);
+  font-weight: 700;
+  font-size: 45px; 
+  line-height: 1.1;
+  margin-top: 5px;
+  margin-bottom: 30px;
+  width: 100%;
+  text-align: left;
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.forgot-password-link {
+  text-align: right; 
+  margin-top: -10px;
+  width: 100%;
+}
+
+.forgot-password-link a, .register-link a {
+  font-family: var(--font-principal);
+  font-size: 12px;
+  color: var(--color-tinta);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* 2. CREAMOS UN CONTENEDOR PARA CENTRAR EL BOTÓN Y EL TEXTO INFERIOR */
+.button-section {
+  width: 100%; /* Ocupa el mismo ancho que los inputs */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra horizontalmente todo lo que está adentro (el botón y el texto) */
+  margin-top: 20px;
+}
+
+/* Ajustamos el botón para que no se estire demasiado */
+.login-form .ui-btn-solid {
+  width: 60%; 
+}
+
+.register-link {
+  text-align: center; 
+  margin-top: 15px; 
+  width: 100%;
+  font-size: 12px;
+}

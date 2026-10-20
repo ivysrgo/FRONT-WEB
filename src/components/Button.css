@@ -1,0 +1,33 @@
+.ui-btn {
+  font-family: var(--font-principal);
+  font-weight: 600;
+  font-size: 20px; 
+  padding: 8px 24px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ui-btn-solid {
+  background-color: var(--color-tinta);
+  color: #FFFFFF;
+  border: 2px solid var(--color-tinta);
+  width: 100%;
+}
+
+.ui-btn-solid:hover {
+  background-color: #333333;
+}
+
+.ui-btn-outline {
+  background-color: transparent;
+  color: var(--color-tinta);
+  border: 1px solid var(--color-borde);
+}
+
+.ui-btn-outline:hover {
+  background-color: var(--color-neutro);
+}
