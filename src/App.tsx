@@ -6,12 +6,20 @@ import { ForgotPassword } from './pages/ForgotPassword';
 import { VerifyCode } from './pages/VerifyCode';
 import { NewPassword } from './pages/NewPassword';
 import { PasswordResetSuccess } from './pages/PasswordResetSuccess';
+import { ExploreHome } from './pages/ExploreHome';
+import { Publicar } from './pages/Publicar'; // <-- Importamos Publicar
 
 export function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/explorar" replace />} />
+        
+        {/* Vistas Principales */}
+        <Route path="/explorar" element={<ExploreHome />} />
+        <Route path="/publicar" element={<Publicar />} />
+
+        {/* Flujo de Autenticación */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

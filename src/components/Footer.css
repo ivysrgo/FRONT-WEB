@@ -1,0 +1,30 @@
+.footer-container {
+  background-color: var(--color-brand); /* #85DAFF */
+  padding: 40px 60px;
+  width: 100%;
+  margin-top: auto;
+  box-sizing: border-box;
+}
+
+.footer-content {
+  max-width: 1140px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.footer-title {
+  font-family: var(--font-principal);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--color-tinta); /* Negro */
+  margin-bottom: 10px;
+}
+
+.footer-item {
+  font-family: var(--font-secundaria);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-tinta); /* Negro */
+  margin: 5px 0;
+}
