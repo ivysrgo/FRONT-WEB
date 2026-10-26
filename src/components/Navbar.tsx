@@ -40,7 +40,7 @@ export const Navbar: React.FC = () => {
           Publicar
         </NavLink>
         <NavLink 
-          to="/mis-publicaciones" 
+          to="/publicaciones" 
           className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
         >
           Publicaciones
