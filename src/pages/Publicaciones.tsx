@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { PostCard } from '../components/PostCard'; // <-- Importamos nuestro nuevo componente
+import { PostCard } from '../components/PostCard';
 import './Publicaciones.css';
 
-interface PostItem {
+export interface PostItem {
   id: string;
   category: string;
   title: string;
@@ -16,48 +16,58 @@ interface PostItem {
 }
 
 export const Publicaciones: React.FC = () => {
-  const myPosts: PostItem[] = [
-    {
-      id: '1',
-      category: 'LIBROS',
-      title: 'Diccionario bilingüe Oxford',
-      details: 'Buen estado · Donación',
-      requests: 3,
-      status: 'Disponible',
-      daysElapsed: 6,
-      imageUrl: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200&q=80'
-    },
-    {
-      id: '2',
-      category: 'ROPA',
-      title: 'Abrigo de paño gris',
-      details: 'Como nuevo · Intercambio · M · Mujer · Frío',
-      requests: 1,
-      status: 'Reservado',
-      daysElapsed: 22,
-      imageUrl: 'https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=200&q=80'
-    },
-    {
-      id: '3',
-      category: 'ÚTILES',
-      title: 'Cuadernos universitarios (x4)',
-      details: 'Nuevo · Donación',
-      requests: 0,
-      status: 'Donado',
-      daysElapsed: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1531346878377-244bb0cb85d8?w=200&q=80'
-    },
-    {
-      id: '4',
-      category: 'ROPA',
-      title: 'Jeans Clásicos Talla 30',
-      details: 'Con uso · Donación · S · Hombre · Templado',
-      requests: 0,
-      status: 'Caducado',
-      daysElapsed: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1542272604-780c8d1976ec?w=200&q=80'
-    }
-  ];
+  // 1. Estados de datos y de red (Sesión 3)
+  const [publicaciones, setPublicaciones] = useState<PostItem[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [errorDeCarga, setErrorDeCarga] = useState<string | null>(null);
+
+  // 2. Ejecutar la petición HTTP al montar el componente
+  useEffect(() => {
+    let cancelado = false; // Evita fugas de memoria si el componente se desmonta antes de que responda el fetch
+
+    const cargarDatos = async () => {
+      try {
+        // Simulamos un retraso de red de 1 segundo para poder ver el estado "Cargando..."
+        await new Promise((resolver) => setTimeout(resolver, 1000));
+
+        // Petición al backend simulado
+        const respuesta = await fetch('/publicaciones-demo.json');
+        
+        // Manejo del código de estado HTTP
+        if (!respuesta.ok) {
+          throw new Error(`Error ${respuesta.status}: No se pudo obtener el inventario.`);
+        }
+        
+        const datos = await respuesta.json();
+
+        if (!cancelado) {
+          setPublicaciones(datos);
+          setErrorDeCarga(null);
+        }
+      } catch (error: any) {
+        if (!cancelado) {
+          setErrorDeCarga(error.message || 'No pudimos conectar con el servidor. Verifica tu conexión.');
+        }
+      } finally {
+        if (!cancelado) {
+          setCargando(false);
+        }
+      }
+    };
+
+    cargarDatos();
+
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  const manejarDonarUnidona = (id: string) => {
+    const nuevasPublicaciones = publicaciones.map((post) => 
+      post.id === id ? { ...post, status: 'Donado' as const } : post
+    );
+    setPublicaciones(nuevasPublicaciones);
+  };
 
   return (
     <div className="publicaciones-page">
@@ -71,21 +81,51 @@ export const Publicaciones: React.FC = () => {
           </p>
         </header>
 
-        <section className="publicaciones-list">
-          {myPosts.map((post) => (
-            <PostCard 
-              key={post.id} 
-              id={post.id}
-              category={post.category}
-              title={post.title}
-              details={post.details}
-              requests={post.requests}
-              status={post.status}
-              daysElapsed={post.daysElapsed}
-              imageUrl={post.imageUrl}
-            />
-          ))}
-        </section>
+        {/* 3. Renderizado Condicional: Estado de Carga */}
+        {cargando && (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <h3 style={{ color: '#0070BA' }}>Cargando inventario...</h3>
+            {/* Aquí se puede insertar el componente <Spinner /> visual más adelante */}
+          </div>
+        )}
+
+        {/* 4. Renderizado Condicional: Estado de Error */}
+        {errorDeCarga && !cargando && (
+          <div style={{ backgroundColor: '#fee2e2', padding: '20px', borderRadius: '12px', textAlign: 'center', margin: '20px 0' }}>
+            <h3 style={{ color: '#D5473A', margin: '0 0 10px 0' }}>¡Uy! Algo salió mal</h3>
+            <p style={{ color: '#000', marginBottom: '15px' }}>{errorDeCarga}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              style={{ padding: '10px 20px', backgroundColor: '#D5473A', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              Reintentar
+            </button>
+          </div>
+        )}
+
+        {/* 5. Renderizado Condicional: Éxito (Lista de Tarjetas) */}
+        {!cargando && !errorDeCarga && (
+          <section className="publicaciones-list">
+            {publicaciones.length === 0 ? (
+              <p style={{ textAlign: 'center' }}>No tienes publicaciones activas en este momento.</p>
+            ) : (
+              publicaciones.map((post) => (
+                <PostCard 
+                  key={post.id}
+                  id={post.id}
+                  category={post.category}
+                  title={post.title}
+                  details={post.details}
+                  requests={post.requests}
+                  status={post.status}
+                  daysElapsed={post.daysElapsed}
+                  imageUrl={post.imageUrl}
+                  onDonate={() => manejarDonarUnidona(post.id)}
+                />
+              ))
+            )}
+          </section>
+        )}
       </main>
 
       <Footer />
