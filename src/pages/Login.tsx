@@ -20,9 +20,7 @@ export const Login: React.FC = () => {
     <div className="login-layout">
       {/* Columna Izquierda: Logo */}
       <div className="login-left">
-        <div className="logo-placeholder">
-           <img src={logoFull} alt="Eco-Golgi Logo" style={{ maxWidth: '400px', width: '100%' }} /> 
-        </div>
+        <img src={logoFull} alt="Eco-Golgi Logo" className="login-logo" />
       </div>
 
       {/* Columna Derecha: Formulario */}
@@ -42,7 +40,7 @@ export const Login: React.FC = () => {
               label="Contraseña" 
               type="password" 
               placeholder="Ingresa tu contraseña"
-              rightIcon={<img src={ojoSeguridad} alt="Ver contraseña" style={{ width: '20px', height: '20px' }} />} 
+              rightIcon={<img src={ojoSeguridad} alt="Ver contraseña" />} 
             />
 
             <div className="forgot-password-link">

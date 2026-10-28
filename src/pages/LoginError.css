@@ -1,101 +1,13 @@
-.login-error-layout {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-}
-
-.login-error-left {
-  flex: 1;
-  background-color: #FFFFFF;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-error-right {
-  flex: 1;
-  background-color: var(--color-brand);
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding-top: 100px;
-  padding-left: 60px;
-}
-
-.login-error-form-container {
-  width: 100%;
-  max-width: 750px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.login-error-welcome {
-  font-family: var(--font-principal);
-  font-weight: 700;
-  font-size: 16px;
-  margin-bottom: 0;
-  width: 100%;
-  text-align: left;
-}
-
-.login-error-title {
-  font-family: var(--font-principal);
-  font-weight: 700;
-  font-size: 45px;
-  line-height: 1.1;
-  margin-top: 5px;
-  margin-bottom: 20px;
-  width: 100%;
-  text-align: left;
-}
-
-/* Alerta de error en rojo */
+/* Las pantallas de error reutilizan Login.css; aquí solo vive el aviso en rojo */
 .login-error-alert {
   font-family: var(--font-principal);
-  font-size: 13px;
+  font-size: clamp(13px, 1.15vw, 17px);
   font-weight: 600;
-  color: #D5473A !important;
-  margin-bottom: 12px;
-  text-align: left;
-  width: 100%;
+  color: var(--color-error);
+  margin: 0 0 clamp(10px, 1.4vw, 20px) clamp(4px, 0.9vw, 12px);
 }
 
-.login-error-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.login-error-forgot {
-  text-align: right;
-  margin-top: -10px;
-  width: 100%;
-}
-
-.login-error-forgot a, .login-error-register a {
-  font-family: var(--font-principal);
-  font-size: 12px;
-  color: var(--color-tinta);
-  text-decoration: underline;
-  font-weight: 600;
-}
-
-.login-error-button-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.login-error-form .ui-btn-solid {
-  width: 60%;
-}
-
-.login-error-register {
-  text-align: center;
-  margin-top: 15px;
-  width: 100%;
-  font-size: 12px;
+/* Los campos se marcan en rojo para acompañar el aviso */
+.login-error-alert ~ .input-wrapper .input-container {
+  border-color: var(--color-error);
 }

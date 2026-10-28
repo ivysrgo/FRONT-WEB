@@ -1,57 +1,55 @@
-/* ... el código inicial se mantiene igual hasta login-form-container ... */
+/* Medidas proporcionales al ancho de pantalla, tomadas del diseño de Figma */
 .login-layout {
   display: flex;
-  min-height: 100vh; 
+  min-height: 100vh;
   width: 100%;
 }
 
+/* Mitad izquierda: logo completo */
 .login-left {
-  flex: 1; 
+  flex: 1;
   background-color: #FFFFFF;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 40px;
 }
 
+.login-logo {
+  height: min(68vh, 50vw);
+  width: auto;
+  max-width: 100%;
+}
+
+/* Mitad derecha: panel azul con el formulario */
 .login-right {
   flex: 1;
   background-color: var(--color-brand);
   display: flex;
-  justify-content: flex-start; 
-  align-items: flex-start; 
-  padding-top: 100px; 
-  /* Aumentamos un poco el padding izquierdo si quieres empujar todo más hacia la derecha, o déjalo en 60px */
-  padding-left: 60px; 
+  align-items: center;
+  padding: 60px 8vw 60px clamp(24px, 4.2vw, 64px);
 }
 
-/* Este es el contenedor principal de los elementos del formulario */
 .login-form-container {
   width: 100%;
-  /* 1. ACERCAMOS LOS INPUTS AL LADO DERECHO */
-  max-width: 750px; 
+  max-width: 640px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; 
 }
 
 .login-welcome {
   font-family: var(--font-principal);
-  font-weight: 700;
-  font-size: 16px;
-  margin-bottom: 0;
-  width: 100%;
-  text-align: left;
+  font-weight: 600;
+  font-size: clamp(14px, 1.9vw, 26px);
+  margin: 0 0 0 clamp(4px, 1vw, 14px);
 }
 
 .login-title {
   font-family: var(--font-principal);
-  font-weight: 700;
-  font-size: 45px; 
-  line-height: 1.1;
-  margin-top: 5px;
-  margin-bottom: 30px;
-  width: 100%;
-  text-align: left;
+  font-weight: 600;
+  font-size: clamp(44px, 6.6vw, 96px);
+  line-height: 0.95;
+  margin: clamp(6px, 1vw, 14px) 0 clamp(28px, 5vw, 72px) clamp(4px, 1vw, 14px);
 }
 
 .login-form {
@@ -60,37 +58,81 @@
   flex-direction: column;
 }
 
+/* Campos de correo y contraseña */
+.login-form .input-wrapper {
+  gap: clamp(3px, 0.5vw, 8px);
+  margin-bottom: clamp(14px, 2.1vw, 30px);
+}
+
+.login-form .input-label {
+  font-size: clamp(12px, 1.1vw, 16px);
+  font-weight: 400;
+  padding-left: clamp(4px, 0.9vw, 12px);
+}
+
+.login-form .input-container {
+  height: clamp(46px, 5.7vw, 80px);
+  border-radius: clamp(10px, 1.3vw, 18px);
+  background-color: #F2F2F2;
+  border-color: #5A5A5A;
+  padding: 0 clamp(14px, 1.8vw, 26px);
+}
+
+.login-form .ui-input {
+  font-size: clamp(14px, 1.2vw, 18px);
+}
+
+.login-form .input-icon-btn img {
+  width: clamp(18px, 1.8vw, 28px);
+  height: clamp(18px, 1.8vw, 28px);
+}
+
+/* La contraseña queda pegada al enlace de "¿Olvidaste...?" */
+.login-form .input-wrapper:has(+ .forgot-password-link) {
+  margin-bottom: clamp(4px, 0.6vw, 10px);
+}
+
 .forgot-password-link {
-  text-align: right; 
-  margin-top: -10px;
+  text-align: right;
   width: 100%;
 }
 
-.forgot-password-link a, .register-link a {
+.forgot-password-link a {
   font-family: var(--font-principal);
-  font-size: 12px;
+  font-size: clamp(11px, 1vw, 15px);
   color: var(--color-tinta);
-  text-decoration: underline;
-  font-weight: 600;
+  text-decoration: none;
 }
 
-/* 2. CREAMOS UN CONTENEDOR PARA CENTRAR EL BOTÓN Y EL TEXTO INFERIOR */
-.button-section {
-  width: 100%; /* Ocupa el mismo ancho que los inputs */
+.forgot-password-link a:hover {
+  text-decoration: underline;
+}
+
+.login-form .button-section {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centra horizontalmente todo lo que está adentro (el botón y el texto) */
-  margin-top: 20px;
+  align-items: center;
+  margin-top: clamp(18px, 2.6vw, 40px);
 }
 
-/* Ajustamos el botón para que no se estire demasiado */
 .login-form .ui-btn-solid {
-  width: 60%; 
+  width: 59%;
+  height: clamp(46px, 5.6vw, 78px);
+  font-size: clamp(15px, 1.75vw, 24px);
+  background-color: #1E1E1E;
+  border-color: #1E1E1E;
 }
 
 .register-link {
-  text-align: center; 
-  margin-top: 15px; 
+  text-align: center;
+  margin: clamp(10px, 1.6vw, 22px) 0 0 0;
   width: 100%;
-  font-size: 12px;
+  font-family: var(--font-principal);
+  font-size: clamp(11px, 1vw, 15px);
+}
+
+.register-link a {
+  color: #2F5BEA;
+  text-decoration: underline;
 }
