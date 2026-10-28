@@ -1,56 +1,51 @@
-/* Layout general para ocupar toda la pantalla */
+/* Medidas proporcionales al ancho de pantalla, tomadas del diseño de Figma */
 .register-layout {
-  display: flex;
-  height: 100vh; 
+  position: relative;
+  min-height: 100vh;
   width: 100%;
-  background-color: #FFFFFF; 
-  position: relative; 
-  justify-content: center; 
-  align-items: center; 
-  overflow: hidden; 
-  padding: 0 20px; 
+  background-color: #FFFFFF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(40px, 6vw, 90px) 20px;
 }
 
-
+/* Sol decorativo en la esquina superior izquierda */
 .register-floating-logo {
   position: absolute;
-  top: -40px; 
-  left: -310px; 
-  width: 300px; 
+  top: clamp(16px, 4.6vw, 70px);
+  left: clamp(12px, 3.3vw, 50px);
+  width: clamp(120px, 24vw, 360px);
   height: auto;
+  pointer-events: none;
 }
 
-/* El contenedor que agrupa el título y la caja azul */
+/* Agrupa el título, la caja azul y el enlace inferior */
 .register-center-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: clamp(340px, 45vw, 680px);
   display: flex;
   flex-direction: column;
-  align-items: center; /* Asegura que el título y el enlace inferior se centren con la caja */
-  width: 100%;
-  max-width: 600px; 
-  z-index: 10; 
-  position: relative; 
+  align-items: center;
 }
 
-/* El título general centrado por encima de la caja */
 .register-title {
   font-family: var(--font-principal);
-  font-weight: 700;
-  font-size: 55px; 
-  line-height: 1.1;
-  margin-top: 0;
-  margin-bottom: 20px;
-  width: 100%;
-  text-align: center; 
+  font-weight: 600;
+  font-size: clamp(44px, 7.7vw, 112px);
+  line-height: 1;
+  margin: 0 0 clamp(8px, 1.4vw, 20px) 0;
+  text-align: center;
 }
 
-/* La caja azul claro que envuelve los inputs */
+/* Caja azul claro que envuelve los campos */
 .register-box {
-  background-color: var(--color-brand-claro); 
-  border-radius: 24px;
-  padding: 40px;
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  background-color: var(--color-brand-claro);
+  border-radius: clamp(16px, 2.7vw, 40px);
+  padding: clamp(14px, 2.4vw, 36px) clamp(18px, 3.4vw, 50px) clamp(14px, 1.8vw, 26px);
 }
 
 .register-form {
@@ -59,59 +54,87 @@
   flex-direction: column;
 }
 
+/* Campos del formulario */
+.register-form .input-wrapper {
+  gap: clamp(3px, 0.5vw, 8px);
+  margin-bottom: clamp(10px, 1.3vw, 20px);
+}
+
+.register-form .input-label {
+  font-size: clamp(12px, 1.05vw, 16px);
+  font-weight: 400;
+  padding-left: clamp(4px, 0.9vw, 12px);
+}
+
+.register-form .input-container {
+  height: clamp(46px, 5.7vw, 80px);
+  border-radius: clamp(10px, 1.3vw, 18px);
+  background-color: #F2F2F2;
+  border-color: #5A5A5A;
+  padding: 0 clamp(14px, 1.8vw, 26px);
+}
+
+.register-form .ui-input {
+  font-size: clamp(14px, 1.2vw, 18px);
+}
+
+.register-form .input-icon-btn img {
+  width: clamp(18px, 1.8vw, 28px);
+  height: clamp(18px, 1.8vw, 28px);
+}
+
 /* Barra de nivel de seguridad */
 .security-level {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 30px;
-  width: 100%;
-  text-align: left; /* Alinea el texto a la izquierda como los otros labels */
+  gap: clamp(4px, 0.6vw, 8px);
+  margin-bottom: clamp(10px, 1.4vw, 22px);
 }
 
 .security-label {
   font-family: var(--font-principal);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: clamp(12px, 1.05vw, 16px);
+  font-weight: 400;
   color: var(--color-tinta);
+  padding-left: clamp(4px, 0.9vw, 12px);
 }
 
 .security-bar {
   width: 100%;
-  height: 10px; 
-  background-color: var(--color-fondo); 
-  border: 1px solid var(--color-tinta); 
-  border-radius: 6px;
+  height: clamp(6px, 0.8vw, 10px);
+  background-color: #F2F2F2;
+  border: 1px solid #5A5A5A;
+  border-radius: 9999px;
   overflow: hidden;
 }
 
 .security-fill {
   height: 100%;
-  background-color: transparent; 
+  background-color: transparent;
 }
 
-/* Sección del botón de Registrarse */
-.button-section {
+.register-form .button-section {
   width: 100%;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .register-form .ui-btn-solid {
-  width: 60%; 
+  width: 59%;
+  height: clamp(44px, 5.4vw, 76px);
+  font-size: clamp(15px, 1.75vw, 24px);
 }
 
-/* El enlace de iniciar sesión por fuera de la caja */
+/* Enlace de iniciar sesión por fuera de la caja */
 .login-link {
   text-align: center;
-  margin-top: 20px;
+  margin: clamp(10px, 1.8vw, 26px) 0 0 0;
   width: 100%;
-  font-size: 12px;
+  font-family: var(--font-principal);
+  font-size: clamp(11px, 1vw, 15px);
 }
 
 .login-link a {
-  font-family: var(--font-principal);
-  color: var(--color-tinta);
+  color: #2F5BEA;
   text-decoration: underline;
-  font-weight: 600;
 }

@@ -27,6 +27,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: auto; /* El menú se agrupa a la derecha, junto a los íconos */
+  margin-right: 28px;
 }
 
 .nav-item {
@@ -53,6 +55,7 @@
 }
 
 .navbar-actions {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -70,7 +73,8 @@
   transition: background-color 0.2s ease;
 }
 
-.nav-icon-btn:hover {
+.nav-icon-btn:hover,
+.nav-icon-btn.is-open {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
@@ -78,4 +82,50 @@
   width: 22px;
   height: 22px;
   display: block;
+}
+/* Fondo oscurecido bajo el panel de búsqueda */
+.navbar-backdrop {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.35);
+  z-index: 1;
+}
+
+/* Base de las ventanas flotantes (notificaciones y perfil) */
+.nav-popover {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  background-color: var(--color-blanco);
+  border-radius: 22px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
+  z-index: 3;
+  animation: nav-popover-in 0.2s ease;
+}
+
+@keyframes nav-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-popover {
+    right: -12px;
+    max-width: calc(100vw - 24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-popover {
+    animation: none;
+  }
 }

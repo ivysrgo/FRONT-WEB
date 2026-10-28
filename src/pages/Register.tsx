@@ -12,8 +12,9 @@ export const Register: React.FC = () => {
 
   return (
     <div className="register-layout">
+      <img src={logoSol} alt="" aria-hidden="true" className="register-floating-logo" />
+
       <div className="register-center-wrapper">
-        <img src={logoSol} alt="Sol Eco-Golgi" className="register-floating-logo" />
 
         <h2 className="register-title">Regístrate</h2>
 
@@ -21,8 +22,8 @@ export const Register: React.FC = () => {
           <form className="register-form" onSubmit={(e) => e.preventDefault()}>
             <InputField label="Nombre" type="text" placeholder="Ingresa tu nombre completo" />
             <InputField label="Correo Electrónico" type="email" placeholder="Ej: correo@ejemplo.com" />
-            <InputField label="Contraseña" type="password" placeholder="Ingresa tu contraseña" rightIcon={<img src={ojoSeguridad} alt="Ver" style={{ width: '20px', height: '20px' }} />} />
-            <InputField label="Confirmar Contraseña" type="password" placeholder="Confirma tu contraseña" rightIcon={<img src={ojoSeguridad} alt="Ver" style={{ width: '20px', height: '20px' }} />} />
+            <InputField label="Contraseña" type="password" placeholder="Ingresa tu contraseña" rightIcon={<img src={ojoSeguridad} alt="Ver" />} />
+            <InputField label="Confirmar Contraseña" type="password" placeholder="Confirma tu contraseña" rightIcon={<img src={ojoSeguridad} alt="Ver" />} />
 
             <div className="security-level">
               <span className="security-label">Nivel de Seguridad</span>
