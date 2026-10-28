@@ -8,6 +8,7 @@ interface RequestCardProps {
   message: string;
   date: string;
   status: 'Aceptado' | 'Pendiente';
+  onCancel?: () => void;
 }
 
 export const RequestCard: React.FC<RequestCardProps> = ({
@@ -15,7 +16,8 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   title,
   message,
   date,
-  status
+  status,
+  onCancel,
 }) => {
   return (
     <article className="request-card">
@@ -27,13 +29,15 @@ export const RequestCard: React.FC<RequestCardProps> = ({
 
       <div className="request-actions">
         <span className="request-date">{date}</span>
-        
+
         <span className={`request-badge badge-${status.toLowerCase()}`}>
           {status}
         </span>
 
         {status === 'Pendiente' && (
-          <button className="request-cancel-btn">Cancelar</button>
+          <button type="button" className="request-cancel-btn" onClick={onCancel}>
+            Cancelar
+          </button>
         )}
       </div>
     </article>

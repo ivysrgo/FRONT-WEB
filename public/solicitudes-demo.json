@@ -1,0 +1,47 @@
+[
+  {
+    "id": "sol-1",
+    "type": "INTERCAMBIO",
+    "author": "Camila Rojas",
+    "title": "Chaqueta de Jean Oversize · Talla M",
+    "message": "Hola, tengo una chaqueta impermeable negra talla M en perfecto estado para intercambiar.",
+    "date": "Hace 2 días",
+    "status": "Pendiente",
+    "daysRemaining": 4,
+    "isFavorite": true
+  },
+  {
+    "id": "sol-2",
+    "type": "DONACIÓN",
+    "author": "Mateo Vargas",
+    "title": "Camiseta Básica Algodón Orgánico · Talla S",
+    "message": "Me interesa para la jornada de donación universitaria de esta semana en Chapinero.",
+    "date": "Hace 5 días",
+    "status": "Aceptado",
+    "daysRemaining": 12,
+    "isFavorite": true
+  },
+  {
+    "id": "sol-3",
+    "type": "INTERCAMBIO",
+    "author": "Valentina Gómez",
+    "title": "Pantalón Cargo Beige · Talla 30",
+    "message": "Puedo acercarme a la estación de TransMilenio más cercana para hacer el cambio.",
+    "date": "12 Oct 2026",
+    "status": "Rechazado",
+    "daysRemaining": 0,
+    "isFavorite": false
+  },
+  {
+    "id": "sol-4",
+    "type": "DONACIÓN",
+    "author": "Fundación Unidona",
+    "title": "Buso Tejido Lana Gris · Talla L",
+    "message": "Recibido exitosamente en el punto de recolección del Banco de Ropa Unidona.",
+    "date": "08 Oct 2026",
+    "status": "Donado",
+    "daysRemaining": 0,
+    "isFavorite": false
+  }
+]
+
