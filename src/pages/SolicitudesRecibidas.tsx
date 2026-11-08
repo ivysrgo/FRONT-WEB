@@ -54,7 +54,7 @@ export const SolicitudesRecibidas: React.FC = () => {
   // 1. Memoria del componente (Sesión 2): Pasamos el arreglo al estado
   const [solicitudes, setSolicitudes] = useState<ReceivedItem[]>(solicitudesIniciales);
 
-  // 2. Función inmutable para ACEPTAR (Actualizar - 'U' del CRUD)
+  // 2. Función inmutable para ACEPTAR 
   const manejarAceptar = (id: string) => {
     // CORRECCIÓN: Le indicamos a TS que el retorno de esta flecha es de tipo ReceivedItem
     const nuevoArreglo = solicitudes.map((req): ReceivedItem => 
@@ -63,7 +63,7 @@ export const SolicitudesRecibidas: React.FC = () => {
     setSolicitudes(nuevoArreglo);
   };
 
-  // 3. Función inmutable para RECHAZAR (Eliminar - 'D' del CRUD)
+  // 3. Función inmutable para RECHAZAR 
   const manejarRechazar = (id: string) => {
     // Usamos .filter() para crear un nuevo arreglo descartando el que rechazamos
     const nuevoArreglo = solicitudes.filter(req => req.id !== id);

@@ -71,9 +71,7 @@ export const Login: React.FC = () => {
   return (
     <div className="login-layout">
       <div className="login-left">
-        <div className="logo-placeholder">
-           <img src={logoFull} alt="Eco-Golgi Logo" style={{ maxWidth: '400px', width: '100%' }} /> 
-        </div>
+        <img src={logoFull} alt="Eco-Golgi Logo" className="login-logo" />
       </div>
 
       <div className="login-right">

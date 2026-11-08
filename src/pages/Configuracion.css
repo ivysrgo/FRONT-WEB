@@ -1,0 +1,103 @@
+.config-card {
+  background-color: var(--color-blanco);
+  border-radius: 36px;
+  padding: 28px 40px 12px;
+  margin-bottom: 24px;
+}
+
+.config-section-title {
+  font-family: var(--font-principal);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-tinta);
+  margin: 0 0 8px 0;
+}
+
+.config-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px 0;
+  border-bottom: 1px solid #ECECEC;
+}
+
+.config-row:last-child {
+  border-bottom: none;
+}
+
+.config-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.config-label {
+  font-family: var(--font-principal);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-tinta);
+}
+
+.config-description {
+  font-family: var(--font-principal);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-texto-secundario);
+}
+
+/* Interruptor encendido/apagado */
+.config-switch {
+  flex-shrink: 0;
+  position: relative;
+  width: 50px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background-color: var(--color-neutro);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.config-switch.is-on {
+  background-color: var(--color-brand);
+}
+
+.config-switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--color-blanco);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.config-switch.is-on .config-switch-thumb {
+  transform: translateX(22px);
+}
+
+.config-switch:focus-visible {
+  outline: 2px solid var(--color-tinta);
+  outline-offset: 2px;
+}
+
+.config-logout {
+  font-family: var(--font-principal);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 7px 24px;
+  border: none;
+  border-radius: 9999px;
+  background-color: #FBE3E1;
+  color: var(--color-error);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.config-logout:hover {
+  background-color: #F7D0CC;
+}

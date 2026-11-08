@@ -36,8 +36,9 @@ export const Register: React.FC = () => {
 
   return (
     <div className="register-layout">
+      <img src={logoSol} alt="" aria-hidden="true" className="register-floating-logo" />
+
       <div className="register-center-wrapper">
-        <img src={logoSol} alt="Sol Eco-Golgi" className="register-floating-logo" />
 
         <h2 className="register-title">Regístrate</h2>
 

@@ -1,0 +1,239 @@
+.carousel {
+  --card-width: 300px;
+  --card-step: 245px; /* Separación horizontal entre tarjetas */
+  position: relative;
+  width: 100%;
+  outline: none;
+}
+
+.carousel:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 6px;
+  border-radius: 24px;
+}
+
+/* Escenario donde se apilan las tarjetas */
+.carousel-stage {
+  position: relative;
+  height: 430px;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+}
+
+.carousel-stage:active {
+  cursor: grabbing;
+}
+
+/* Tarjeta: todas parten del centro y se desplazan según su --offset */
+.carousel-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--card-width);
+  background: #FFFFFF;
+  border: 1px solid #8C8C8C;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transform: translate(-50%, -50%) translateX(calc(var(--offset) * var(--card-step))) scale(0.84);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease, box-shadow 0.3s ease;
+  z-index: 2;
+}
+
+.carousel-card.is-active {
+  transform: translate(-50%, -50%) scale(1);
+  z-index: 3;
+  cursor: default;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.carousel-card[data-distance='2'] {
+  transform: translate(-50%, -50%) translateX(calc(var(--offset) * var(--card-step) * 0.85)) scale(0.7);
+  opacity: 0.45;
+  z-index: 1;
+}
+
+.carousel-card[data-distance='3'] {
+  transform: translate(-50%, -50%) translateX(calc(var(--offset) * var(--card-step) * 0.6)) scale(0.6);
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Imagen y badge */
+.carousel-card-image {
+  position: relative;
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  padding: 16px 16px 0;
+}
+
+.carousel-card-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.carousel-card-placeholder {
+  font-size: 13px;
+  color: var(--color-texto-secundario);
+}
+
+.carousel-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.badge-donacion {
+  background-color: var(--color-brand);
+  color: var(--color-tinta);
+}
+
+.badge-intercambio {
+  background-color: var(--color-acento);
+  color: #FFFFFF;
+}
+
+/* Contenido de la tarjeta */
+.carousel-card-body {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 14px 16px;
+}
+
+.carousel-category {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: #2E86C1;
+  margin-bottom: 2px;
+}
+
+.carousel-title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--color-tinta);
+  margin: 0 0 10px 0;
+}
+
+.carousel-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.carousel-tag {
+  background-color: var(--color-neutro);
+  border-radius: 4px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-tinta);
+}
+
+.carousel-description {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--color-texto-secundario);
+  margin: 0 0 18px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.carousel-card-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-texto-secundario);
+}
+
+/* Flechas */
+.carousel-arrow {
+  position: absolute;
+  top: 215px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--color-borde);
+  background: #FFFFFF;
+  color: var(--color-tinta);
+  font-family: var(--font-principal);
+  font-size: 24px;
+  line-height: 1;
+  padding-bottom: 3px;
+  cursor: pointer;
+  z-index: 5;
+  transition: background-color 0.2s ease;
+}
+
+.carousel-arrow:hover {
+  background-color: var(--color-neutro);
+}
+
+.carousel-arrow-prev {
+  left: 0;
+}
+
+.carousel-arrow-next {
+  right: 0;
+}
+
+/* Indicadores */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background-color: var(--color-neutro);
+  cursor: pointer;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.carousel-dot.is-active {
+  width: 24px;
+  background-color: var(--color-tinta);
+}
+
+@media (max-width: 640px) {
+  .carousel {
+    --card-width: 250px;
+    --card-step: 150px;
+  }
+
+  .carousel-arrow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-card {
+    transition: none;
+  }
+}
