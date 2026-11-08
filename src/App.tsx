@@ -15,8 +15,10 @@ import { SolicitudesEnviadas } from './pages/SolicitudesEnviadas';
 import { SolicitudesRecibidas } from './pages/SolicitudesRecibidas';
 import { SolicitudesFavoritos } from './pages/SolicitudesFavoritos';
 import { MiPerfil } from './pages/MiPerfil';
+import { PerfilUsuario } from './pages/PerfilUsuario';
 import { Configuracion } from './pages/Configuracion';
 import { SolicitudesHistorial } from './pages/SolicitudesHistorial'; // <-- Añadido el import faltante
+import { EditarPublicacion } from './pages/EditarPublicacion'; // <-- Añadido el import faltante
 
 export function App() {
   return (
@@ -32,11 +34,13 @@ export function App() {
         {/* Sección Mis Solicitudes */}
         <Route path="/solicitudes" element={<SolicitudesEnviadas />} />
         <Route path="/solicitudes/recibidas" element={<SolicitudesRecibidas />} />
+        <Route path="/editar-publicacion" element={<EditarPublicacion />} />
         <Route path="/solicitudes/favoritos" element={<SolicitudesFavoritos />} />
         <Route path="/solicitudes/historial" element={<SolicitudesHistorial />} />
 
         {/* Cuenta del usuario */}
         <Route path="/perfil" element={<MiPerfil />} />
+        <Route path="/perfil/:id" element={<PerfilUsuario />} />
         <Route path="/configuracion" element={<Configuracion />} />
 
         {/* Flujo de Autenticación */}

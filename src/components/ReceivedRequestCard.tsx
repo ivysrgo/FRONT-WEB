@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ReceivedRequestCard.css';
 
 interface ReceivedRequestCardProps {
@@ -22,11 +23,18 @@ export const ReceivedRequestCard: React.FC<ReceivedRequestCardProps> = ({
   onReject
 }) => {
   const initial = author.charAt(0).toUpperCase();
+  const navigate = useNavigate();
 
   return (
     <article className="received-card">
       <div className="received-card-left">
-        <div className="avatar-circle">{initial}</div>
+        <div
+          className="avatar-circle"
+          onClick={() => navigate('/perfil/usuario-x')}
+          style={{ cursor: 'pointer' }}
+        >
+          {initial}
+        </div>
         
         <div className="received-info">
           <span className="received-type">

@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { PostCard } from '../components/PostCard';
+import { DonateConfirmModal } from '../components/DonateConfirmModal';
 import './Publicaciones.css';
+
+import { obtenerMisPublicaciones } from '../services/publicacionService';
+import { ApiError } from '../services/api';
 
 export interface PostItem {
   id: string;
@@ -21,32 +25,30 @@ export const Publicaciones: React.FC = () => {
   const [cargando, setCargando] = useState(true);
   const [errorDeCarga, setErrorDeCarga] = useState<string | null>(null);
 
-  // 2. Ejecutar la petición HTTP al montar el componente
+  const [modalDonarAbierto, setModalDonarAbierto] = useState(false);
+  const [idArticuloADonar, setIdArticuloADonar] = useState<string | null>(null);
+
   useEffect(() => {
-    let cancelado = false; // Evita fugas de memoria si el componente se desmonta antes de que responda el fetch
+    let cancelado = false;
 
     const cargarDatos = async () => {
       try {
-        // Simulamos un retraso de red de 1 segundo para poder ver el estado "Cargando..."
         await new Promise((resolver) => setTimeout(resolver, 1000));
-
-        // Petición al backend simulado
-        const respuesta = await fetch('/publicaciones-demo.json');
-        
-        // Manejo del código de estado HTTP
-        if (!respuesta.ok) {
-          throw new Error(`Error ${respuesta.status}: No se pudo obtener el inventario.`);
-        }
-        
-        const datos = await respuesta.json();
+        const datos = await obtenerMisPublicaciones();
 
         if (!cancelado) {
           setPublicaciones(datos);
           setErrorDeCarga(null);
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (!cancelado) {
-          setErrorDeCarga(error.message || 'No pudimos conectar con el servidor. Verifica tu conexión.');
+          if (error instanceof ApiError) {
+            setErrorDeCarga(`Error ${error.status}: ${error.message}`);
+          } else if (error instanceof Error) {
+            setErrorDeCarga(error.message);
+          } else {
+            setErrorDeCarga('No pudimos conectar con el servidor.');
+          }
         }
       } finally {
         if (!cancelado) {
@@ -62,11 +64,21 @@ export const Publicaciones: React.FC = () => {
     };
   }, []);
 
-  const manejarDonarUnidona = (id: string) => {
-    const nuevasPublicaciones = publicaciones.map((post) => 
-      post.id === id ? { ...post, status: 'Donado' as const } : post
-    );
-    setPublicaciones(nuevasPublicaciones);
+  const solicitarDonacion = (id: string) => {
+    setIdArticuloADonar(id);
+    setModalDonarAbierto(true);
+  };
+
+  const confirmarDonacion = () => {
+    if (idArticuloADonar) {
+      setPublicaciones((publicacionesActuales) =>
+        publicacionesActuales.map((post) =>
+          post.id === idArticuloADonar ? { ...post, status: 'Donado' } : post
+        )
+      );
+      setModalDonarAbierto(false);
+      setIdArticuloADonar(null);
+    }
   };
 
   return (
@@ -120,7 +132,7 @@ export const Publicaciones: React.FC = () => {
                   status={post.status}
                   daysElapsed={post.daysElapsed}
                   imageUrl={post.imageUrl}
-                  onDonate={() => manejarDonarUnidona(post.id)}
+                  onDonate={() => solicitarDonacion(post.id)}
                 />
               ))
             )}
@@ -129,6 +141,15 @@ export const Publicaciones: React.FC = () => {
       </main>
 
       <Footer />
+
+      <DonateConfirmModal
+        isOpen={modalDonarAbierto}
+        onClose={() => {
+          setModalDonarAbierto(false);
+          setIdArticuloADonar(null);
+        }}
+        onConfirm={confirmarDonacion}
+      />
     </div>
   );
 };

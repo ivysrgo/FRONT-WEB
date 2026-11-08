@@ -1,15 +1,9 @@
-.star-rating {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.star-rating-container {
+  display: flex;
+  gap: 4px;
 }
 
-.star-filled {
-  fill: #F2C037;
-  stroke: #F2C037;
-}
-
-.star-empty {
-  fill: none;
-  stroke: var(--color-tinta);
+.star-icon {
+  width: 20px;
+  height: 20px;
 }

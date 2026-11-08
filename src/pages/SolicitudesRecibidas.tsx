@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { ReceivedRequestCard } from '../components/ReceivedRequestCard';
+import { ExchangeConfirmModal } from '../components/ExchangeConfirmModal';
 import './SolicitudesRecibidas.css';
 
 interface ReceivedItem {
@@ -53,21 +54,43 @@ const solicitudesIniciales: ReceivedItem[] = [
 export const SolicitudesRecibidas: React.FC = () => {
   // 1. Memoria del componente (Sesión 2): Pasamos el arreglo al estado
   const [solicitudes, setSolicitudes] = useState<ReceivedItem[]>(solicitudesIniciales);
+  const [modalIntercambioAbierto, setModalIntercambioAbierto] = useState(false);
+  const [usuarioACalificar, setUsuarioACalificar] = useState('');
+  const [idSolicitudActual, setIdSolicitudActual] = useState<string | null>(null);
 
   // 2. Función inmutable para ACEPTAR 
   const manejarAceptar = (id: string) => {
-    // CORRECCIÓN: Le indicamos a TS que el retorno de esta flecha es de tipo ReceivedItem
-    const nuevoArreglo = solicitudes.map((req): ReceivedItem => 
-      req.id === id ? { ...req, status: 'Aceptado' } : req
+    setSolicitudes((solicitudesActuales) =>
+      solicitudesActuales.map((req) =>
+        req.id === id ? { ...req, status: 'Aceptado' } : req
+      )
     );
-    setSolicitudes(nuevoArreglo);
   };
 
   // 3. Función inmutable para RECHAZAR 
   const manejarRechazar = (id: string) => {
     // Usamos .filter() para crear un nuevo arreglo descartando el que rechazamos
-    const nuevoArreglo = solicitudes.filter(req => req.id !== id);
-    setSolicitudes(nuevoArreglo);
+    setSolicitudes((solicitudesActuales) =>
+      solicitudesActuales.filter((req) => req.id !== id)
+    );
+  };
+
+  const iniciarConfirmacionIntercambio = (idSolicitud: string, nombreUsuario: string) => {
+    setIdSolicitudActual(idSolicitud);
+    setUsuarioACalificar(nombreUsuario);
+    setModalIntercambioAbierto(true);
+  };
+
+  const finalizarIntercambio = (calificacionOtorgada: number) => {
+    if (idSolicitudActual === null) return;
+
+    console.log(
+      `Intercambio confirmado. Calificación para ${usuarioACalificar}: ${calificacionOtorgada} estrellas`
+    );
+    manejarAceptar(idSolicitudActual);
+    setModalIntercambioAbierto(false);
+    setIdSolicitudActual(null);
+    setUsuarioACalificar('');
   };
 
   return (
@@ -121,7 +144,13 @@ export const SolicitudesRecibidas: React.FC = () => {
               title={req.title}
               message={req.message}
               status={req.status}
-              onAccept={() => manejarAceptar(req.id)}
+              onAccept={() => {
+                if (req.type === 'INTERCAMBIO') {
+                  iniciarConfirmacionIntercambio(req.id, req.author);
+                } else {
+                  manejarAceptar(req.id);
+                }
+              }}
               onReject={() => manejarRechazar(req.id)}
             />
           ))}
@@ -129,6 +158,17 @@ export const SolicitudesRecibidas: React.FC = () => {
       </main>
 
       <Footer />
+
+      <ExchangeConfirmModal
+        isOpen={modalIntercambioAbierto}
+        onClose={() => {
+          setModalIntercambioAbierto(false);
+          setIdSolicitudActual(null);
+          setUsuarioACalificar('');
+        }}
+        onConfirm={finalizarIntercambio}
+        nombreOtroUsuario={usuarioACalificar}
+      />
     </div>
   );
 };
