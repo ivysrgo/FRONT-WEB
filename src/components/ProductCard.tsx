@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
 
 // Importar los SVGs de favoritos que creaste
@@ -19,6 +20,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
+  id,
   category,
   title,
   modality,
@@ -29,6 +31,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   imageUrl,
   isNew = false
 }) => {
+  const navigate = useNavigate();
+
   // Estado local para manejar si está en favoritos o no
   const [esFavorito, setEsFavorito] = useState(false);
 
@@ -39,7 +43,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <article className="product-card">
-      <div className="product-image-container">
+      <div
+        className="product-image-container"
+        onClick={() => navigate(`/articulo/${id}`)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            navigate(`/articulo/${id}`);
+          }
+        }}
+        role="link"
+        tabIndex={0}
+        aria-label={`Ver detalle de ${title}`}
+        style={{ cursor: 'pointer' }}
+      >
         <img src={imageUrl} alt={title} className="product-image" />
         
         {/* Etiqueta flotante superior izquierda (Reciente) */}

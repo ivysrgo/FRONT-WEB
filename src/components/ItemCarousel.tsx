@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ItemCarousel.css';
 
 export interface CarouselItem {
@@ -23,6 +24,7 @@ interface ItemCarouselProps {
 const SWIPE_THRESHOLD = 50;
 
 export const ItemCarousel: React.FC<ItemCarouselProps> = ({ items, autoPlayMs = 3500 }) => {
+  const navigate = useNavigate();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
@@ -111,6 +113,13 @@ export const ItemCarousel: React.FC<ItemCarouselProps> = ({ items, autoPlayMs = 
                 <span className={`carousel-badge ${item.modality === 'Donación' ? 'badge-donacion' : 'badge-intercambio'}`}>
                   {item.modality}
                 </span>
+                <button
+                  type="button"
+                  className="carousel-image-link"
+                  onClick={() => navigate(`/articulo/${item.id}`)}
+                  aria-label={`Ver detalle de ${item.title}`}
+                  tabIndex={isActive ? 0 : -1}
+                />
                 {item.imageUrl && !brokenImages[item.id] ? (
                   <img
                     src={item.imageUrl}

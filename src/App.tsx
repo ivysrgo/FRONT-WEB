@@ -10,6 +10,7 @@ import { NewPassword } from './pages/NewPassword';
 import { PasswordResetSuccess } from './pages/PasswordResetSuccess';
 import { ExploreHome } from './pages/ExploreHome';
 import { TodosLosArticulos } from './pages/TodosLosArticulos';
+import { DetalleArticulo } from './pages/DetalleArticulo';
 import { Publicar } from './pages/Publicar';
 import { Publicaciones } from './pages/Publicaciones';
 import { SolicitudesEnviadas } from './pages/SolicitudesEnviadas';
@@ -30,6 +31,7 @@ export function App() {
         {/* Vistas Principales */}
         <Route path="/explorar" element={<ExploreHome />} />
         <Route path="/todos" element={<TodosLosArticulos />} />
+        <Route path="/articulo/:id" element={<DetalleArticulo />} />
         <Route path="/publicar" element={<Publicar />} />
         <Route path="/publicaciones" element={<Publicaciones />} />
         
