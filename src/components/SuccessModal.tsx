@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SuccessModal.css';
 
-// Importa el logo que mencionaste
 import logoSol from '../assets/logosol.svg';
 
 interface SuccessModalProps {

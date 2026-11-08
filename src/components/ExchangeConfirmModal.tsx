@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './ExchangeConfirmModal.css';
 
-// Asegúrate de que las rutas a los SVGs sean correctas
 import flechaVolverNegra from '../assets/flechavolvernegra.svg';
 import estrellaLlena from '../assets/starratingllena.svg';
 import estrellaVacia from '../assets/starratingvacia.svg';
@@ -56,13 +55,10 @@ export const ExchangeConfirmModal: React.FC<ExchangeConfirmModalProps> = ({
         <div 
           className="interactive-stars-container"
           // Al salir del contenedor completo de estrellas, el hover se limpia 
-          // para mostrar solo la calificación seleccionada (si la hay)
           onMouseLeave={() => setHoverRating(0)}
         >
           {[1, 2, 3, 4, 5].map((starValue) => {
             // Lógica para iluminar la estrella:
-            // Si el mouse está sobre alguna estrella (hoverRating > 0), ilumina hasta esa estrella.
-            // Si el mouse NO está sobre ninguna (hoverRating === 0), muestra la calificación clickeada.
             const isFilled = hoverRating > 0 ? starValue <= hoverRating : starValue <= calificacion;
 
             return (

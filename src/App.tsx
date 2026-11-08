@@ -9,6 +9,7 @@ import { VerifyCode } from './pages/VerifyCode';
 import { NewPassword } from './pages/NewPassword';
 import { PasswordResetSuccess } from './pages/PasswordResetSuccess';
 import { ExploreHome } from './pages/ExploreHome';
+import { TodosLosArticulos } from './pages/TodosLosArticulos';
 import { Publicar } from './pages/Publicar';
 import { Publicaciones } from './pages/Publicaciones';
 import { SolicitudesEnviadas } from './pages/SolicitudesEnviadas';
@@ -28,6 +29,7 @@ export function App() {
         
         {/* Vistas Principales */}
         <Route path="/explorar" element={<ExploreHome />} />
+        <Route path="/todos" element={<TodosLosArticulos />} />
         <Route path="/publicar" element={<Publicar />} />
         <Route path="/publicaciones" element={<Publicaciones />} />
         

@@ -5,7 +5,7 @@ import { Footer } from '../components/Footer';
 import { Button } from '../components/Button';
 import { ItemCarousel } from '../components/ItemCarousel';
 import type { CarouselItem } from '../components/ItemCarousel';
-import { applyFilters, filtersFromParams, hasActiveFilters } from '../utils/searchFilters';
+import { applyFilters, filtersFromParams } from '../utils/searchFilters';
 import './ExploreHome.css';
 
 export const ExploreHome: React.FC = () => {
@@ -130,7 +130,6 @@ export const ExploreHome: React.FC = () => {
 
   const filters = filtersFromParams(searchParams);
   const filteredItems = applyFilters(items, filters);
-  const filtering = hasActiveFilters(filters);
 
   return (
     <div className="explore-page">
@@ -186,15 +185,9 @@ export const ExploreHome: React.FC = () => {
             <p className="catalog-count">
               {filteredItems.length} {filteredItems.length === 1 ? 'artículo encontrado' : 'artículos encontrados'}
             </p>
-            {filtering ? (
-              <button type="button" className="catalog-link" onClick={() => navigate('/explorar')}>
-                Ver todos los artículos
-              </button>
-            ) : (
-              <a href="#ver-todos" className="catalog-link" onClick={(e) => e.preventDefault()}>
-                Ver todos los artículos
-              </a>
-            )}
+            <button type="button" className="catalog-link" onClick={() => navigate('/todos')}>
+              Ver todos los artículos
+            </button>
           </div>
 
           {filteredItems.length > 0 ? (

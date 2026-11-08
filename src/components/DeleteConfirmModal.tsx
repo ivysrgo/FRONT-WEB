@@ -1,9 +1,7 @@
 import React from 'react';
 import './DeleteConfirmModal.css';
 
-// Reutilizamos el icono del sol que ya tienes
 import logoSol from '../assets/logosol.svg';
-// Importamos la flecha de volver negra
 import flechaVolverNegra from '../assets/flechavolvernegra.svg';
 
 interface DeleteConfirmModalProps {

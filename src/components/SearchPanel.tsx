@@ -17,18 +17,18 @@ export const SearchPanel: React.FC = () => {
   const [searchParams] = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onExplore = location.pathname === '/explorar';
+  const onExplore = location.pathname === '/todos';
   const filters = onExplore ? filtersFromParams(searchParams) : DEFAULT_FILTERS;
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  // Cada cambio se refleja en la URL de /explorar; desde otra pantalla, lleva a Explorar con el panel abierto
+  // Cada cambio se refleja en /todos; desde otra pantalla, abre Todos con el panel abierto
   const update = (changes: Partial<SearchFilters>) => {
     const next = { ...filters, ...changes };
     navigate(
-      { pathname: '/explorar', search: filtersToParams(next).toString() },
+      { pathname: '/todos', search: filtersToParams(next).toString() },
       { replace: onExplore, state: { searchOpen: true } },
     );
   };

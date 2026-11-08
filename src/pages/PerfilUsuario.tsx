@@ -19,7 +19,7 @@ interface ProfilePost {
 export const PerfilUsuario: React.FC = () => {
   const navigate = useNavigate();
 
-  // Datos mockeados del usuario (luego vendrán del backend)
+  // Datos mockeados del usuario 
   const userData = {
     nombre: 'Julian Espinoza',
     calificacion: 3.0,
