@@ -9,6 +9,7 @@ import { VerifyCode } from './pages/VerifyCode';
 import { NewPassword } from './pages/NewPassword';
 import { PasswordResetSuccess } from './pages/PasswordResetSuccess';
 import { ExploreHome } from './pages/ExploreHome';
+import { AdminExploreHome } from './pages/AdminExploreHome';
 import { TodosLosArticulos } from './pages/TodosLosArticulos';
 import { DetalleArticulo } from './pages/DetalleArticulo';
 import { Publicar } from './pages/Publicar';
@@ -30,6 +31,7 @@ export function App() {
         
         {/* Vistas Principales */}
         <Route path="/explorar" element={<ExploreHome />} />
+        <Route path="/admin/explorar" element={<AdminExploreHome />} />
         <Route path="/todos" element={<TodosLosArticulos />} />
         <Route path="/articulo/:id" element={<DetalleArticulo />} />
         <Route path="/publicar" element={<Publicar />} />
