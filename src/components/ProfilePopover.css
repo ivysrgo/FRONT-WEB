@@ -26,6 +26,22 @@
   margin-bottom: 12px;
 }
 
+.profile-avatar-admin {
+  background-color: #0070BA;
+  color: #FFFFFF;
+}
+
+.profile-role-badge {
+  padding: 4px 12px;
+  border: 1px solid #85DAFF;
+  border-radius: 9999px;
+  background-color: #E8F8FF;
+  color: #005A94;
+  font-family: var(--font-secundaria);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .profile-name {
   font-family: var(--font-principal);
   font-size: 17px;

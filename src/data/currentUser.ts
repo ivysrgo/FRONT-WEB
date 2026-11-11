@@ -16,6 +16,14 @@ export const CURRENT_USER: UserProfile = {
   rating: 3,
 };
 
+export const ADMIN_USER: UserProfile = {
+  name: 'Administrador',
+  role: 'Administrador',
+  email: '',
+  phone: '',
+  rating: 0,
+};
+
 export const getInitials = (name: string) =>
   name
     .split(' ')

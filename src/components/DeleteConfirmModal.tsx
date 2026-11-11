@@ -3,6 +3,7 @@ import './DeleteConfirmModal.css';
 
 import logoSol from '../assets/logosol.svg';
 import flechaVolverNegra from '../assets/flechavolvernegra.svg';
+import { ModalCloseButton } from './ModalCloseButton';
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   return (
     <div className="modal-overlay">
       <div className="delete-modal-content">
+        <ModalCloseButton onClose={onClose} />
         
         {/* Flecha de Volver negra en la esquina superior izquierda */}
         <button className="modal-back-btn" onClick={onClose}>

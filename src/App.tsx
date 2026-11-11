@@ -10,6 +10,13 @@ import { NewPassword } from './pages/NewPassword';
 import { PasswordResetSuccess } from './pages/PasswordResetSuccess';
 import { ExploreHome } from './pages/ExploreHome';
 import { AdminExploreHome } from './pages/AdminExploreHome';
+import { AdminDashboard } from './pages/AdminDashboard';
+import { AdminMetricas } from './pages/AdminMetricas';
+import { AdminDonaciones } from './pages/AdminDonaciones';
+import { AdminUsuarios } from './pages/AdminUsuarios';
+import { AdminReportes } from './pages/AdminReportes';
+import { AdminReportesGestionar } from './pages/AdminReportesGestionar';
+import { AdminPerfil } from './pages/AdminPerfil';
 import { TodosLosArticulos } from './pages/TodosLosArticulos';
 import { DetalleArticulo } from './pages/DetalleArticulo';
 import { Publicar } from './pages/Publicar';
@@ -20,8 +27,8 @@ import { SolicitudesFavoritos } from './pages/SolicitudesFavoritos';
 import { MiPerfil } from './pages/MiPerfil';
 import { PerfilUsuario } from './pages/PerfilUsuario';
 import { Configuracion } from './pages/Configuracion';
-import { SolicitudesHistorial } from './pages/SolicitudesHistorial'; // <-- Añadido el import faltante
-import { EditarPublicacion } from './pages/EditarPublicacion'; // <-- Añadido el import faltante
+import { SolicitudesHistorial } from './pages/SolicitudesHistorial';
+import { EditarPublicacion } from './pages/EditarPublicacion';
 
 export function App() {
   return (
@@ -32,10 +39,21 @@ export function App() {
         {/* Vistas Principales */}
         <Route path="/explorar" element={<ExploreHome />} />
         <Route path="/admin/explorar" element={<AdminExploreHome />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/todos" element={<TodosLosArticulos />} />
         <Route path="/articulo/:id" element={<DetalleArticulo />} />
+        <Route path="/admin/todos" element={<TodosLosArticulos isAdmin />} />
+        <Route path="/admin/articulo/:id" element={<DetalleArticulo isAdmin />} />
         <Route path="/publicar" element={<Publicar />} />
         <Route path="/publicaciones" element={<Publicaciones />} />
+        <Route path="/admin/metricas" element={<AdminMetricas />} />
+        <Route path="/admin/historial" element={<AdminDonaciones />} />
+        <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+        <Route path="/admin/reportes" element={<AdminReportes />} />
+        <Route path="/admin/reportes/gestionar/:id" element={<AdminReportesGestionar />} />
+        <Route path="/admin/perfil/:userId" element={<AdminPerfil />} />
+        <Route path="/admin/perfil" element={<Navigate to="/admin/mi-perfil" replace />} />
+        <Route path="/admin/mi-perfil" element={<MiPerfil isAdmin />} />
         
         {/* Sección Mis Solicitudes */}
         <Route path="/solicitudes" element={<SolicitudesEnviadas />} />

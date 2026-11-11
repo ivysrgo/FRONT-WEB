@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from 'react';
+
 export interface Articulo {
   id: string;
   category: string;
@@ -9,6 +11,7 @@ export interface Articulo {
   imageUrl: string;
   publishedAt: string;
   daysElapsed: number;
+  expirationDays?: number;
   tags?: string[];
 }
 
@@ -137,3 +140,47 @@ export const articulosMock: Articulo[] = [
     daysElapsed: 30
   }
 ];
+
+let articulosActuales = articulosMock;
+const listeners = new Set<() => void>();
+
+const subscribeToArticulos = (listener: () => void) => {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+};
+
+const getArticulosSnapshot = () => articulosActuales;
+
+const notifyArticulosChanged = () => {
+  listeners.forEach((listener) => listener());
+};
+
+export const useArticulos = () =>
+  useSyncExternalStore(subscribeToArticulos, getArticulosSnapshot, getArticulosSnapshot);
+
+export const addDaysToExpiration = (id: string, daysToAdd: number) => {
+  if (!Number.isInteger(daysToAdd) || daysToAdd <= 0) {
+    throw new Error('Los días que se agregan a la caducidad deben ser un entero positivo.');
+  }
+
+  const articulo = articulosActuales.find((item) => item.id === id);
+  if (!articulo) {
+    throw new Error(`No se encontró el artículo con ID ${id}.`);
+  }
+
+  articulosActuales = articulosActuales.map((item) =>
+    item.id === id
+      ? { ...item, expirationDays: (item.expirationDays ?? 30) + daysToAdd }
+      : item
+  );
+  notifyArticulosChanged();
+};
+
+export const removeArticulo = (id: string) => {
+  if (!articulosActuales.some((item) => item.id === id)) {
+    throw new Error(`No se encontró el artículo con ID ${id}.`);
+  }
+
+  articulosActuales = articulosActuales.filter((item) => item.id !== id);
+  notifyArticulosChanged();
+};

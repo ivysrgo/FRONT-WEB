@@ -4,6 +4,7 @@ import './ExchangeConfirmModal.css';
 import flechaVolverNegra from '../assets/flechavolvernegra.svg';
 import estrellaLlena from '../assets/starratingllena.svg';
 import estrellaVacia from '../assets/starratingvacia.svg';
+import { ModalCloseButton } from './ModalCloseButton';
 
 interface ExchangeConfirmModalProps {
   isOpen: boolean;
@@ -40,6 +41,7 @@ export const ExchangeConfirmModal: React.FC<ExchangeConfirmModalProps> = ({
   return (
     <div className="modal-overlay">
       <div className="exchange-modal-content">
+        <ModalCloseButton onClose={cerrarModal} />
         
         {/* Flecha de Volver en la esquina superior izquierda */}
         <button className="modal-back-btn" onClick={cerrarModal}>

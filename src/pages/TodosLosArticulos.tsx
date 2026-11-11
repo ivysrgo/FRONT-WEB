@@ -1,39 +1,63 @@
 import React, { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
+import { AdminNavbar } from '../components/AdminNavbar';
 import { Footer } from '../components/Footer';
 import { ProductCard } from '../components/ProductCard';
 import { applyFilters, filtersFromParams } from '../utils/searchFilters';
-import { articulosMock } from '../data/articulos';
+import { useArticulos } from '../data/articulos';
+import flechaVolverNegra from '../assets/flechavolvernegra.svg';
 import './TodosLosArticulos.css';
 
-export const TodosLosArticulos: React.FC = () => {
+interface TodosLosArticulosProps {
+  isAdmin?: boolean;
+}
+
+export const TodosLosArticulos: React.FC<TodosLosArticulosProps> = ({ isAdmin = false }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const articulos = useArticulos();
   const currentFilters = useMemo(
     () => filtersFromParams(searchParams),
     [searchParams]
   );
   const itemsFiltrados = useMemo(
-    () => applyFilters(articulosMock, currentFilters),
-    [currentFilters]
+    () => applyFilters(articulos, currentFilters),
+    [articulos, currentFilters]
   );
 
   return (
     <div className="todos-layout">
-      <Navbar />
+      {isAdmin ? <AdminNavbar /> : <Navbar />}
 
       <main className="todos-content">
+        <div className="todos-back-row">
+          <button
+            type="button"
+            className="todos-back-button"
+            aria-label="Volver a explorar"
+            onClick={() => navigate({
+              pathname: isAdmin ? '/admin/explorar' : '/explorar',
+              search: searchParams.toString() ? `?${searchParams.toString()}` : ''
+            })}
+          >
+            <img src={flechaVolverNegra} alt="" className="todos-back-icon" />
+            <span>Volver a Explorar</span>
+          </button>
+        </div>
+
         <header className="todos-header">
           <h2 className="todos-title">
             {itemsFiltrados.length} {itemsFiltrados.length === 1 ? 'artículo encontrado' : 'artículos encontrados'}
           </h2>
-          <button 
-            className="btn-publicar-negro"
-            onClick={() => navigate('/publicar')}
-          >
-            Publicar Artículo
-          </button>
+          {!isAdmin && (
+            <button
+              className="btn-publicar-negro"
+              onClick={() => navigate('/publicar')}
+            >
+              Publicar Artículo
+            </button>
+          )}
         </header>
 
         {itemsFiltrados.length === 0 ? (
@@ -56,6 +80,7 @@ export const TodosLosArticulos: React.FC = () => {
                 author={item.author}
                 imageUrl={item.imageUrl}
                 isNew={index < 3}
+                isAdmin={isAdmin}
               />
             ))}
           </section>

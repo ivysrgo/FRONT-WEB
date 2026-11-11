@@ -6,6 +6,7 @@ import './ProfilePopover.css';
 
 interface ProfilePopoverProps {
   onClose: () => void;
+  isAdmin?: boolean;
 }
 
 const UserIcon = () => (
@@ -40,8 +41,9 @@ const LogoutIcon = () => (
   </svg>
 );
 
-export const ProfilePopover: React.FC<ProfilePopoverProps> = ({ onClose }) => {
+export const ProfilePopover: React.FC<ProfilePopoverProps> = ({ onClose, isAdmin = false }) => {
   const navigate = useNavigate();
+  const displayName = isAdmin ? 'Administrador' : CURRENT_USER.name;
 
   const goTo = (path: string) => {
     onClose();
@@ -49,24 +51,38 @@ export const ProfilePopover: React.FC<ProfilePopoverProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="nav-popover profile-popover" role="dialog" aria-label="Mi perfil">
+    <div className="nav-popover profile-popover" role="dialog" aria-label={isAdmin ? 'Perfil de administrador' : 'Mi perfil'}>
       <div className="profile-summary">
-        <div className="profile-avatar" aria-hidden="true">{getInitials(CURRENT_USER.name)}</div>
-        <p className="profile-name">{CURRENT_USER.name}</p>
-        <div className="profile-rating">
-          <StarRating rating={CURRENT_USER.rating} size={18} />
-          <span className="profile-rating-value">Calificación {CURRENT_USER.rating.toFixed(1)}</span>
+        <div className={`profile-avatar ${isAdmin ? 'profile-avatar-admin' : ''}`} aria-hidden="true">
+          {getInitials(displayName)}
         </div>
+        <p className="profile-name">{displayName}</p>
+        {isAdmin ? (
+          <span className="profile-role-badge">Administrador</span>
+        ) : (
+          <div className="profile-rating">
+            <StarRating rating={CURRENT_USER.rating} size={18} />
+            <span className="profile-rating-value">Calificación {CURRENT_USER.rating.toFixed(1)}</span>
+          </div>
+        )}
       </div>
 
-      <nav className="profile-menu" aria-label="Opciones de perfil">
-        <button type="button" className="profile-menu-item" onClick={() => goTo('/perfil')}>
+      <nav className="profile-menu" aria-label={isAdmin ? 'Opciones de administrador' : 'Opciones de perfil'}>
+        <button
+          type="button"
+          className="profile-menu-item"
+          onClick={() => goTo(isAdmin ? '/admin/mi-perfil' : '/perfil')}
+        >
           <UserIcon />
-          Ver Perfil
+          {isAdmin ? 'Mi Perfil de Administrador' : 'Ver Perfil'}
         </button>
-        <button type="button" className="profile-menu-item" onClick={() => goTo('/configuracion')}>
+        <button
+          type="button"
+          className="profile-menu-item"
+          onClick={() => goTo(isAdmin ? '/admin/dashboard' : '/configuracion')}
+        >
           <SettingsIcon />
-          Configuración
+          {isAdmin ? 'Panel administrativo' : 'Configuración'}
         </button>
         <button type="button" className="profile-menu-item profile-logout" onClick={() => goTo('/login')}>
           <LogoutIcon />

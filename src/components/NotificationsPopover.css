@@ -78,6 +78,19 @@
   color: var(--color-error);
 }
 
+.icon-reporte {
+  background-color: #FFF0D6;
+  color: #A85D00;
+}
+
+.notifications-empty {
+  margin: 18px 0;
+  color: var(--color-texto-secundario);
+  font-family: var(--font-principal);
+  font-size: 13px;
+  text-align: center;
+}
+
 .notification-text {
   display: flex;
   flex-direction: column;

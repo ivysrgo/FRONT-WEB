@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './SuccessModal.css';
 
 import logoSol from '../assets/logosol.svg';
+import { ModalCloseButton } from './ModalCloseButton';
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface SuccessModalProps {
   subtitle: string;
   buttonText: string;
   redirectPath: string;
+  onClose: () => void;
 }
 
 export const SuccessModal: React.FC<SuccessModalProps> = ({
@@ -17,7 +19,8 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
   title,
   subtitle,
   buttonText,
-  redirectPath
+  redirectPath,
+  onClose
 }) => {
   const navigate = useNavigate();
 
@@ -27,6 +30,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
   return (
     <div className="modal-overlay">
       <div className="modal-content">
+        <ModalCloseButton onClose={onClose} />
         <h2 className="modal-title">{title}</h2>
         <p className="modal-subtitle">{subtitle}</p>
         

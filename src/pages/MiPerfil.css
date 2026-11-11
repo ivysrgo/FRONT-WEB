@@ -108,6 +108,30 @@
   margin: 0 0 14px 0;
 }
 
+.perfil-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.perfil-name-row .perfil-name {
+  margin-bottom: 14px;
+}
+
+.perfil-admin-badge {
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border: 1px solid #85DAFF;
+  border-radius: 9999px;
+  background-color: #E8F8FF;
+  color: #005A94;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 .perfil-rating-value {
   font-family: var(--font-principal);
   font-size: 14px;

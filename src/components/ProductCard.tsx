@@ -17,6 +17,7 @@ interface ProductCardProps {
   author: string;
   imageUrl: string;
   isNew?: boolean; // Para la etiqueta "Reciente" (Opcional, según lógica de fecha)
+  isAdmin?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -29,9 +30,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   condition,
   author,
   imageUrl,
-  isNew = false
+  isNew = false,
+  isAdmin = false
 }) => {
   const navigate = useNavigate();
+  const detailPath = isAdmin ? `/admin/articulo/${id}` : `/articulo/${id}`;
 
   // Estado local para manejar si está en favoritos o no
   const [esFavorito, setEsFavorito] = useState(false);
@@ -45,11 +48,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     <article className="product-card">
       <div
         className="product-image-container"
-        onClick={() => navigate(`/articulo/${id}`)}
+        onClick={() => navigate(detailPath)}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            navigate(`/articulo/${id}`);
+            navigate(detailPath);
           }
         }}
         role="link"

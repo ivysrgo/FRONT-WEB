@@ -188,6 +188,7 @@ export const EditarPublicacion: React.FC = () => {
         subtitle="Tu publicación ha sido actualizada exitosamente."
         buttonText="Volver a Publicaciones"
         redirectPath="/publicaciones"
+        onClose={() => setModalGuardarAbierto(false)}
       />
 
       <DeleteConfirmModal

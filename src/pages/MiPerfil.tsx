@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
+import { AdminNavbar } from '../components/AdminNavbar';
 import { Footer } from '../components/Footer';
 import { StarRating } from '../components/StarRating';
-import { CURRENT_USER } from '../data/currentUser';
+import { ADMIN_USER, CURRENT_USER } from '../data/currentUser';
 import './MiPerfil.css';
 
-export const MiPerfil: React.FC = () => {
+interface MiPerfilProps {
+  isAdmin?: boolean;
+}
+
+export const MiPerfil: React.FC<MiPerfilProps> = ({ isAdmin = false }) => {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState(CURRENT_USER);
-  const [draft, setDraft] = useState(CURRENT_USER);
+  const initialProfile = isAdmin ? ADMIN_USER : CURRENT_USER;
+  const [profile, setProfile] = useState(initialProfile);
+  const [draft, setDraft] = useState(initialProfile);
   const [editing, setEditing] = useState(false);
 
   const startEditing = () => {
@@ -25,7 +31,7 @@ export const MiPerfil: React.FC = () => {
 
   return (
     <div className="perfil-page">
-      <Navbar />
+      {isAdmin ? <AdminNavbar /> : <Navbar />}
 
       <main className="perfil-content">
         <header className="perfil-header">
@@ -35,10 +41,12 @@ export const MiPerfil: React.FC = () => {
                 <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-            <h1 className="perfil-title">Mi Perfil</h1>
+            <h1 className="perfil-title">{isAdmin ? 'Perfil de Administrador' : 'Mi Perfil'}</h1>
           </div>
           <p className="perfil-subtitle">
-            Edita tu perfil, agrega información sobre ti para que la comunidad confíe en ti
+            {isAdmin
+              ? 'Administra tu cuenta y tus datos de acceso.'
+              : 'Edita tu perfil, agrega información sobre ti para que la comunidad confíe en ti'}
           </p>
         </header>
 
@@ -92,13 +100,19 @@ export const MiPerfil: React.FC = () => {
             </form>
           ) : (
             <div className="perfil-info">
-              <h2 className="perfil-name">{profile.name}</h2>
-              <StarRating rating={profile.rating} size={26} />
-              <p className="perfil-rating-value">Calificación: {profile.rating.toFixed(1)}</p>
+              <div className="perfil-name-row">
+                <h2 className="perfil-name">{profile.name}</h2>
+                {isAdmin && <span className="perfil-admin-badge">ADMINISTRADOR</span>}
+              </div>
+              {!isAdmin && (
+                <>
+                  <StarRating rating={profile.rating} size={26} />
+                  <p className="perfil-rating-value">Calificación: {profile.rating.toFixed(1)}</p>
+                </>
+              )}
               <p className="perfil-contact">
-                Correo: {profile.email}
-                <br />
-                Teléfono: {profile.phone}
+                {profile.email && <>Correo: {profile.email}<br /></>}
+                {profile.phone && <>Teléfono: {profile.phone}</>}
               </p>
             </div>
           )}

@@ -3,6 +3,7 @@ import './DonateConfirmModal.css';
 
 import logoSol from '../assets/logosol.svg';
 import flechaVolverNegra from '../assets/flechavolvernegra.svg'; 
+import { ModalCloseButton } from './ModalCloseButton';
 
 interface DonateConfirmModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export const DonateConfirmModal: React.FC<DonateConfirmModalProps> = ({
   return (
     <div className="modal-overlay">
       <div className="donate-modal-content">
+        <ModalCloseButton onClose={onClose} />
         
         {/* Flecha de Volver negra en la esquina */}
         <button className="modal-back-btn" onClick={onClose}>

@@ -10,6 +10,7 @@
 }
 
 .reporte-modal {
+  position: relative;
   width: min(100%, 560px);
   overflow: hidden;
   border-radius: 16px;
@@ -37,29 +38,6 @@
   text-align: center;
 }
 
-.reporte-cerrar {
-  position: absolute;
-  top: 50%;
-  right: 18px;
-  display: grid;
-  width: 32px;
-  height: 32px;
-  transform: translateY(-50%);
-  place-items: center;
-  border: 0;
-  background: transparent;
-  color: #333333;
-  cursor: pointer;
-}
-
-.reporte-cerrar span {
-  font-family: Arial, sans-serif;
-  font-size: 28px;
-  font-weight: 300;
-  line-height: 1;
-}
-
-.reporte-cerrar:focus-visible,
 .reporte-motivo:focus-visible,
 .reporte-continuar:focus-visible {
   outline: 2px solid #0070BA;

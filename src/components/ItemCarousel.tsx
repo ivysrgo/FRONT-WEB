@@ -18,13 +18,19 @@ export interface CarouselItem {
 interface ItemCarouselProps {
   items: CarouselItem[];
   autoPlayMs?: number;
+  isAdmin?: boolean;
 }
 
 // Distancia mínima (px) de arrastre para cambiar de tarjeta
 const SWIPE_THRESHOLD = 50;
 
-export const ItemCarousel: React.FC<ItemCarouselProps> = ({ items, autoPlayMs = 3500 }) => {
+export const ItemCarousel: React.FC<ItemCarouselProps> = ({
+  items,
+  autoPlayMs = 3500,
+  isAdmin = false
+}) => {
   const navigate = useNavigate();
+  const getDetailPath = (id: string) => isAdmin ? `/admin/articulo/${id}` : `/articulo/${id}`;
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
@@ -116,7 +122,7 @@ export const ItemCarousel: React.FC<ItemCarouselProps> = ({ items, autoPlayMs = 
                 <button
                   type="button"
                   className="carousel-image-link"
-                  onClick={() => navigate(`/articulo/${item.id}`)}
+                  onClick={() => navigate(getDetailPath(item.id))}
                   aria-label={`Ver detalle de ${item.title}`}
                   tabIndex={isActive ? 0 : -1}
                 />

@@ -1,12 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { reportesPendientes } from '../data/adminReports';
+import { useArticulos } from '../data/articulos';
 import './NotificationsPopover.css';
 
 interface NotificationItem {
   id: string;
-  type: 'intercambio' | 'caducar';
+  type: 'intercambio' | 'caducar' | 'reporte';
   title: string;
   details: string[];
+  path: string;
 }
 
 // Alertas de ejemplo hasta conectar el backend
@@ -16,17 +19,20 @@ const NOTIFICATIONS: NotificationItem[] = [
     type: 'intercambio',
     title: 'Diccionario bilingüe Oxford',
     details: ['3 solicitudes', '15 días para caducar', 'Oportunidad de intercambio'],
+    path: '/publicaciones',
   },
   {
     id: '2',
     type: 'caducar',
     title: 'Jeans Clásicos Talla 30',
     details: ['Sin solicitudes', 'Oportunidad de donación a Unidona'],
+    path: '/publicaciones',
   },
 ];
 
 interface NotificationsPopoverProps {
   onClose: () => void;
+  isAdmin?: boolean;
 }
 
 const PencilIcon = () => (
@@ -48,31 +54,57 @@ const AlertIcon = () => (
   </svg>
 );
 
-export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({ onClose }) => {
+export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
+  onClose,
+  isAdmin = false
+}) => {
   const navigate = useNavigate();
+  const articulos = useArticulos();
+  const adminNotifications: NotificationItem[] = [
+    ...(reportesPendientes.length > 0
+      ? [{
+          id: 'admin-reports',
+          type: 'reporte' as const,
+          title: 'Reportes pendientes',
+          details: [`${reportesPendientes.length} reportes requieren revisión`],
+          path: '/admin/reportes'
+        }]
+      : []),
+    ...articulos
+      .filter((article) => (article.expirationDays ?? 30) - article.daysElapsed <= 5)
+      .map((article) => ({
+        id: `expiration-${article.id}`,
+        type: 'caducar' as const,
+        title: article.title,
+        details: [`${Math.max(0, (article.expirationDays ?? 30) - article.daysElapsed)} días restantes`],
+        path: `/admin/articulo/${article.id}`
+      }))
+  ];
+  const notifications = isAdmin ? adminNotifications : NOTIFICATIONS;
 
-  const goToPublicaciones = () => {
+  const goToNotification = (path: string) => {
     onClose();
-    navigate('/publicaciones');
+    navigate(path);
   };
 
   return (
     <div className="nav-popover notifications-popover" role="dialog" aria-label="Notificaciones">
       <div className="notifications-header">
         <h3>Notificaciones</h3>
-        <span className="notifications-count">{NOTIFICATIONS.length} nuevas</span>
+        <span className="notifications-count">{notifications.length} nuevas</span>
       </div>
 
-      <ul className="notifications-list">
-        {NOTIFICATIONS.map((notification) => (
+      {notifications.length > 0 ? (
+        <ul className="notifications-list">
+        {notifications.map((notification) => (
           <li key={notification.id}>
-            <button type="button" className="notification-item" onClick={goToPublicaciones}>
+            <button type="button" className="notification-item" onClick={() => goToNotification(notification.path)}>
               <span className={`notification-icon icon-${notification.type}`}>
                 {notification.type === 'caducar' ? <AlertIcon /> : <PencilIcon />}
               </span>
               <span className="notification-text">
                 <span className="notification-title">{notification.title}</span>
-                {notification.type === 'caducar' && (
+                {notification.type === 'caducar' && !isAdmin && (
                   <span className="notification-tag">Próximo a caducar</span>
                 )}
                 <span className="notification-details">{notification.details.join(' · ')}</span>
@@ -80,10 +112,17 @@ export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({ onCl
             </button>
           </li>
         ))}
-      </ul>
+        </ul>
+      ) : (
+        <p className="notifications-empty">No tienes notificaciones pendientes.</p>
+      )}
 
-      <button type="button" className="notifications-footer" onClick={goToPublicaciones}>
-        Ver mis publicaciones →
+      <button
+        type="button"
+        className="notifications-footer"
+        onClick={() => goToNotification(isAdmin ? '/admin/reportes' : '/publicaciones')}
+      >
+        {isAdmin ? 'Ver reportes pendientes →' : 'Ver mis publicaciones →'}
       </button>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReportarPublicacionModal } from './ReportarPublicacionModal';
+import { EditExpirationForm } from './EditExpirationForm';
 import './ArticuloInfoBox.css';
 
 export interface ArticuloInfoProps {
@@ -12,6 +13,11 @@ export interface ArticuloInfoProps {
   author: string;
   tags?: string[]; // Talla, Género, Tela (para Ropa)
   daysElapsed: number;
+  expirationDays?: number;
+  isAdmin?: boolean;
+  onDelete?: () => void;
+  onAddExpirationDays?: (daysToAdd: number) => void;
+  evidenceImageUrl?: string;
 }
 
 export const ArticuloInfoBox: React.FC<ArticuloInfoProps> = ({
@@ -22,11 +28,17 @@ export const ArticuloInfoBox: React.FC<ArticuloInfoProps> = ({
   condition,
   author,
   tags,
-  daysElapsed
+  daysElapsed,
+  expirationDays = 30,
+  isAdmin = false,
+  onDelete,
+  onAddExpirationDays,
+  evidenceImageUrl
 }) => {
   const navigate = useNavigate();
   const [reporteAbierto, setReporteAbierto] = useState(false);
-  const diasRestantes = 30 - daysElapsed;
+  const [expirationEditorOpen, setExpirationEditorOpen] = useState(false);
+  const diasRestantes = Math.max(0, expirationDays - daysElapsed);
   const isRopa = category.toUpperCase() === 'ROPA';
 
   return (
@@ -39,24 +51,40 @@ export const ArticuloInfoBox: React.FC<ArticuloInfoProps> = ({
           </span>
           <span className="tag-category-outline">{category}</span>
         </div>
-        <button
-          type="button"
-          className="btn-reportar"
-          onClick={() => setReporteAbierto(true)}
-        >
-          Reportar
-        </button>
+        {isAdmin ? (
+          onDelete && (
+            <button type="button" className="btn-eliminar-publicacion" onClick={onDelete}>
+              Eliminar Publicación
+            </button>
+          )
+        ) : (
+          <button
+            type="button"
+            className="btn-reportar"
+            onClick={() => setReporteAbierto(true)}
+          >
+            Reportar
+          </button>
+        )}
       </div>
 
-      <ReportarPublicacionModal
-        isOpen={reporteAbierto}
-        onClose={() => setReporteAbierto(false)}
-        onContinue={() => navigate('/explorar')}
-      />
+      {!isAdmin && (
+        <ReportarPublicacionModal
+          isOpen={reporteAbierto}
+          onClose={() => setReporteAbierto(false)}
+          onContinue={() => navigate('/explorar')}
+        />
+      )}
 
       {/* Título y Descripción */}
       <h1 className="detalle-title">{title}</h1>
       <p className="detalle-description">{description}</p>
+
+      {evidenceImageUrl && (
+        <div className="admin-evidence-image">
+          <img src={evidenceImageUrl} alt={title} />
+        </div>
+      )}
 
       {/* Cuadrícula de Metadatos */}
       <div className="metadata-grid">
@@ -95,6 +123,27 @@ export const ArticuloInfoBox: React.FC<ArticuloInfoProps> = ({
           Días restantes en circulación local antes de habilitarse para donación al Minuto de Dios.
         </p>
       </div>
+
+      {isAdmin && onAddExpirationDays && (
+        <div className="expiration-editor-section">
+          {!expirationEditorOpen ? (
+            <button
+              type="button"
+              className="btn-editar-caducidad"
+              onClick={() => setExpirationEditorOpen(true)}
+            >
+              Editar tiempo de caducidad
+            </button>
+          ) : (
+            <EditExpirationForm
+              onConfirm={(daysToAdd) => {
+                onAddExpirationDays(daysToAdd);
+                setExpirationEditorOpen(false);
+              }}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

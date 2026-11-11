@@ -235,6 +235,7 @@ export const Publicar: React.FC = () => {
         subtitle="Se ha publicado exitosamente tu artículo"
         buttonText="Volver a Explorar"
         redirectPath="/explorar"
+        onClose={() => setModalAbierto(false)}
       />
     </div>
   );

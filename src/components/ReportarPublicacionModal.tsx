@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './ReportarPublicacionModal.css';
 import checkCircleReport from '../assets/checkcirclereport.svg';
+import { ModalCloseButton } from './ModalCloseButton';
 
 interface ReportarPublicacionModalProps {
   isOpen: boolean;
@@ -61,16 +62,9 @@ export const ReportarPublicacionModal: React.FC<ReportarPublicacionModalProps> =
         aria-modal="true"
         aria-labelledby="reporte-modal-title"
       >
+        <ModalCloseButton onClose={cerrarModal} />
         <header className="reporte-modal-header">
           <h2 id="reporte-modal-title">Reportar Publicación</h2>
-          <button
-            type="button"
-            className="reporte-cerrar"
-            onClick={cerrarModal}
-            aria-label="Cerrar"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
         </header>
 
         {reporteEnviado ? (

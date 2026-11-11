@@ -5,15 +5,16 @@ import { Footer } from '../components/Footer';
 import { Button } from '../components/Button';
 import { ItemCarousel } from '../components/ItemCarousel';
 import { applyFilters, filtersFromParams } from '../utils/searchFilters';
-import { articulosMock } from '../data/articulos';
+import { useArticulos } from '../data/articulos';
 import './ExploreHome.css';
 
 export const ExploreHome: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const articulos = useArticulos();
 
   const filters = filtersFromParams(searchParams);
-  const filteredItems = applyFilters(articulosMock, filters);
+  const filteredItems = applyFilters(articulos, filters);
 
   return (
     <div className="explore-page">
@@ -43,7 +44,7 @@ export const ExploreHome: React.FC = () => {
         {/* Fila de Métricas / Estadísticas */}
         <section className="metrics-section">
           <div className="metric-card">
-            <span className="metric-number">{articulosMock.length}</span>
+            <span className="metric-number">{articulos.length}</span>
             <span className="metric-label">Artículos<br />Disponibles</span>
           </div>
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { SearchPanel } from './SearchPanel'; // Reutilizamos el panel de búsqueda
-// import { NotificationsPopover } from './NotificationsPopover'; // Descomentar si aplica al admin
-// import { ProfilePopover } from './ProfilePopover'; // Descomentar si aplica al admin
+import { NotificationsPopover } from './NotificationsPopover';
+import { ProfilePopover } from './ProfilePopover';
 import './Navbar.css'; // Podemos reutilizar los estilos del Navbar de usuario
 
 import logoHeader from '../assets/logoheader.svg';
@@ -106,8 +106,10 @@ export const AdminNavbar: React.FC = () => {
           <img src={iconPerfil} alt="Perfil" className="nav-icon" />
         </button>
 
-        {/* {openPanel === 'notifications' && <NotificationsPopover onClose={closePanel} />} */}
-        {/* {openPanel === 'profile' && <ProfilePopover onClose={closePanel} />} */}
+        {openPanel === 'notifications' && (
+          <NotificationsPopover onClose={closePanel} isAdmin />
+        )}
+        {openPanel === 'profile' && <ProfilePopover onClose={closePanel} isAdmin />}
       </div>
 
       {openPanel === 'search' && (

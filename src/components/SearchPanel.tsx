@@ -17,7 +17,9 @@ export const SearchPanel: React.FC = () => {
   const [searchParams] = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onExplore = location.pathname === '/todos';
+  const isAdmin = location.pathname.startsWith('/admin/');
+  const onExplore = location.pathname === '/todos' || location.pathname === '/admin/todos';
+  const catalogPath = isAdmin ? '/admin/todos' : '/todos';
   const filters = onExplore ? filtersFromParams(searchParams) : DEFAULT_FILTERS;
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export const SearchPanel: React.FC = () => {
   const update = (changes: Partial<SearchFilters>) => {
     const next = { ...filters, ...changes };
     navigate(
-      { pathname: '/todos', search: filtersToParams(next).toString() },
+      { pathname: catalogPath, search: filtersToParams(next).toString() },
       { replace: onExplore, state: { searchOpen: true } },
     );
   };
