@@ -37,13 +37,7 @@ export const Login: React.FC = () => {
       setCargando(true);
       
       // Petición HTTP al Backend
-      const respuesta = await login({ correo, contrasena });
-      
-      // Si llegamos aquí, fue un éxito (Status 200 OK)
-      console.log('Login exitoso. Token:', respuesta.token);
-      
-      // Guardar el token (ej. localStorage o Context)
-      localStorage.setItem('token', respuesta.token);
+      await login({ correo, contrasena });
       
       // Redirigir
       navigate('/explorar');

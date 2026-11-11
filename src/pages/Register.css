@@ -110,7 +110,25 @@
 
 .security-fill {
   height: 100%;
-  background-color: transparent;
+  background-color: #D5473A;
+  transition: width 180ms ease, background-color 180ms ease;
+}
+
+.security-fill-2,
+.security-fill-3 {
+  background-color: #E8A72C;
+}
+
+.security-fill-4,
+.security-fill-5 {
+  background-color: #2E9D62;
+}
+
+.security-hint {
+  font-family: var(--font-principal);
+  font-size: clamp(11px, 0.95vw, 14px);
+  color: var(--color-tinta);
+  padding-left: clamp(4px, 0.9vw, 12px);
 }
 
 .register-form .button-section {

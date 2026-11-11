@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { PostCard } from '../components/PostCard';
@@ -20,6 +21,7 @@ export interface PostItem {
 }
 
 export const Publicaciones: React.FC = () => {
+  const navigate = useNavigate();
   // 1. Estados de datos y de red (Sesión 3)
   const [publicaciones, setPublicaciones] = useState<PostItem[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -33,7 +35,10 @@ export const Publicaciones: React.FC = () => {
 
     const cargarDatos = async () => {
       try {
-        await new Promise((resolver) => setTimeout(resolver, 1000));
+        if (!localStorage.getItem('token')) {
+          navigate('/login');
+          return;
+        }
         const datos = await obtenerMisPublicaciones();
 
         if (!cancelado) {
@@ -62,7 +67,7 @@ export const Publicaciones: React.FC = () => {
     return () => {
       cancelado = true;
     };
-  }, []);
+  }, [navigate]);
 
   const solicitarDonacion = (id: string) => {
     setIdArticuloADonar(id);

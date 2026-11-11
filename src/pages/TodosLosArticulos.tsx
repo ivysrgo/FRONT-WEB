@@ -5,7 +5,7 @@ import { AdminNavbar } from '../components/AdminNavbar';
 import { Footer } from '../components/Footer';
 import { ProductCard } from '../components/ProductCard';
 import { applyFilters, filtersFromParams } from '../utils/searchFilters';
-import { useArticulos } from '../data/articulos';
+import { recargarArticulos, useArticulos, useEstadoArticulos } from '../data/articulos';
 import flechaVolverNegra from '../assets/flechavolvernegra.svg';
 import './TodosLosArticulos.css';
 
@@ -17,6 +17,7 @@ export const TodosLosArticulos: React.FC<TodosLosArticulosProps> = ({ isAdmin = 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const articulos = useArticulos();
+  const estadoArticulos = useEstadoArticulos();
   const currentFilters = useMemo(
     () => filtersFromParams(searchParams),
     [searchParams]
@@ -60,7 +61,19 @@ export const TodosLosArticulos: React.FC<TodosLosArticulosProps> = ({ isAdmin = 
           )}
         </header>
 
-        {itemsFiltrados.length === 0 ? (
+        {estadoArticulos.estado === 'loading' ? (
+          <div className="catalog-empty" role="status">
+            <p className="catalog-empty-title">Cargando publicaciones...</p>
+          </div>
+        ) : estadoArticulos.estado === 'error' ? (
+          <div className="catalog-empty" role="alert">
+            <p className="catalog-empty-title">No se pudieron cargar las publicaciones.</p>
+            <p className="catalog-empty-text">{estadoArticulos.error}</p>
+            <button type="button" className="btn-publicar-negro" onClick={() => void recargarArticulos()}>
+              Reintentar
+            </button>
+          </div>
+        ) : itemsFiltrados.length === 0 ? (
           <div className="catalog-empty">
             <p className="catalog-empty-title">No encontramos artículos que coincidan con tu búsqueda.</p>
             <p className="catalog-empty-text">Intenta quitando algunos filtros desde la lupa.</p>

@@ -5,13 +5,14 @@ import { Footer } from '../components/Footer';
 import { Button } from '../components/Button';
 import { ItemCarousel } from '../components/ItemCarousel';
 import { applyFilters, filtersFromParams } from '../utils/searchFilters';
-import { useArticulos } from '../data/articulos';
+import { recargarArticulos, useArticulos, useEstadoArticulos } from '../data/articulos';
 import './ExploreHome.css';
 
 export const ExploreHome: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const articulos = useArticulos();
+  const estadoArticulos = useEstadoArticulos();
 
   const filters = filtersFromParams(searchParams);
   const filteredItems = applyFilters(articulos, filters);
@@ -75,7 +76,17 @@ export const ExploreHome: React.FC = () => {
             </button>
           </div>
 
-          {filteredItems.length > 0 ? (
+          {estadoArticulos.estado === 'loading' ? (
+            <p role="status">Cargando publicaciones...</p>
+          ) : estadoArticulos.estado === 'error' ? (
+            <div className="catalog-empty" role="alert">
+              <p className="catalog-empty-title">No se pudieron cargar las publicaciones.</p>
+              <p className="catalog-empty-text">{estadoArticulos.error}</p>
+              <button type="button" className="catalog-link" onClick={() => void recargarArticulos()}>
+                Reintentar
+              </button>
+            </div>
+          ) : filteredItems.length > 0 ? (
             // La key reinicia el carrusel cuando cambian los filtros
             <ItemCarousel key={searchParams.toString()} items={filteredItems} />
           ) : (

@@ -1,16 +1,42 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { SuccessModal } from '../components/SuccessModal';
+import { ApiError } from '../services/api';
+import { crearPublicacion } from '../services/publicacionService';
+import { agregarArticulo } from '../data/articulos';
 import './Publicar.css';
 
 // Importación del SVG para los selectores desplegables
 import flechaDropdown from '../assets/flechadropdown.svg';
 
+interface ImagenSeleccionada {
+  archivo: File;
+  dataUrl: string;
+}
+
+const MAX_IMAGENES = 5;
+const MAX_BYTES_POR_IMAGEN = 5 * 1024 * 1024;
+const MAX_BYTES_TOTALES = 20 * 1024 * 1024;
+
+function leerImagen(archivo: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const lector = new FileReader();
+    lector.onload = () => {
+      if (typeof lector.result === 'string') resolve(lector.result);
+      else reject(new Error(`No se pudo leer ${archivo.name}.`));
+    };
+    lector.onerror = () => reject(new Error(`No se pudo leer ${archivo.name}.`));
+    lector.readAsDataURL(archivo);
+  });
+}
+
 export const Publicar: React.FC = () => {
+  const navigate = useNavigate();
   // Estados del formulario
   const [categoria, setCategoria] = useState('Ropa');
   const [estado, setEstado] = useState('Buen Estado');
-  const [modalidad, setModalidad] = useState('Donación');
+  const [modalidad, setModalidad] = useState<'Donación' | 'Intercambio'>('Donación');
   const [modalAbierto, setModalAbierto] = useState(false);
 
   // Metadatos de ropa
@@ -22,10 +48,87 @@ export const Publicar: React.FC = () => {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [autorizaDonacion, setAutorizaDonacion] = useState(true);
+  const [imagenes, setImagenes] = useState<ImagenSeleccionada[]>([]);
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const manejarImagenes = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const seleccionadas = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    setError(null);
+    if (imagenes.length + seleccionadas.length > MAX_IMAGENES) {
+      setError(`Puedes subir hasta ${MAX_IMAGENES} imágenes.`);
+      return;
+    }
+
+    const totalActual = imagenes.reduce((total, imagen) => total + imagen.archivo.size, 0);
+    const tipoInvalido = seleccionadas.find(
+      (archivo) => !['image/jpeg', 'image/png'].includes(archivo.type)
+    );
+    if (tipoInvalido) {
+      setError('Solo se permiten imágenes JPG o PNG.');
+      return;
+    }
+    if (seleccionadas.some((archivo) => archivo.size > MAX_BYTES_POR_IMAGEN)) {
+      setError('Cada imagen debe pesar máximo 5 MB.');
+      return;
+    }
+    if (totalActual + seleccionadas.reduce((total, archivo) => total + archivo.size, 0) > MAX_BYTES_TOTALES) {
+      setError('El tamaño total de las imágenes no debe superar 20 MB.');
+      return;
+    }
+
+    try {
+      const cargadas = await Promise.all(
+        seleccionadas.map(async (archivo) => ({ archivo, dataUrl: await leerImagen(archivo) }))
+      );
+      setImagenes((actuales) => [...actuales, ...cargadas]);
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'No se pudieron leer las imágenes.');
+    }
+  };
+
+  const quitarImagen = (indice: number) => {
+    setImagenes((actuales) => actuales.filter((_, posicion) => posicion !== indice));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setModalAbierto(true);
+    setError(null);
+    if (imagenes.length === 0) {
+      setError('Selecciona al menos una imagen para tu publicación.');
+      return;
+    }
+    if (!localStorage.getItem('token')) {
+      navigate('/login');
+      return;
+    }
+
+    setCargando(true);
+    try {
+      const articulo = await crearPublicacion({
+        title: titulo.trim(),
+        category: categoria,
+        modality: modalidad,
+        condition: estado,
+        description: descripcion.trim(),
+        ...(categoria === 'Ropa' ? { talla, genero, clima: tela } : {}),
+        autorizaDonacion,
+        images: imagenes.map(({ dataUrl }) => dataUrl),
+      });
+      agregarArticulo(articulo);
+      setModalAbierto(true);
+    } catch (error: unknown) {
+      setError(
+        error instanceof ApiError
+          ? error.message
+          : error instanceof Error
+            ? error.message
+            : 'No se pudo publicar el artículo.'
+      );
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
@@ -44,6 +147,11 @@ export const Publicar: React.FC = () => {
         {/* Tarjeta blanca centralizada */}
         <section className="publicar-card">
           <form className="publicar-form" onSubmit={handleSubmit}>
+            {error && (
+              <p role="alert" style={{ color: '#D5473A', fontWeight: 600 }}>
+                {error}
+              </p>
+            )}
 
             {/* 1. Zona de Fotografía */}
             <div className="form-group">
@@ -54,14 +162,35 @@ export const Publicar: React.FC = () => {
                 <input 
                   type="file" 
                   id="photo-input" 
-                  accept="image/png, image/jpeg" 
+                  accept="image/png, image/jpeg"
+                  multiple
+                  onChange={manejarImagenes}
+                  disabled={cargando}
                   className="photo-file-input" 
                 />
                 <label htmlFor="photo-input" className="photo-upload-label">
-                  <span className="photo-primary-text">Arrastra una o varias fotos o haz clic</span>
-                  <span className="photo-secondary-text">JPG o PNG · máx. 5 MB</span>
+                  <span className="photo-primary-text">Haz clic para seleccionar una o varias fotos</span>
+                  <span className="photo-secondary-text">JPG o PNG · máximo 5 fotos · 5 MB cada una</span>
                 </label>
               </div>
+              {imagenes.length > 0 && (
+                <div className="photo-preview-list">
+                  {imagenes.map((imagen, indice) => (
+                    <div className="photo-preview" key={`${imagen.archivo.name}-${indice}`}>
+                      <img src={imagen.dataUrl} alt={`Vista previa ${indice + 1}: ${imagen.archivo.name}`} />
+                      {indice === 0 && <span className="photo-cover-label">Portada</span>}
+                      <button
+                        type="button"
+                        onClick={() => quitarImagen(indice)}
+                        aria-label={`Quitar imagen ${imagen.archivo.name}`}
+                        disabled={cargando}
+                      >
+                        Quitar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* 2. Campo Título */}
@@ -119,7 +248,9 @@ export const Publicar: React.FC = () => {
                 <div className="select-wrapper">
                   <select 
                     value={modalidad} 
-                    onChange={(e) => setModalidad(e.target.value)}
+                    onChange={(e) =>
+                      setModalidad(e.target.value === 'Intercambio' ? 'Intercambio' : 'Donación')
+                    }
                     className="custom-select"
                   >
                     <option value="Donación">Donación</option>
@@ -222,8 +353,8 @@ export const Publicar: React.FC = () => {
             </div>
 
             {/* 7. Botón Publicar Artículo */}
-            <button type="submit" className="publicar-submit-btn">
-              Publicar Artículo
+            <button type="submit" className="publicar-submit-btn" disabled={cargando}>
+              {cargando ? 'Publicando...' : 'Publicar Artículo'}
             </button>
             
           </form>

@@ -1,4 +1,6 @@
-import { useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
+import { ApiError } from '../services/api';
+import { obtenerPublicaciones } from '../services/publicacionService';
 
 export interface Articulo {
   id: string;
@@ -6,9 +8,10 @@ export interface Articulo {
   title: string;
   modality: 'Donación' | 'Intercambio';
   description: string;
-  condition: 'Nuevo' | 'Usado' | 'Buen Estado' | 'Como nuevo';
+  condition: string;
   author: string;
   imageUrl: string;
+  imageUrls?: string[];
   publishedAt: string;
   daysElapsed: number;
   expirationDays?: number;
@@ -141,7 +144,10 @@ export const articulosMock: Articulo[] = [
   }
 ];
 
-let articulosActuales = articulosMock;
+let articulosActuales: Articulo[] = [];
+type EstadoCarga = { estado: 'idle' | 'loading' | 'success' | 'error'; error: string | null };
+let estadoCarga: EstadoCarga = { estado: 'idle', error: null };
+let solicitudEnCurso: Promise<void> | null = null;
 const listeners = new Set<() => void>();
 
 const subscribeToArticulos = (listener: () => void) => {
@@ -150,13 +156,63 @@ const subscribeToArticulos = (listener: () => void) => {
 };
 
 const getArticulosSnapshot = () => articulosActuales;
+const getEstadoCargaSnapshot = () => estadoCarga;
 
 const notifyArticulosChanged = () => {
   listeners.forEach((listener) => listener());
 };
 
 export const useArticulos = () =>
-  useSyncExternalStore(subscribeToArticulos, getArticulosSnapshot, getArticulosSnapshot);
+  useArticulosStore();
+
+function useArticulosStore() {
+  const articulos = useSyncExternalStore(subscribeToArticulos, getArticulosSnapshot, getArticulosSnapshot);
+  useEffect(() => {
+    void cargarArticulos();
+  }, []);
+  return articulos;
+}
+
+export const useEstadoArticulos = () =>
+  useSyncExternalStore(subscribeToArticulos, getEstadoCargaSnapshot, getEstadoCargaSnapshot);
+
+export async function cargarArticulos() {
+  if (solicitudEnCurso) return solicitudEnCurso;
+  if (estadoCarga.estado === 'success') return;
+
+  estadoCarga = { estado: 'loading', error: null };
+  notifyArticulosChanged();
+  solicitudEnCurso = obtenerPublicaciones()
+    .then((articulos) => {
+      articulosActuales = articulos;
+      estadoCarga = { estado: 'success', error: null };
+      notifyArticulosChanged();
+    })
+    .catch((error: unknown) => {
+      estadoCarga = {
+        estado: 'error',
+        error: error instanceof ApiError || error instanceof Error
+          ? error.message
+          : 'No se pudieron cargar las publicaciones.',
+      };
+      notifyArticulosChanged();
+    })
+    .finally(() => {
+      solicitudEnCurso = null;
+    });
+  return solicitudEnCurso;
+}
+
+export async function recargarArticulos() {
+  estadoCarga = { estado: 'idle', error: null };
+  await cargarArticulos();
+}
+
+export function agregarArticulo(articulo: Articulo) {
+  articulosActuales = [articulo, ...articulosActuales];
+  estadoCarga = { estado: 'success', error: null };
+  notifyArticulosChanged();
+}
 
 export const addDaysToExpiration = (id: string, daysToAdd: number) => {
   if (!Number.isInteger(daysToAdd) || daysToAdd <= 0) {

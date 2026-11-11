@@ -21,7 +21,14 @@ export const DetalleArticulo: React.FC<DetalleArticuloProps> = ({ isAdmin = fals
   const articulos = useArticulos();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isExpirationUpdatedOpen, setIsExpirationUpdatedOpen] = useState(false);
+  const [indiceImagen, setIndiceImagen] = useState(0);
   const articulo = articulos.find((item) => item.id === id);
+  const imagenes = articulo?.imageUrls?.length
+    ? articulo.imageUrls
+    : articulo?.imageUrl
+      ? [articulo.imageUrl]
+      : [];
+  const indiceVisible = imagenes.length > 0 ? indiceImagen % imagenes.length : 0;
 
   // Función que recibe los datos desde el componente hijo ArticuloSolicitudForm
   const procesarEnvioSolicitud = (
@@ -64,8 +71,33 @@ export const DetalleArticulo: React.FC<DetalleArticuloProps> = ({ isAdmin = fals
         {articulo ? (
           <section className="detalle-grid">
             <div className="detalle-col-left">
-              <div className="detalle-image-box">
-                <img src={articulo.imageUrl} alt={articulo.title} />
+              <div className="detalle-image-box" aria-label="Fotos del artículo">
+                {imagenes.length > 0 ? (
+                  <>
+                    <img src={imagenes[indiceVisible]} alt={`${articulo.title}, foto ${indiceVisible + 1} de ${imagenes.length}`} />
+                    {imagenes.length > 1 && (
+                      <div className="detalle-carousel-controls">
+                        <button
+                          type="button"
+                          aria-label="Ver foto anterior"
+                          onClick={() => setIndiceImagen((actual) => (actual - 1 + imagenes.length) % imagenes.length)}
+                        >
+                          ‹
+                        </button>
+                        <span>{indiceVisible + 1} / {imagenes.length}</span>
+                        <button
+                          type="button"
+                          aria-label="Ver foto siguiente"
+                          onClick={() => setIndiceImagen((indiceVisible + 1) % imagenes.length)}
+                        >
+                          ›
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p>Este artículo no tiene fotografías.</p>
+                )}
               </div>
             </div>
 

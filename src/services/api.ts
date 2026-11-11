@@ -12,10 +12,16 @@ export class ApiError extends Error {
 
 export async function solicitar<T>(endpoint: string, opciones: RequestInit = {}): Promise<T> {
   const url = `${API_URL}${endpoint}`;
-  
+  const headers = new Headers(opciones.headers);
+  if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  const token = localStorage.getItem('token');
+  if (token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
   const configuracion: RequestInit = {
     ...opciones,
-    headers: { 'Content-Type': 'application/json', ...opciones.headers },
+    headers,
   };
 
   try {
@@ -27,8 +33,8 @@ export async function solicitar<T>(endpoint: string, opciones: RequestInit = {})
       let mensajeServidor = 'Error desconocido del servidor';
       try {
         const errorData = await respuesta.json();
-        mensajeServidor = errorData.mensaje || mensajeServidor;
-      } catch (e) {
+        mensajeServidor = errorData.mensaje || errorData.error || mensajeServidor;
+      } catch {
         mensajeServidor = `Error del servidor (${respuesta.status})`;
       }
       throw new ApiError(respuesta.status, mensajeServidor);

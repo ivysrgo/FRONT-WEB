@@ -13,7 +13,7 @@ interface ProductCardProps {
   modality: 'Donación' | 'Intercambio';
   tags?: string[];
   description: string;
-  condition: 'Nuevo' | 'Usado' | 'Buen Estado' | 'Como nuevo'; // Tipos de estado
+  condition: string;
   author: string;
   imageUrl: string;
   isNew?: boolean; // Para la etiqueta "Reciente" (Opcional, según lógica de fecha)

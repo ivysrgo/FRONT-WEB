@@ -44,6 +44,7 @@
 }
 
 .detalle-image-box {
+  position: relative;
   background-color: #FFFFFF;
   border: 1px solid #E5E7EB;
   border-radius: 20px;
@@ -59,6 +60,34 @@
   max-height: 100%;
   object-fit: contain;
   border-radius: 12px;
+}
+
+.detalle-carousel-controls {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #FFFFFF;
+  background: rgba(30, 30, 30, 0.8);
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 13px;
+}
+
+.detalle-carousel-controls button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  color: #1E1E1E;
+  background: #FFFFFF;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .detalle-col-right {
