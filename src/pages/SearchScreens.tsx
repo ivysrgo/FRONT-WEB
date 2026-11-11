@@ -1,81 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { BackLink, ScreenLayout } from '../components/ScreenLayout';
+import { ApiError, displayCategory, getImageUrl, publicacionesApi } from '../services/publicacionesApi';
+import type { Publication } from '../services/publicacionesApi';
 import './SearchScreens.css';
-
-interface CatalogItem {
-  id: string;
-  category: string;
-  title: string;
-  type: 'Donación' | 'Intercambio';
-  condition: string;
-  author: string;
-  description: string;
-  image: string;
-}
-
-const catalog: CatalogItem[] = [
-  {
-    id: '1',
-    category: 'Libros',
-    title: 'Diccionario bilingüe Oxford',
-    type: 'Donación',
-    condition: 'Buen estado',
-    author: 'Valentina P.',
-    description: 'Diccionario bilingüe de inglés, en buen estado y con páginas completas.',
-    image: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=800&q=80',
-  },
-  {
-    id: '2',
-    category: 'Ropa',
-    title: 'Abrigo de paño gris',
-    type: 'Intercambio',
-    condition: 'Como nuevo · Talla M',
-    author: 'Andrés S.',
-    description: 'Abrigo de paño gris, abrigado y en excelente estado. Talla M.',
-    image: 'https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=800&q=80',
-  },
-  {
-    id: '3',
-    category: 'Útiles',
-    title: 'Set de escuadras y compás',
-    type: 'Donación',
-    condition: 'Como nuevo',
-    author: 'Valentina P.',
-    description: 'Set de dibujo técnico: dos escuadras, transportador y compás.',
-    image: 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&q=80',
-  },
-  {
-    id: '4',
-    category: 'Muebles pequeños',
-    title: 'Repisa de madera 60 cm',
-    type: 'Intercambio',
-    condition: 'Buen estado',
-    author: 'Pedro C.',
-    description: 'Repisa de madera de abedul de 60 cm. Busca un nuevo hogar.',
-    image: 'https://images.unsplash.com/photo-1594620302200-9a762244a156?w=800&q=80',
-  },
-  {
-    id: '5',
-    category: 'Ropa',
-    title: 'Camisas de trabajo (x3)',
-    type: 'Donación',
-    condition: 'Buen estado · Talla M',
-    author: 'Andrés S.',
-    description: 'Tres camisas de trabajo de algodón, manga corta.',
-    image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=800&q=80',
-  },
-  {
-    id: '6',
-    category: 'Libros',
-    title: 'Harry Potter y la Piedra Filosofal',
-    type: 'Intercambio',
-    condition: 'Buen estado',
-    author: 'Mariana C.',
-    description: 'Primera novela de la saga, ideal para intercambio.',
-    image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&q=80',
-  },
-];
 
 const categories = ['Todos', 'Libros', 'Útiles', 'Muebles pequeños', 'Ropa'];
 
@@ -86,12 +14,21 @@ export const SearchScreen: React.FC = () => {
   const query = params.get('q') ?? '';
   const activeCategory = params.get('categoria') ?? 'Todos';
   const [searchText, setSearchText] = useState(query);
-  const filteredItems = catalog.filter((item) => {
-    const matchesCategory = activeCategory === 'Todos' || item.category === activeCategory;
-    const matchesQuery = !query || `${item.title} ${item.category} ${item.description}`.toLowerCase().includes(query.toLowerCase());
-    return matchesCategory && matchesQuery;
-  });
-  const items = isEmptyState ? [] : filteredItems;
+  const filterKey = `${activeCategory}\u0000${query}`;
+  const [result, setResult] = useState<{ key: string; items?: Publication[]; error?: string } | null>(null);
+
+  useEffect(() => {
+    publicacionesApi.list({ categoria: activeCategory, q: query })
+      .then((items) => setResult({ key: filterKey, items }))
+      .catch((requestError: unknown) => {
+        const error = requestError instanceof ApiError ? requestError.message : 'No se pudieron cargar los artículos.';
+        setResult({ key: filterKey, error });
+      })
+  }, [activeCategory, filterKey, query]);
+
+  const loading = result?.key !== filterKey;
+  const items = result?.key === filterKey ? result.items ?? [] : [];
+  const error = result?.key === filterKey ? result.error : undefined;
 
   const submitSearch = (event: React.FormEvent) => {
     event.preventDefault();
@@ -131,7 +68,11 @@ export const SearchScreen: React.FC = () => {
         })}
       </nav>
 
-      {items.length > 0 ? (
+      {loading ? (
+        <p role="status">Cargando artículos…</p>
+      ) : error ? (
+        <section className="screen-panel search-empty-state"><h2 role="alert">{error}</h2></section>
+      ) : !isEmptyState && items.length > 0 ? (
         <>
           <div className="catalog-results-heading">
             <strong>{items.length} artículos encontrados</strong>
@@ -141,11 +82,11 @@ export const SearchScreen: React.FC = () => {
             {items.map((item) => (
               <article className="feature-product-card" key={item.id}>
                 <Link to={`/productos/${item.id}`} className="feature-product-image-link" aria-label={`Ver ${item.title}`}>
-                  <img className="feature-product-image" src={item.image} alt={item.title} />
-                  <span className={`feature-product-type ${item.type === 'Donación' ? 'donation' : 'exchange'}`}>{item.type}</span>
+                  <img className="feature-product-image" src={getImageUrl(item.imageUrl)} alt={item.title} />
+                  <span className={`feature-product-type ${item.modality === 'Donación' ? 'donation' : 'exchange'}`}>{item.modality}</span>
                 </Link>
                 <div className="feature-product-body">
-                  <span className="feature-product-category">{item.category}</span>
+                  <span className="feature-product-category">{displayCategory(item.category)}</span>
                   <h2><Link to={`/productos/${item.id}`}>{item.title}</Link></h2>
                   <p>{item.condition}</p>
                   <div className="feature-product-footer">
@@ -169,14 +110,32 @@ export const SearchScreen: React.FC = () => {
   );
 };
 
-const getItem = (id: string | undefined) => catalog.find((item) => item.id === id) ?? catalog[0];
-
 export const ProductScreen: React.FC = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
-  const item = getItem(id);
+  const [productResult, setProductResult] = useState<{ id: string; item?: Publication; error?: string } | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    let active = true;
+    publicacionesApi.get(id)
+      .then((item) => { if (active) setProductResult({ id, item }); })
+      .catch((requestError: unknown) => {
+        if (active) {
+          const error = requestError instanceof ApiError ? requestError.message : 'No se pudo cargar el artículo.';
+          setProductResult({ id, error });
+        }
+      });
+    return () => { active = false; };
+  }, [id]);
+
+  const matchingResult = productResult?.id === id ? productResult : null;
+  const loading = !matchingResult;
+  const item = matchingResult?.item ?? null;
+  const error = matchingResult?.error;
+
   const mode = location.pathname.split('/').pop();
   const isRequest = mode === 'solicitar';
   const isReport = mode === 'reportar';
@@ -188,20 +147,27 @@ export const ProductScreen: React.FC = () => {
     navigate('/solicitudes/intercambio-confirmado');
   };
 
+  if (loading) {
+    return <ScreenLayout title="Artículo" subtitle="Cargando información…" width="wide"><p role="status">Cargando artículo…</p></ScreenLayout>;
+  }
+  if (error || !item) {
+    return <ScreenLayout title="Artículo no disponible" subtitle={error || 'No se encontró el artículo.'} width="wide"><BackLink to="/buscar">Volver a explorar</BackLink></ScreenLayout>;
+  }
+
   return (
-    <ScreenLayout title={item.title} subtitle={`${item.category} · ${item.type}`} width="wide">
+    <ScreenLayout title={item.title} subtitle={`${displayCategory(item.category)} · ${item.modality}`} width="wide">
       <BackLink to="/buscar">Volver a explorar</BackLink>
       <section className="screen-panel product-detail">
-        <img src={item.image} alt={item.title} />
+        <img src={getImageUrl(item.imageUrl)} alt={item.title} />
         <div className="product-detail-copy">
-          <span className={`feature-product-type ${item.type === 'Donación' ? 'donation' : 'exchange'}`}>{item.type}</span>
-          <p className="feature-product-category">{item.category}</p>
+          <span className={`feature-product-type ${item.modality === 'Donación' ? 'donation' : 'exchange'}`}>{item.modality}</span>
+          <p className="feature-product-category">{displayCategory(item.category)}</p>
           <h2>{item.title}</h2>
           <p className="product-detail-description">{item.description}</p>
           <dl className="product-facts">
             <div><dt>Estado</dt><dd>{item.condition}</dd></div>
             <div><dt>Publicado por</dt><dd>{item.author}</dd></div>
-            <div><dt>Ubicación</dt><dd>Bogotá · Sede Claustro</dd></div>
+            <div><dt>Ubicación</dt><dd>{item.ubicacion || 'Bogotá, Colombia'}</dd></div>
           </dl>
           <div className="screen-actions">
             <Link className="screen-button" to={`/productos/${item.id}/solicitar`}>Enviar solicitud</Link>

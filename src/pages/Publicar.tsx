@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
+import { ApiError, publicacionesApi } from '../services/publicacionesApi';
 import './Publicar.css';
 
 // Importación del SVG para los selectores desplegables
@@ -12,22 +13,48 @@ export const Publicar: React.FC = () => {
   // Estados del formulario
   const [categoria, setCategoria] = useState('Ropa');
   const [estado, setEstado] = useState('Buen Estado');
-  const [modalidad, setModalidad] = useState('Donación');
+  const [modalidad, setModalidad] = useState<'Donación' | 'Intercambio'>('Donación');
 
   // Metadatos de ropa
   const [talla, setTalla] = useState('L');
   const [genero, setGenero] = useState('Unisex');
-  const [tela, setTela] = useState('Calida');
+  const [clima, setClima] = useState('Cálido');
 
   // Campos de texto y términos
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [autorizaDonacion, setAutorizaDonacion] = useState(true);
+  const [error, setError] = useState('');
+  const [enviando, setEnviando] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulación de envío: navega a la vista de publicaciones
-    navigate('/publicaciones/confirmacion');
+    setError('');
+    setEnviando(true);
+    try {
+      await publicacionesApi.create({
+        title: titulo,
+        category: categoria,
+        condition: estado,
+        modality: modalidad,
+        description: descripcion,
+        imageUrl: imageUrl.trim() || undefined,
+        talla: categoria === 'Ropa' ? talla : '',
+        genero: categoria === 'Ropa' ? genero : '',
+        clima: categoria === 'Ropa' ? clima : '',
+        autorizaDonacion,
+      });
+      navigate('/publicaciones/confirmacion');
+    } catch (requestError) {
+      if (requestError instanceof ApiError && requestError.status === 401) {
+        navigate('/login');
+        return;
+      }
+      setError(requestError instanceof ApiError ? requestError.message : 'No se pudo crear la publicación.');
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -50,19 +77,22 @@ export const Publicar: React.FC = () => {
             {/* 1. Zona de Fotografía */}
             <div className="form-group">
               <label className="form-label">
-                Fotografía<span className="required-star">*</span>
+                Enlace de fotografía
               </label>
               <div className="photo-upload-zone">
-                <input 
-                  type="file" 
-                  id="photo-input" 
-                  accept="image/png, image/jpeg" 
-                  className="photo-file-input" 
-                />
-                <label htmlFor="photo-input" className="photo-upload-label">
-                  <span className="photo-primary-text">Arrastra una o varias fotos o haz clic</span>
-                  <span className="photo-secondary-text">JPG o PNG · máx. 5 MB</span>
+                <label className="photo-upload-label" htmlFor="publication-image-url">
+                  <span className="photo-primary-text">Pega el enlace de una imagen</span>
+                  <span className="photo-secondary-text">Debe ser una URL pública (JPG o PNG)</span>
                 </label>
+                <input
+                  id="publication-image-url"
+                  type="url"
+                  className="input-d9"
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                  value={imageUrl}
+                  onChange={(event) => setImageUrl(event.target.value)}
+                />
+                {imageUrl && <img className="publication-image-preview" src={imageUrl} alt="Vista previa del artículo" />}
               </div>
             </div>
 
@@ -121,7 +151,7 @@ export const Publicar: React.FC = () => {
                 <div className="select-wrapper">
                   <select 
                     value={modalidad} 
-                    onChange={(e) => setModalidad(e.target.value)}
+                    onChange={(e) => setModalidad(e.target.value as 'Donación' | 'Intercambio')}
                     className="custom-select"
                   >
                     <option value="Donación">Donación</option>
@@ -178,16 +208,16 @@ export const Publicar: React.FC = () => {
                   </div>
 
                   <div className="form-group flex-1">
-                    <label className="form-label">Tela</label>
+                    <label className="form-label">Clima</label>
                     <div className="select-wrapper">
                       <select 
-                        value={tela} 
-                        onChange={(e) => setTela(e.target.value)}
+                        value={clima}
+                        onChange={(e) => setClima(e.target.value)}
                         className="custom-select"
                       >
-                        <option value="Calida">Calida</option>
-                        <option value="Fria">Fria</option>
-                        <option value="Templada">Templada</option>
+                        <option value="Cálido">Cálido</option>
+                        <option value="Frío">Frío</option>
+                        <option value="Templado">Templado</option>
                       </select>
                       <img src={flechaDropdown} alt="" className="select-arrow" />
                     </div>
@@ -224,8 +254,9 @@ export const Publicar: React.FC = () => {
             </div>
 
             {/* 7. Botón Publicar Artículo */}
-            <button type="submit" className="publicar-submit-btn">
-              Publicar Artículo
+            {error && <p className="publication-api-error" role="alert">{error}</p>}
+            <button type="submit" className="publicar-submit-btn" disabled={enviando}>
+              {enviando ? 'Publicando…' : 'Publicar Artículo'}
             </button>
 
           </form>

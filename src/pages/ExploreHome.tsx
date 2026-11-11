@@ -1,58 +1,26 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Button } from '../components/Button';
+import { ApiError, displayCategory, getImageUrl, publicacionesApi } from '../services/publicacionesApi';
+import type { Publication } from '../services/publicacionesApi';
 import './ExploreHome.css';
-
-interface ItemCard {
-  id: string;
-  category: string;
-  title: string;
-  modality: 'Donación' | 'Intercambio';
-  tags?: string[];
-  description: string;
-  condition: string;
-  author: string;
-  imageUrl?: string;
-}
 
 export const ExploreHome: React.FC = () => {
   const navigate = useNavigate();
+  const [result, setResult] = useState<{ items: Publication[]; error?: string } | null>(null);
 
-  const items: ItemCard[] = [
-    {
-      id: '1',
-      category: 'MUEBLES',
-      title: 'Silla de escritorio',
-      modality: 'Donación',
-      description: 'Estructura metálica firme, asiento acolchado con una rasgadura pequeña en el borde. Busca a cambio...',
-      condition: 'Usado',
-      author: 'Diego L.',
-      imageUrl: 'https://images.unsplash.com/photo-1580481077195-c328ad4f4f72?w=500&auto=format&fit=crop&q=60'
-    },
-    {
-      id: '2',
-      category: 'ROPA',
-      title: 'Camisas de trabajo (x3)',
-      modality: 'Intercambio',
-      tags: ['M', 'Hombre', 'Cálido'],
-      description: 'Algodón liviano, manga corta. Cuellos en buen estado, una tiene un botón de repuesto cosido dentro.',
-      condition: 'Buen Estado',
-      author: 'Andrés S.',
-      imageUrl: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&auto=format&fit=crop&q=60'
-    },
-    {
-      id: '3',
-      category: 'ÚTILES',
-      title: 'Set de escuadras y compás',
-      modality: 'Donación',
-      description: 'Set de dibujo técnico casi sin uso. Dos escuadras, transportador, compás...',
-      condition: 'Como nuevo',
-      author: 'Valentina P.',
-      imageUrl: 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=500&auto=format&fit=crop&q=60'
-    }
-  ];
+  useEffect(() => {
+    publicacionesApi.list({ categoria: 'Todas' })
+      .then((items) => setResult({ items }))
+      .catch((requestError: unknown) => {
+        const error = requestError instanceof ApiError ? requestError.message : 'No se pudieron cargar los artículos.';
+        setResult({ items: [], error });
+      });
+  }, []);
+  const items = result?.items ?? [];
+  const error = result?.error;
 
   return (
     <div className="explore-page">
@@ -83,7 +51,7 @@ export const ExploreHome: React.FC = () => {
         <section className="metrics-section">
           {/* Tarjeta 1: Fondo Azul 85DAFF */}
           <div className="metric-card metric-blue">
-            <span className="metric-number">10</span>
+            <span className="metric-number">{items.filter((item) => item.status === 'Disponible').length}</span>
             <span className="metric-label">Artículos<br />Disponibles</span>
           </div>
 
@@ -108,12 +76,15 @@ export const ExploreHome: React.FC = () => {
         {/* Catálogo */}
         <section className="catalog-section">
           <div className="catalog-header">
-            <p className="catalog-count">10 artículos encontrados</p>
-            <a href="#ver-todos" className="catalog-link" onClick={(e) => e.preventDefault()}>
+            <p className="catalog-count">{items.length} artículos encontrados</p>
+            <Link to="/buscar" className="catalog-link">
               Ver todos los artículos
-            </a>
+            </Link>
           </div>
 
+          {error && <p role="alert">{error}</p>}
+          {result === null && <p role="status">Cargando artículos…</p>}
+          {!error && result !== null && items.length === 0 && <p>No hay artículos disponibles por el momento.</p>}
           <div className="catalog-grid">
             {items.map((item) => (
               <article key={item.id} className="item-card">
@@ -121,16 +92,14 @@ export const ExploreHome: React.FC = () => {
                   <span className={`modality-badge ${item.modality === 'Donación' ? 'badge-donation' : 'badge-exchange'}`}>
                     {item.modality}
                   </span>
-                  {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.title} className="card-image" />
-                  ) : (
-                    <div className="card-image-placeholder">Sin imagen</div>
-                  )}
+                  <Link to={`/productos/${item.id}`} aria-label={`Ver ${item.title}`}>
+                    <img src={getImageUrl(item.imageUrl)} alt="" className="card-image" />
+                  </Link>
                 </div>
 
                 <div className="card-body">
-                  <span className="item-category">{item.category}</span>
-                  <h3 className="item-title">{item.title}</h3>
+                  <span className="item-category">{displayCategory(item.category)}</span>
+                  <h3 className="item-title"><Link to={`/productos/${item.id}`}>{item.title}</Link></h3>
 
                   {item.tags && item.tags.length > 0 && (
                     <div className="item-tags-row">

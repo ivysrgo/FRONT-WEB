@@ -115,3 +115,8 @@
   text-decoration: underline;
   font-weight: 600;
 }
+.auth-error {
+  color: #b42318;
+  font-size: 13px;
+  margin: 8px 0 0;
+}
