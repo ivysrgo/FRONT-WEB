@@ -1,0 +1,202 @@
+.screen-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-fondo, #f4f5f3);
+}
+
+.screen-content {
+  width: min(90%, 850px);
+  margin: 0 auto;
+  padding: 34px 0 76px;
+  flex: 1;
+}
+
+.screen-content-wide {
+  width: min(92%, 1140px);
+}
+
+.screen-heading {
+  margin-bottom: 28px;
+}
+
+.screen-heading h1 {
+  margin: 0 0 8px;
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #000;
+}
+
+.screen-heading p {
+  max-width: 760px;
+  margin: 0;
+  color: #a3a3a3;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.screen-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.screen-back-link:hover {
+  text-decoration: underline;
+}
+
+.screen-panel {
+  padding: 28px;
+  border: 1px solid #ececec;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.screen-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.screen-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 22px;
+  border: 1px solid #000;
+  border-radius: 24px;
+  background: #000;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.screen-button:hover {
+  opacity: 0.82;
+}
+
+.screen-button-secondary {
+  background: #fff;
+  color: #000;
+}
+
+.screen-button-danger {
+  border-color: #d5473a;
+  background: #d5473a;
+}
+
+.screen-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.screen-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #111;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.screen-form input,
+.screen-form select,
+.screen-form textarea,
+.screen-search-input {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 15px;
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  background: #f7f7f7;
+  color: #111;
+  font: inherit;
+  font-size: 13px;
+}
+
+.screen-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.screen-form input:focus,
+.screen-form select:focus,
+.screen-form textarea:focus,
+.screen-search-input:focus {
+  outline: 2px solid #85daff;
+  outline-offset: 1px;
+}
+
+.screen-muted {
+  color: #777;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.screen-overlay {
+  position: fixed;
+  z-index: 200;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.48);
+}
+
+.screen-dialog {
+  width: min(100%, 520px);
+  padding: 32px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.2);
+}
+
+.screen-dialog h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+
+.screen-dialog p {
+  margin: 0 0 22px;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .screen-content,
+  .screen-content-wide {
+    width: min(92%, 850px);
+    padding-top: 24px;
+  }
+
+  .screen-heading h1 {
+    font-size: 34px;
+  }
+
+  .screen-panel {
+    padding: 20px;
+  }
+
+  .screen-dialog {
+    padding: 24px;
+  }
+}

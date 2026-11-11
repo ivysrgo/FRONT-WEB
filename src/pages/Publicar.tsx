@@ -27,7 +27,7 @@ export const Publicar: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Simulación de envío: navega a la vista de publicaciones
-    navigate('/mis-publicaciones');
+    navigate('/publicaciones/confirmacion');
   };
 
   return (

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ProgressBar } from './ProgressBar';
 import './PostCard.css';
 
@@ -14,6 +15,7 @@ interface PostCardProps {
 }
 
 export const PostCard: React.FC<PostCardProps> = ({
+  id,
   category,
   title,
   details,
@@ -22,6 +24,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   daysElapsed,
   imageUrl,
 }) => {
+  const navigate = useNavigate();
   const isExpired = status === 'Caducado';
   const isDonated = status === 'Donado';
   const isActive = status === 'Disponible' || status === 'Reservado';
@@ -52,7 +55,7 @@ export const PostCard: React.FC<PostCardProps> = ({
             <span className={`status-badge badge-${status.toLowerCase()}`}>
               {isDonated ? 'Donado - Unidona' : status}
             </span>
-            <button className="edit-btn">Editar</button>
+            <button className="edit-btn" onClick={() => navigate(`/publicaciones/${id}/editar`)}>Editar</button>
           </div>
         </div>
       </article>

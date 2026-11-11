@@ -55,19 +55,19 @@ export const Navbar: React.FC = () => {
 
       {/* Acciones */}
       <div className="navbar-actions">
-        <button className="nav-icon-btn" title="Buscar">
+        <NavLink className="nav-icon-btn" title="Buscar" to="/buscar" aria-label="Buscar">
           <img src={lupaBusqueda} alt="Buscar" className="nav-icon" />
-        </button>
-        <button className="nav-icon-btn" title="Notificaciones">
+        </NavLink>
+        <NavLink className="nav-icon-btn" title="Notificaciones" to="/notificaciones" aria-label="Notificaciones">
           <img 
             src={hasNotifications ? campanaActiva : campanaInactiva} 
             alt="Notificaciones" 
             className="nav-icon" 
           />
-        </button>
-        <button className="nav-icon-btn profile-btn" title="Mi Perfil">
+        </NavLink>
+        <NavLink className="nav-icon-btn profile-btn" title="Mi Perfil" to="/perfil" aria-label="Mi Perfil">
           <img src={iconPerfil} alt="Perfil" className="nav-icon" />
-        </button>
+        </NavLink>
       </div>
     </header>
   );

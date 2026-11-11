@@ -1,0 +1,71 @@
+.publication-editor {
+  padding: 32px;
+}
+
+.publication-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.publication-clothing-data {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 1.5px solid #1842ff;
+  border-radius: 16px;
+  background: #85daff;
+}
+
+.publication-clothing-data h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.publication-clothing-data .screen-form label {
+  font-size: 12px;
+}
+
+.publication-editor-actions {
+  margin-top: 4px;
+}
+
+.publication-delete-link {
+  margin-left: auto;
+  color: #d5473a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.publication-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 36px;
+  text-align: center;
+}
+
+.publication-success h2 {
+  margin: 18px 0 8px;
+  font-size: 25px;
+}
+
+.publication-success p {
+  max-width: 470px;
+  margin: 0 0 24px;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 650px) {
+  .publication-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .publication-delete-link {
+    width: 100%;
+    margin: 8px 0 0;
+  }
+}

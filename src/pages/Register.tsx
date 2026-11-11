@@ -18,7 +18,7 @@ export const Register: React.FC = () => {
         <h2 className="register-title">Regístrate</h2>
 
         <div className="register-box">
-          <form className="register-form" onSubmit={(e) => e.preventDefault()}>
+          <form className="register-form" onSubmit={(e) => { e.preventDefault(); navigate('/bienvenida'); }}>
             <InputField label="Nombre" type="text" placeholder="Ingresa tu nombre completo" />
             <InputField label="Correo Electrónico" type="email" placeholder="Ej: correo@ejemplo.com" />
             <InputField label="Contraseña" type="password" placeholder="Ingresa tu contraseña" rightIcon={<img src={ojoSeguridad} alt="Ver" style={{ width: '20px', height: '20px' }} />} />
