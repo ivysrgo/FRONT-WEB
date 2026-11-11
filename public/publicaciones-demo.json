@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "category": "LIBROS",
+    "title": "Diccionario bilingüe Oxford",
+    "details": "Buen estado · Donación",
+    "requests": 3,
+    "status": "Disponible",
+    "daysElapsed": 6,
+    "imageUrl": "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200&q=80"
+  },
+  {
+    "id": "2",
+    "category": "ROPA",
+    "title": "Abrigo de paño gris",
+    "details": "Como nuevo · Intercambio · M · Mujer · Frío",
+    "requests": 1,
+    "status": "Reservado",
+    "daysElapsed": 22,
+    "imageUrl": "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=200&q=80"
+  },
+  {
+    "id": "3",
+    "category": "ÚTILES",
+    "title": "Cuadernos universitarios (x4)",
+    "details": "Nuevo · Donación",
+    "requests": 0,
+    "status": "Donado",
+    "daysElapsed": 30,
+    "imageUrl": "https://images.unsplash.com/photo-1531346878377-244bb0cb85d8?w=200&q=80"
+  },
+  {
+    "id": "4",
+    "category": "ROPA",
+    "title": "Jeans Clásicos Talla 30",
+    "details": "Con uso · Donación · S · Hombre · Templado",
+    "requests": 0,
+    "status": "Caducado",
+    "daysElapsed": 30,
+    "imageUrl": "https://images.unsplash.com/photo-1542272604-780c8d1976ec?w=200&q=80"
+  }
+]

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { ApiError, publicacionesApi } from '../services/publicacionesApi';
+import { SuccessModal } from '../components/SuccessModal';
 import './Publicar.css';
 
 // Importación del SVG para los selectores desplegables
@@ -9,11 +10,11 @@ import flechaDropdown from '../assets/flechadropdown.svg';
 
 export const Publicar: React.FC = () => {
   const navigate = useNavigate();
-
   // Estados del formulario
   const [categoria, setCategoria] = useState('Ropa');
   const [estado, setEstado] = useState('Buen Estado');
   const [modalidad, setModalidad] = useState<'Donación' | 'Intercambio'>('Donación');
+  const [modalAbierto, setModalAbierto] = useState(false);
 
   // Metadatos de ropa
   const [talla, setTalla] = useState('L');
@@ -45,7 +46,7 @@ export const Publicar: React.FC = () => {
         clima: categoria === 'Ropa' ? clima : '',
         autorizaDonacion,
       });
-      navigate('/publicaciones/confirmacion');
+      setModalAbierto(true);
     } catch (requestError) {
       if (requestError instanceof ApiError && requestError.status === 401) {
         navigate('/login');
@@ -258,10 +259,18 @@ export const Publicar: React.FC = () => {
             <button type="submit" className="publicar-submit-btn" disabled={enviando}>
               {enviando ? 'Publicando…' : 'Publicar Artículo'}
             </button>
-
+            
           </form>
         </section>
       </main>
+      <SuccessModal
+        isOpen={modalAbierto}
+        title="Muchas Gracias"
+        subtitle="Se ha publicado exitosamente tu artículo"
+        buttonText="Volver a Explorar"
+        redirectPath="/explorar"
+        onClose={() => setModalAbierto(false)}
+      />
     </div>
   );
 };

@@ -49,6 +49,10 @@ export interface PublicationData {
   autorizaDonacion?: boolean;
 }
 
+export type PublicationUpdateData = Partial<PublicationData> & {
+  status?: Publication['status'];
+};
+
 export class ApiError extends Error {
   readonly status: number;
 
@@ -121,7 +125,7 @@ export const publicacionesApi = {
   get: (id: string) => request<Publication>(`/publicaciones/${encodeURIComponent(id)}`),
   create: (data: PublicationData) =>
     request<Publication>('/publicaciones', { method: 'POST', body: JSON.stringify(data) }),
-  update: (id: string, data: Partial<PublicationData>) =>
+  update: (id: string, data: PublicationUpdateData) =>
     request<Publication>(`/publicaciones/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(data) }),
   delete: (id: string) =>
     request<void>(`/publicaciones/${encodeURIComponent(id)}`, { method: 'DELETE' }),

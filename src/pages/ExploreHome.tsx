@@ -1,33 +1,80 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Navbar } from '../components/Navbar';
-import { Footer } from '../components/Footer';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../components/Button';
+import { Footer } from '../components/Footer';
+import { ItemCarousel } from '../components/ItemCarousel';
+import type { CarouselItem } from '../components/ItemCarousel';
+import { Navbar } from '../components/Navbar';
+import { applyFilters, filtersFromParams } from '../utils/searchFilters';
 import { ApiError, displayCategory, getImageUrl, publicacionesApi } from '../services/publicacionesApi';
 import type { Publication } from '../services/publicacionesApi';
 import './ExploreHome.css';
 
+const toCarouselItem = (publication: Publication): CarouselItem => {
+  const category = displayCategory(publication.category);
+  const normalizedCategory = category.toLocaleLowerCase();
+  const categoryKey = normalizedCategory.includes('ropa')
+    ? 'ROPA'
+    : normalizedCategory.includes('libro')
+      ? 'LIBROS'
+      : normalizedCategory.includes('util')
+        ? 'ÚTILES'
+        : normalizedCategory.includes('mueble')
+          ? 'MUEBLES'
+          : category;
+
+  return {
+    id: publication.id,
+    category: categoryKey,
+    title: publication.title,
+    modality: publication.modality,
+    tags: publication.tags,
+    description: publication.description,
+    condition: publication.condition,
+    author: publication.author,
+    imageUrl: getImageUrl(publication.imageUrl),
+    publishedAt: publication.publishedAt,
+  };
+};
+
 export const ExploreHome: React.FC = () => {
   const navigate = useNavigate();
-  const [result, setResult] = useState<{ items: Publication[]; error?: string } | null>(null);
+  const [searchParams] = useSearchParams();
+  const [items, setItems] = useState<CarouselItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    publicacionesApi.list({ categoria: 'Todas' })
-      .then((items) => setResult({ items }))
+    let active = true;
+    publicacionesApi.list()
+      .then((publications) => {
+        if (active) setItems(publications.map(toCarouselItem));
+      })
       .catch((requestError: unknown) => {
-        const error = requestError instanceof ApiError ? requestError.message : 'No se pudieron cargar los artículos.';
-        setResult({ items: [], error });
+        if (active) {
+          setError(requestError instanceof ApiError
+            ? requestError.message
+            : 'No se pudieron cargar los artículos.');
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
+
+    return () => {
+      active = false;
+    };
   }, []);
-  const items = result?.items ?? [];
-  const error = result?.error;
+
+  const filters = useMemo(() => filtersFromParams(searchParams), [searchParams]);
+  const filteredItems = useMemo(() => applyFilters(items, filters), [items, filters]);
+  const availableCount = items.length;
 
   return (
     <div className="explore-page">
       <Navbar />
 
       <main className="explore-content">
-        {/* Bloque Hero */}
         <section className="explore-hero">
           <div className="hero-text-container">
             <span className="hero-tagline">RECICLA Y COMPARTE EN TU COMUNIDAD</span>
@@ -37,88 +84,52 @@ export const ExploreHome: React.FC = () => {
             </p>
           </div>
           <div className="hero-action">
-            <Button 
-              variant="solid" 
-              type="button" 
-              onClick={() => navigate('/publicar')}
-            >
+            <Button variant="solid" type="button" onClick={() => navigate('/publicar')}>
               Publicar Artículo
             </Button>
           </div>
         </section>
 
-        {/* Fila de Métricas / Estadísticas */}
         <section className="metrics-section">
-          {/* Tarjeta 1: Fondo Azul 85DAFF */}
           <div className="metric-card metric-blue">
-            <span className="metric-number">{items.filter((item) => item.status === 'Disponible').length}</span>
+            <span className="metric-number">{availableCount}</span>
             <span className="metric-label">Artículos<br />Disponibles</span>
           </div>
-
-          {/* Tarjeta 2: Fondo Blanco y Número Naranja */}
           <div className="metric-card metric-light">
             <span className="metric-number orange-text">128</span>
             <span className="metric-label">Intercambios<br />Locales</span>
           </div>
-
-          {/* Tarjeta 3: Fondo Blanco, Número Naranja y texto Unidona */}
           <div className="metric-card metric-light">
             <span className="metric-number orange-text">41</span>
             <span className="metric-label">Escalados a<br />Unidona</span>
           </div>
         </section>
 
-        {/* Banner de Impacto Ambiental */}
         <div className="impact-banner">
-          <h2>340KG DE RESIDUOS EVITADOS</h2>
+          <h2>LLEVAMOS 340KG DE RESIDUOS EVITADOS</h2>
         </div>
 
-        {/* Catálogo */}
         <section className="catalog-section">
           <div className="catalog-header">
-            <p className="catalog-count">{items.length} artículos encontrados</p>
-            <Link to="/buscar" className="catalog-link">
+            <p className="catalog-count">
+              {filteredItems.length} {filteredItems.length === 1 ? 'artículo encontrado' : 'artículos encontrados'}
+            </p>
+            <button type="button" className="catalog-link" onClick={() => navigate('/todos')}>
               Ver todos los artículos
-            </Link>
+            </button>
           </div>
 
-          {error && <p role="alert">{error}</p>}
-          {result === null && <p role="status">Cargando artículos…</p>}
-          {!error && result !== null && items.length === 0 && <p>No hay artículos disponibles por el momento.</p>}
-          <div className="catalog-grid">
-            {items.map((item) => (
-              <article key={item.id} className="item-card">
-                <div className="card-image-wrapper">
-                  <span className={`modality-badge ${item.modality === 'Donación' ? 'badge-donation' : 'badge-exchange'}`}>
-                    {item.modality}
-                  </span>
-                  <Link to={`/productos/${item.id}`} aria-label={`Ver ${item.title}`}>
-                    <img src={getImageUrl(item.imageUrl)} alt="" className="card-image" />
-                  </Link>
-                </div>
-
-                <div className="card-body">
-                  <span className="item-category">{displayCategory(item.category)}</span>
-                  <h3 className="item-title"><Link to={`/productos/${item.id}`}>{item.title}</Link></h3>
-
-                  {item.tags && item.tags.length > 0 && (
-                    <div className="item-tags-row">
-                      {item.tags.map((tag, idx) => (
-                        <span key={idx} className="item-tag-chip">{tag}</span>
-                      ))}
-                    </div>
-                  )}
-
-                  <p className="item-description">{item.description}</p>
-
-                  <div className="card-footer">
-                    <span className="item-condition">{item.condition}</span>
-                    <span className="item-author">{item.author}</span>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          {loading && <p role="status">Cargando artículos…</p>}
+          {!loading && error && <p role="alert" className="catalog-empty-text">{error}</p>}
+          {!loading && !error && filteredItems.length > 0 && (
+            <ItemCarousel key={searchParams.toString()} items={filteredItems} />
+          )}
+          {!loading && !error && filteredItems.length === 0 && (
+            <div className="catalog-empty">
+              <p className="catalog-empty-title">No encontramos artículos con esos filtros</p>
+              <p className="catalog-empty-text">Prueba con otra palabra o limpia los filtros para ver todo.</p>
+            </div>
+          )}
         </section>
       </main>
 

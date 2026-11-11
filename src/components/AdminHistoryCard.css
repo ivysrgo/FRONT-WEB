@@ -1,0 +1,121 @@
+.admin-history-card {
+  background-color: #FFFFFF;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  margin-bottom: 20px;
+  border: 1px solid #E5E7EB;
+}
+
+.history-avatar-col {
+  flex-shrink: 0;
+}
+
+.history-avatar-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #C0ECFF; /* Azul claro Eco-Golgi */
+  color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.history-info-col {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.history-type {
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 10px;
+  font-weight: 700;
+  color: #0070BA;
+  text-transform: uppercase;
+}
+
+.history-dot {
+  color: #0070BA;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.history-author {
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 10px;
+  font-weight: 700;
+  color: #0070BA;
+}
+
+.history-title {
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.history-date {
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 10px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 8px;
+}
+
+.history-description {
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 11px;
+  font-weight: 500;
+  color: #888888;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.history-action-col {
+  flex-shrink: 0;
+}
+
+.btn-ver-articulo {
+  background-color: #85DAFF;
+  color: #000000;
+  border: none;
+  border-radius: 12px;
+  padding: 6px 16px;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn-ver-articulo:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+  .admin-history-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .history-action-col {
+    align-self: flex-end;
+    margin-top: -10px;
+  }
+}

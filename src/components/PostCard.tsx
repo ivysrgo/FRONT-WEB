@@ -12,6 +12,7 @@ interface PostCardProps {
   status: 'Disponible' | 'Reservado' | 'Donado' | 'Caducado';
   daysElapsed: number;
   imageUrl: string;
+  onDonate?: () => void;
 }
 
 export const PostCard: React.FC<PostCardProps> = ({
@@ -23,6 +24,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   status,
   daysElapsed,
   imageUrl,
+  onDonate,
 }) => {
   const navigate = useNavigate();
   const isExpired = status === 'Caducado';
@@ -32,7 +34,6 @@ export const PostCard: React.FC<PostCardProps> = ({
   return (
     <div className={`post-card-wrapper ${isExpired ? 'card-expired' : ''}`}>
       <article className="post-card">
-        {/* Lado Izquierdo: Foto y Detalles */}
         <div className="post-info">
           <div className="post-image-box">
             <img src={imageUrl} alt={title} />
@@ -44,46 +45,41 @@ export const PostCard: React.FC<PostCardProps> = ({
           </div>
         </div>
 
-        {/* Lado Derecho: Solicitudes, Badge y Editar */}
         <div className="post-actions">
           <div className="post-requests">
             <span className="request-number">{requests}</span>
             <span className="request-label">Solicitudes</span>
           </div>
-
           <div className="post-badges-row">
             <span className={`status-badge badge-${status.toLowerCase()}`}>
               {isDonated ? 'Donado - Unidona' : status}
             </span>
-            <button className="edit-btn" onClick={() => navigate(`/publicaciones/${id}/editar`)}>Editar</button>
+            <button type="button" className="edit-btn" onClick={() => navigate(`/publicaciones/${id}/editar`)}>
+              Editar
+            </button>
           </div>
         </div>
       </article>
 
-      {/* Lógica Condicional para la parte inferior de la tarjeta */}
-
-      {/* Caso 1: Normal (Disponible o Reservado) -> Muestra la barra de progreso */}
       {isActive && (
         <div className="post-bottom-section">
           <ProgressBar daysElapsed={daysElapsed} totalDays={30} />
         </div>
       )}
 
-      {/* Caso 2: Escalado/Donado -> Caja Negra */}
       {isDonated && (
         <div className="post-bottom-alert alert-black">
           <strong>Escalado a donación formal.</strong> Registrado en la red del Banco de Ropa de Unidona. El seguimiento logístico se gestiona fuera de la plataforma.
         </div>
       )}
 
-      {/* Caso 3: Caducado -> Caja Naranja con botón */}
       {isExpired && (
         <div className="post-bottom-alert alert-orange">
           <div className="alert-text">
             <strong>Sin intercambio local en 30 días</strong><br />
             Puedes escalar este artículo a la red del Banco de Ropa de Unidona para donación formal.
           </div>
-          <button className="donate-btn-orange">Donar al Unidona</button>
+          <button type="button" className="donate-btn-orange" onClick={onDonate}>Donar a Unidona</button>
         </div>
       )}
     </div>

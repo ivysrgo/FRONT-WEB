@@ -1,0 +1,116 @@
+.suspend-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.4);
+  animation: suspendFadeIn 0.2s ease-out;
+}
+
+.suspend-modal-content {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 600px;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 40px 38px;
+  border-radius: 24px;
+  background-color: #FFFFFF;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  animation: suspendSlideUp 0.3s ease-out;
+}
+
+.suspend-modal-back {
+  position: absolute;
+  top: 28px;
+  left: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.suspend-modal-back img {
+  width: 22px;
+  height: 22px;
+}
+
+.suspend-modal-title {
+  margin: 0 0 14px;
+  color: #000000;
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.suspend-modal-description {
+  margin: 0;
+  color: #000000;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.suspend-modal-icon-container {
+  margin: 36px 0;
+}
+
+.suspend-modal-icon {
+  width: 100px;
+  height: auto;
+}
+
+.btn-confirmar-suspension {
+  padding: 14px 34px;
+  border: 0;
+  border-radius: 30px;
+  background-color: #FF3B30;
+  color: #FFFFFF;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.btn-confirmar-suspension:hover {
+  opacity: 0.85;
+}
+
+.btn-confirmar-suspension:active {
+  transform: scale(0.97);
+}
+
+@keyframes suspendFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes suspendSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .suspend-modal-content {
+    padding: 56px 24px 32px;
+  }
+
+  .suspend-modal-title {
+    font-size: 28px;
+  }
+
+  .suspend-modal-icon {
+    width: 84px;
+  }
+}

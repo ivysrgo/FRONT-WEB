@@ -1,0 +1,50 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './SuccessModal.css';
+
+import logoSol from '../assets/logosol.svg';
+import { ModalCloseButton } from './ModalCloseButton';
+
+interface SuccessModalProps {
+  isOpen: boolean;
+  title: string;
+  subtitle: string;
+  buttonText: string;
+  redirectPath: string;
+  onClose: () => void;
+}
+
+export const SuccessModal: React.FC<SuccessModalProps> = ({
+  isOpen,
+  title,
+  subtitle,
+  buttonText,
+  redirectPath,
+  onClose
+}) => {
+  const navigate = useNavigate();
+
+  // Si no está abierto, no renderiza nada
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <ModalCloseButton onClose={onClose} />
+        <h2 className="modal-title">{title}</h2>
+        <p className="modal-subtitle">{subtitle}</p>
+        
+        <div className="modal-logo-container">
+          <img src={logoSol} alt="Eco-Golgi Sol" className="modal-logo" />
+        </div>
+
+        <button 
+          className="modal-btn-blue" 
+          onClick={() => navigate(redirectPath)}
+        >
+          {buttonText}
+        </button>
+      </div>
+    </div>
+  );
+};
