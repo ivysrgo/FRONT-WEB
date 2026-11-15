@@ -4,10 +4,11 @@ import estrellaVacia from '../assets/starratingvacia.svg';
 import './StarRating.css';
 
 interface StarRatingProps {
-  rating: number; // Número de 0 a 5
+  rating: number;
+  size?: number;
 }
 
-export const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
+export const StarRating: React.FC<StarRatingProps> = ({ rating, size = 20 }) => {
   // Asegurarnos de que el rating esté entre 0 y 5
   const normalizedRating = Math.max(0, Math.min(5, Math.round(rating)));
 
@@ -19,6 +20,7 @@ export const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
           src={star <= normalizedRating ? estrellaLlena : estrellaVacia} 
           alt={star <= normalizedRating ? "Estrella llena" : "Estrella vacía"}
           className="star-icon"
+          style={{ width: size, height: size }}
         />
       ))}
     </div>

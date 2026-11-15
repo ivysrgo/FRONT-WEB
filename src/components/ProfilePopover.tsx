@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { StarRating } from './StarRating';
-import { CURRENT_USER, getInitials } from '../data/currentUser';
+import { getInitials } from '../data/currentUser';
+import { cerrarSesion, obtenerPerfilActual, type PerfilAutenticado } from '../services/authService';
 import './ProfilePopover.css';
 
 interface ProfilePopoverProps {
@@ -43,11 +44,42 @@ const LogoutIcon = () => (
 
 export const ProfilePopover: React.FC<ProfilePopoverProps> = ({ onClose, isAdmin = false }) => {
   const navigate = useNavigate();
-  const displayName = isAdmin ? 'Administrador' : CURRENT_USER.name;
+  const [profile, setProfile] = useState<PerfilAutenticado | null>(null);
+  const [loading, setLoading] = useState(Boolean(localStorage.getItem('token')));
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!localStorage.getItem('token')) return;
+    let cancelled = false;
+
+    obtenerPerfilActual()
+      .then((currentProfile) => {
+        if (!cancelled) setProfile(currentProfile);
+      })
+      .catch((requestError: unknown) => {
+        if (!cancelled) {
+          setError(requestError instanceof Error ? requestError.message : 'No se pudo cargar el perfil.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const displayName = isAdmin ? profile?.name ?? 'Administrador' : profile?.name ?? 'Mi perfil';
 
   const goTo = (path: string) => {
     onClose();
     navigate(path);
+  };
+
+  const handleLogout = () => {
+    cerrarSesion();
+    goTo('/login');
   };
 
   return (
@@ -60,10 +92,16 @@ export const ProfilePopover: React.FC<ProfilePopoverProps> = ({ onClose, isAdmin
         {isAdmin ? (
           <span className="profile-role-badge">Administrador</span>
         ) : (
-          <div className="profile-rating">
-            <StarRating rating={CURRENT_USER.rating} size={18} />
-            <span className="profile-rating-value">Calificación {CURRENT_USER.rating.toFixed(1)}</span>
-          </div>
+          profile ? (
+            <div className="profile-rating">
+              <StarRating rating={profile.rating} size={18} />
+              <span className="profile-rating-value">Calificación {profile.rating.toFixed(1)}</span>
+            </div>
+          ) : (
+            <p className="profile-rating-value" role={error ? 'alert' : 'status'}>
+              {error ?? (loading ? 'Cargando perfil...' : 'Inicia sesión para ver tu perfil.')}
+            </p>
+          )
         )}
       </div>
 
@@ -71,10 +109,10 @@ export const ProfilePopover: React.FC<ProfilePopoverProps> = ({ onClose, isAdmin
         <button
           type="button"
           className="profile-menu-item"
-          onClick={() => goTo(isAdmin ? '/admin/mi-perfil' : '/perfil')}
+          onClick={() => goTo(profile ? (isAdmin ? '/admin/mi-perfil' : '/perfil') : '/login')}
         >
           <UserIcon />
-          {isAdmin ? 'Mi Perfil de Administrador' : 'Ver Perfil'}
+          {profile ? (isAdmin ? 'Mi Perfil de Administrador' : 'Ver Perfil') : 'Iniciar Sesión'}
         </button>
         <button
           type="button"
@@ -84,10 +122,12 @@ export const ProfilePopover: React.FC<ProfilePopoverProps> = ({ onClose, isAdmin
           <SettingsIcon />
           {isAdmin ? 'Panel administrativo' : 'Configuración'}
         </button>
-        <button type="button" className="profile-menu-item profile-logout" onClick={() => goTo('/login')}>
-          <LogoutIcon />
-          Cerrar Sesión
-        </button>
+        {profile && (
+          <button type="button" className="profile-menu-item profile-logout" onClick={handleLogout}>
+            <LogoutIcon />
+            Cerrar Sesión
+          </button>
+        )}
       </nav>
     </div>
   );

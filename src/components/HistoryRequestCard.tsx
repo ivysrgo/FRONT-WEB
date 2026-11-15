@@ -7,7 +7,7 @@ interface HistoryRequestCardProps {
   author: string;
   title: string;
   message: string;
-  status: 'Aceptado' | 'Donado' | 'Rechazado';
+  status: 'Donado' | 'Rechazado' | 'Cancelado';
 }
 
 export const HistoryRequestCard: React.FC<HistoryRequestCardProps> = ({
@@ -21,7 +21,7 @@ export const HistoryRequestCard: React.FC<HistoryRequestCardProps> = ({
   const initial = author.charAt(0).toUpperCase();
 
   // Determinar si fue un caso de éxito (para mostrar la estrella y el color azul)
-  const isSuccess = status === 'Aceptado' || status === 'Donado';
+  const isSuccess = status === 'Donado';
 
   return (
     <article className="history-card">

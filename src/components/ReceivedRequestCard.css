@@ -68,6 +68,20 @@
   line-height: 1.4;
 }
 
+.received-view-btn {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0070BA;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .received-actions {
   display: flex;
   align-items: center;

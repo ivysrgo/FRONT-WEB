@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { AdminNavbar } from '../components/AdminNavbar';
 import { Footer } from '../components/Footer';
 import { StarRating } from '../components/StarRating';
-import { ADMIN_USER, CURRENT_USER } from '../data/currentUser';
+import { ApiError } from '../services/api';
+import { obtenerPerfilActual, type PerfilAutenticado } from '../services/authService';
 import './MiPerfil.css';
 
 interface MiPerfilProps {
@@ -13,19 +14,56 @@ interface MiPerfilProps {
 
 export const MiPerfil: React.FC<MiPerfilProps> = ({ isAdmin = false }) => {
   const navigate = useNavigate();
-  const initialProfile = isAdmin ? ADMIN_USER : CURRENT_USER;
-  const [profile, setProfile] = useState(initialProfile);
-  const [draft, setDraft] = useState(initialProfile);
+  const [profile, setProfile] = useState<PerfilAutenticado | null>(null);
+  const [draft, setDraft] = useState<PerfilAutenticado | null>(null);
   const [editing, setEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!localStorage.getItem('token')) {
+      navigate('/login');
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    obtenerPerfilActual()
+      .then((currentProfile) => {
+        if (!cancelled) {
+          setProfile(currentProfile);
+          setError(null);
+        }
+      })
+      .catch((requestError: unknown) => {
+        if (!cancelled) {
+          setError(
+            requestError instanceof ApiError || requestError instanceof Error
+              ? requestError.message
+              : 'No se pudo cargar el perfil.'
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
 
   const startEditing = () => {
+    if (!profile) return;
     setDraft(profile);
     setEditing(true);
   };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setProfile(draft);
+    if (draft) setProfile(draft);
     setEditing(false);
   };
 
@@ -50,77 +88,84 @@ export const MiPerfil: React.FC<MiPerfilProps> = ({ isAdmin = false }) => {
           </p>
         </header>
 
+        {loading && <p role="status">Cargando perfil...</p>}
+        {error && !loading && <p role="alert">{error}</p>}
+
         <section className="perfil-card">
-          <div className="perfil-photo">
-            {profile.avatarUrl ? (
-              <img src={profile.avatarUrl} alt={profile.name} />
-            ) : (
-              <svg viewBox="0 0 100 100" aria-hidden="true">
-                <rect width="100" height="100" fill="#D0D0D0" />
-                <circle cx="50" cy="40" r="18" fill="#FFFFFF" />
-                <path d="M14 100c0-22 16-36 36-36s36 14 36 36Z" fill="#FFFFFF" />
-              </svg>
-            )}
-          </div>
+          {profile && (
+            <>
+              <div className="perfil-photo">
+                {profile.avatarUrl ? (
+                  <img src={profile.avatarUrl} alt={profile.name} />
+                ) : (
+                  <svg viewBox="0 0 100 100" aria-hidden="true">
+                    <rect width="100" height="100" fill="#D0D0D0" />
+                    <circle cx="50" cy="40" r="18" fill="#FFFFFF" />
+                    <path d="M14 100c0-22 16-36 36-36s36 14 36 36Z" fill="#FFFFFF" />
+                  </svg>
+                )}
+              </div>
 
-          {editing ? (
-            <form className="perfil-info perfil-form" onSubmit={handleSave}>
-              <label>
-                Nombre
-                <input
-                  type="text"
-                  value={draft.name}
-                  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                  required
-                />
-              </label>
-              <label>
-                Correo
-                <input
-                  type="email"
-                  value={draft.email}
-                  onChange={(e) => setDraft({ ...draft, email: e.target.value })}
-                  required
-                />
-              </label>
-              <label>
-                Teléfono
-                <input
-                  type="tel"
-                  value={draft.phone}
-                  onChange={(e) => setDraft({ ...draft, phone: e.target.value })}
-                />
-              </label>
-              <div className="perfil-form-actions">
-                <button type="button" className="perfil-btn-outline" onClick={() => setEditing(false)}>
-                  Cancelar
-                </button>
-                <button type="submit" className="perfil-btn-solid">Guardar</button>
-              </div>
-            </form>
-          ) : (
-            <div className="perfil-info">
-              <div className="perfil-name-row">
-                <h2 className="perfil-name">{profile.name}</h2>
-                {isAdmin && <span className="perfil-admin-badge">ADMINISTRADOR</span>}
-              </div>
-              {!isAdmin && (
-                <>
-                  <StarRating rating={profile.rating} size={26} />
-                  <p className="perfil-rating-value">Calificación: {profile.rating.toFixed(1)}</p>
-                </>
+              {editing && draft ? (
+                <form className="perfil-info perfil-form" onSubmit={handleSave}>
+                  <label>
+                    Nombre
+                    <input
+                      type="text"
+                      value={draft.name}
+                      onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Correo
+                    <input
+                      type="email"
+                      value={draft.email}
+                      onChange={(e) => setDraft({ ...draft, email: e.target.value })}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Teléfono
+                    <input
+                      type="tel"
+                      value={draft.phone}
+                      onChange={(e) => setDraft({ ...draft, phone: e.target.value })}
+                    />
+                  </label>
+                  <div className="perfil-form-actions">
+                    <button type="button" className="perfil-btn-outline" onClick={() => setEditing(false)}>
+                      Cancelar
+                    </button>
+                    <button type="submit" className="perfil-btn-solid">Guardar</button>
+                  </div>
+                </form>
+              ) : (
+                <div className="perfil-info">
+                  <div className="perfil-name-row">
+                    <h2 className="perfil-name">{profile.name}</h2>
+                    {isAdmin && <span className="perfil-admin-badge">ADMINISTRADOR</span>}
+                  </div>
+                  {!isAdmin && (
+                    <>
+                      <StarRating rating={profile.rating} size={26} />
+                      <p className="perfil-rating-value">Calificación: {profile.rating.toFixed(1)}</p>
+                    </>
+                  )}
+                  <p className="perfil-contact">
+                    {profile.email && <>Correo: {profile.email}<br /></>}
+                    {profile.phone && <>Teléfono: {profile.phone}</>}
+                  </p>
+                </div>
               )}
-              <p className="perfil-contact">
-                {profile.email && <>Correo: {profile.email}<br /></>}
-                {profile.phone && <>Teléfono: {profile.phone}</>}
-              </p>
-            </div>
-          )}
 
-          {!editing && (
-            <button type="button" className="perfil-btn-outline perfil-edit" onClick={startEditing}>
-              Editar
-            </button>
+              {!editing && (
+                <button type="button" className="perfil-btn-outline perfil-edit" onClick={startEditing}>
+                  Editar
+                </button>
+              )}
+            </>
           )}
         </section>
       </main>

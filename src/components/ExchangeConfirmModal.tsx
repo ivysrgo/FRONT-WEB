@@ -9,7 +9,7 @@ import { ModalCloseButton } from './ModalCloseButton';
 interface ExchangeConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (calificacion: number) => void;
+  onConfirm: (calificacion: number) => void | Promise<void>;
   nombreOtroUsuario: string;
 }
 
@@ -21,20 +21,31 @@ export const ExchangeConfirmModal: React.FC<ExchangeConfirmModalProps> = ({
 }) => {
   const [calificacion, setCalificacion] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const manejarConfirmacion = () => {
-    if (calificacion > 0) {
-      onConfirm(calificacion);
-      setCalificacion(0);
-      setHoverRating(0);
+  const manejarConfirmacion = async () => {
+    if (calificacion > 0 && !enviando) {
+      setEnviando(true);
+      setError(null);
+      try {
+        await onConfirm(calificacion);
+        setCalificacion(0);
+        setHoverRating(0);
+      } catch (requestError: unknown) {
+        setError(requestError instanceof Error ? requestError.message : 'No se pudo confirmar el intercambio.');
+      } finally {
+        setEnviando(false);
+      }
     }
   };
 
   const cerrarModal = () => {
     setCalificacion(0);
     setHoverRating(0);
+    setError(null);
     onClose();
   }
 
@@ -71,6 +82,11 @@ export const ExchangeConfirmModal: React.FC<ExchangeConfirmModalProps> = ({
                 className="interactive-star"
                 onClick={() => setCalificacion(starValue)}
                 onMouseEnter={() => setHoverRating(starValue)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') setCalificacion(starValue);
+                }}
               />
             );
           })}
@@ -78,10 +94,11 @@ export const ExchangeConfirmModal: React.FC<ExchangeConfirmModalProps> = ({
 
         {/* El botón "Confirmar" solo aparece si se hizo clic (calificacion > 0) */}
         <div className={`exchange-btn-container ${calificacion > 0 ? 'visible' : 'hidden'}`}>
-           <button className="modal-btn-cyan" onClick={manejarConfirmacion}>
-            Confirmar
+           <button className="modal-btn-cyan" onClick={() => void manejarConfirmacion()} disabled={enviando}>
+            {enviando ? 'Confirmando...' : 'Confirmar'}
           </button>
         </div>
+        {error && <p role="alert">{error}</p>}
 
       </div>
     </div>

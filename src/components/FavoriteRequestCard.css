@@ -89,6 +89,21 @@
   height: 24px;
 }
 
+.favorite-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.favorite-remove-btn:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 /* Botón "Ver" color celeste */
 .btn-view-blue {
   background-color: var(--color-brand, #85DAFF);

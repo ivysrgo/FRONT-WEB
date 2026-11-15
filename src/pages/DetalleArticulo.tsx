@@ -8,6 +8,7 @@ import { ArticuloSolicitudForm } from '../components/ArticuloSolicitudForm';
 import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
 import { ExpirationUpdatedModal } from '../components/ExpirationUpdatedModal';
 import { addDaysToExpiration, removeArticulo, useArticulos } from '../data/articulos';
+import { crearSolicitud } from '../services/solicitudService';
 import flechaVolverNegra from '../assets/flechavolvernegra.svg';
 import './DetalleArticulo.css';
 
@@ -31,16 +32,19 @@ export const DetalleArticulo: React.FC<DetalleArticuloProps> = ({ isAdmin = fals
   const indiceVisible = imagenes.length > 0 ? indiceImagen % imagenes.length : 0;
 
   // Función que recibe los datos desde el componente hijo ArticuloSolicitudForm
-  const procesarEnvioSolicitud = (
+  const procesarEnvioSolicitud = async (
     tipoSolicitud: 'Donación' | 'Intercambio',
     mensaje: string,
     articuloOfrecidoId?: string
   ) => {
-    console.log(`Enviando solicitud de ${tipoSolicitud} para el artículo ${articulo?.id}:`, {
-      mensaje,
-      articuloOfrecidoId
+    if (!articulo) throw new Error('No se encontró el artículo solicitado.');
+    await crearSolicitud({
+      type: tipoSolicitud === 'Intercambio' ? 'INTERCAMBIO' : 'DONACIÓN',
+      title: articulo.title,
+      message: mensaje,
+      articuloId: articulo.id,
+      ...(articuloOfrecidoId ? { articuloOfrecidoId } : {}),
     });
-    // Aquí iría el fetch() hacia el backend para guardar la solicitud.
   };
 
   const handleEliminarArticulo = () => {

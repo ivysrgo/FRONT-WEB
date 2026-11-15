@@ -13,7 +13,8 @@ interface PublicacionApi {
   requests: number;
   status: PostItem['status'];
   daysElapsed: number;
-  imageUrl: string;
+  expirationDays?: number;
+  imageUrl?: string;
   imageUrls?: string[];
   author: string;
   publishedAt: string;
@@ -69,6 +70,7 @@ function mapearPublicacion(publicacion: PublicacionApi): Articulo {
     imageUrls,
     publishedAt: publicacion.publishedAt || publicacion.createdAt || '',
     daysElapsed: publicacion.daysElapsed ?? diasDesde(publicacion.publishedAt || publicacion.createdAt),
+    expirationDays: publicacion.expirationDays,
     tags: publicacion.tags?.length
       ? publicacion.tags
       : [publicacion.talla, publicacion.genero, publicacion.clima].filter(
@@ -92,7 +94,11 @@ export async function obtenerMisPublicaciones(): Promise<PostItem[]> {
     requests: publicacion.requests,
     status: publicacion.status,
     daysElapsed: publicacion.daysElapsed ?? diasDesde(publicacion.publishedAt || publicacion.createdAt),
-    imageUrl: publicacion.imageUrl ? resolverUrlImagen(publicacion.imageUrl) : '',
+    imageUrl: publicacion.imageUrl
+      ? resolverUrlImagen(publicacion.imageUrl)
+      : publicacion.imageUrls?.[0]
+        ? resolverUrlImagen(publicacion.imageUrls[0])
+        : '',
   }));
 }
 

@@ -18,6 +18,16 @@ export interface LoginResponse {
   };
 }
 
+export interface PerfilAutenticado {
+  id: string;
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+  rating: number;
+  avatarUrl: string;
+}
+
 export async function login(credenciales: LoginRequest): Promise<LoginResponse> {
   const respuesta = await solicitar<LoginResponse>('/auth/login', {
     method: 'POST',
@@ -40,6 +50,29 @@ export async function registrar(datos: RegisterRequest): Promise<LoginResponse> 
   });
   guardarSesion(respuesta);
   return respuesta;
+}
+
+export async function obtenerPerfilActual(): Promise<PerfilAutenticado> {
+  const respuesta = await solicitar<{ usuario: LoginResponse['usuario'] }>('/auth/me');
+  const usuario = respuesta.usuario;
+  localStorage.setItem('usuario', JSON.stringify(usuario));
+
+  return {
+    id: usuario.id,
+    name: usuario.nombre,
+    role: usuario.role === 'admin' ? 'Administrador' : 'Miembro de la comunidad',
+    email: usuario.correo,
+    phone: usuario.phone ?? '',
+    rating: typeof usuario.rating === 'number' && Number.isFinite(usuario.rating)
+      ? usuario.rating
+      : 0,
+    avatarUrl: usuario.avatarUrl ?? '',
+  };
+}
+
+export function cerrarSesion() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('usuario');
 }
 
 function guardarSesion(respuesta: LoginResponse) {

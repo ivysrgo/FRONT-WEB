@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
 
@@ -16,6 +16,9 @@ interface ProductCardProps {
   condition: string;
   author: string;
   imageUrl: string;
+  isFavorite?: boolean;
+  favoritePending?: boolean;
+  onToggleFavorite?: (id: string) => void;
   isNew?: boolean; // Para la etiqueta "Reciente" (Opcional, según lógica de fecha)
   isAdmin?: boolean;
 }
@@ -30,14 +33,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   condition,
   author,
   imageUrl,
+  isFavorite = false,
+  favoritePending = false,
+  onToggleFavorite,
   isNew = false,
   isAdmin = false
 }) => {
   const navigate = useNavigate();
   const detailPath = isAdmin ? `/admin/articulo/${id}` : `/articulo/${id}`;
-
-  // Estado local para manejar si está en favoritos o no
-  const [esFavorito, setEsFavorito] = useState(false);
 
   // Truco para limitar la descripción a unas 2-3 líneas (ej. 100 caracteres)
   const descCorta = description.length > 100 
@@ -76,17 +79,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         
         <div className="product-title-row">
           <h3 className="product-title">{title}</h3>
-          <button 
-            className="btn-favorite" 
-            onClick={() => setEsFavorito(!esFavorito)}
-            aria-label={esFavorito ? "Quitar de favoritos" : "Añadir a favoritos"}
-          >
-            <img 
-              src={esFavorito ? starLlena : starVacia} 
+          {!isAdmin && (
+            <button
+              type="button"
+              className="btn-favorite"
+              onClick={() => onToggleFavorite?.(id)}
+              disabled={favoritePending}
+              aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+            >
+            <img
+              src={isFavorite ? starLlena : starVacia}
               alt="Favorito" 
               className="star-fav-icon"
             />
-          </button>
+            </button>
+          )}
         </div>
 
         {/* Etiquetas de Ropa (Talla, Género, Clima) si existen */}

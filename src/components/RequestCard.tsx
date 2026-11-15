@@ -8,19 +8,22 @@ interface RequestCardProps {
   message: string;
   date: string;
   status: 'Aceptado' | 'Pendiente';
-  onCancel?: () => void; // 1. Nueva prop para delegar el evento al padre
+  actionPending?: boolean;
+  onCancel?: () => void;
 }
 
 export const RequestCard: React.FC<RequestCardProps> = ({
+  id,
   type,
   title,
   message,
   date,
   status,
-  onCancel // 2. Recibimos la prop
+  actionPending = false,
+  onCancel
 }) => {
   return (
-    <article className="request-card">
+    <article className="request-card" data-request-id={id}>
       <div className="request-info">
         <span className="request-type">{type}</span>
         <h3 className="request-title">{title}</h3>
@@ -36,8 +39,8 @@ export const RequestCard: React.FC<RequestCardProps> = ({
 
         {/* 3. Ejecutamos la función onCancel al hacer clic */}
         {status === 'Pendiente' && (
-          <button className="request-cancel-btn" onClick={onCancel}>
-            Cancelar
+          <button className="request-cancel-btn" onClick={onCancel} disabled={actionPending}>
+            {actionPending ? 'Cancelando...' : 'Cancelar'}
           </button>
         )}
       </div>

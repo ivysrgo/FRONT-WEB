@@ -1,39 +1,83 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ApiError } from '../services/api';
+import { obtenerMisPublicaciones } from '../services/publicacionService';
+import type { PostItem } from '../pages/Publicaciones';
 import './ArticuloSolicitudForm.css';
-
-const misArticulosParaOfrecer = [
-  { id: 'mi-1', titulo: 'Abrigo de paño gris' },
-  { id: 'mi-2', titulo: 'Diccionario Oxford' },
-  { id: 'mi-3', titulo: 'Repisa de madera de 60cm' },
-];
 
 interface ArticuloSolicitudFormProps {
   onEnviarSolicitud: (
     tipoSolicitud: 'Donación' | 'Intercambio',
     mensaje: string,
     articuloOfrecidoId?: string
-  ) => void;
+  ) => Promise<void>;
 }
 
 export const ArticuloSolicitudForm: React.FC<ArticuloSolicitudFormProps> = ({ onEnviarSolicitud }) => {
+  const navigate = useNavigate();
   const [tipoSolicitud, setTipoSolicitud] = useState<'Donación' | 'Intercambio'>('Donación');
   const [mensajeSolicitud, setMensajeSolicitud] = useState('');
   const [articuloOfrecidoId, setArticuloOfrecidoId] = useState('');
+  const [misArticulosParaOfrecer, setMisArticulosParaOfrecer] = useState<PostItem[]>([]);
+  const [cargandoArticulos, setCargandoArticulos] = useState(false);
+  const [enviando, setEnviando] = useState(false);
   const [solicitudEnviada, setSolicitudEnviada] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const manejarEnvio = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (tipoSolicitud !== 'Intercambio' || misArticulosParaOfrecer.length > 0) return;
+    if (!localStorage.getItem('token')) return;
+
+    let cancelled = false;
+    setCargandoArticulos(true);
+    obtenerMisPublicaciones()
+      .then((articulos) => {
+        if (!cancelled) setMisArticulosParaOfrecer(articulos);
+      })
+      .catch((requestError: unknown) => {
+        if (!cancelled) {
+          setError(requestError instanceof ApiError || requestError instanceof Error
+            ? requestError.message
+            : 'No se pudieron cargar tus publicaciones.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setCargandoArticulos(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [tipoSolicitud, misArticulosParaOfrecer.length]);
+
+  const manejarEnvio = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    if (!localStorage.getItem('token')) {
+      navigate('/login');
+      return;
+    }
     if (tipoSolicitud === 'Intercambio' && !articuloOfrecidoId) {
+      setError('Selecciona una publicación tuya para ofrecer en el intercambio.');
       return;
     }
 
-    onEnviarSolicitud(
-      tipoSolicitud,
-      mensajeSolicitud,
-      tipoSolicitud === 'Intercambio' ? articuloOfrecidoId : undefined
-    );
-    setSolicitudEnviada(true);
+    setEnviando(true);
+    try {
+      await onEnviarSolicitud(
+        tipoSolicitud,
+        mensajeSolicitud,
+        tipoSolicitud === 'Intercambio' ? articuloOfrecidoId : undefined
+      );
+      setSolicitudEnviada(true);
+      setMensajeSolicitud('');
+    } catch (requestError: unknown) {
+      setError(requestError instanceof ApiError || requestError instanceof Error
+        ? requestError.message
+        : 'No se pudo enviar la solicitud.');
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -47,6 +91,7 @@ export const ArticuloSolicitudForm: React.FC<ArticuloSolicitudFormProps> = ({ on
           onClick={() => {
             setTipoSolicitud('Donación');
             setSolicitudEnviada(false);
+            setError(null);
           }}
         >
           Pedir en donación
@@ -57,10 +102,8 @@ export const ArticuloSolicitudForm: React.FC<ArticuloSolicitudFormProps> = ({ on
           onClick={() => {
             setTipoSolicitud('Intercambio');
             setSolicitudEnviada(false);
-            if (misArticulosParaOfrecer.length > 0 && !articuloOfrecidoId) {
-              setArticuloOfrecidoId(misArticulosParaOfrecer[0].id);
-            }
-            setSolicitudEnviada(false);
+            setArticuloOfrecidoId('');
+            setError(null);
           }}
         >
           Proponer Intercambio
@@ -73,7 +116,9 @@ export const ArticuloSolicitudForm: React.FC<ArticuloSolicitudFormProps> = ({ on
             <label className="selector-label" htmlFor="articulo-ofrecido">
               ¿Qué vas a ofrecer a cambio?
             </label>
-            {misArticulosParaOfrecer.length > 0 ? (
+            {cargandoArticulos ? (
+              <p className="no-items-msg" role="status">Cargando tus publicaciones...</p>
+            ) : misArticulosParaOfrecer.length > 0 ? (
               <select
                 id="articulo-ofrecido"
                 className="selector-intercambio"
@@ -87,7 +132,7 @@ export const ArticuloSolicitudForm: React.FC<ArticuloSolicitudFormProps> = ({ on
                 <option value="" disabled>Selecciona uno de tus artículos...</option>
                 {misArticulosParaOfrecer.map((articulo) => (
                   <option key={articulo.id} value={articulo.id}>
-                    {articulo.titulo}
+                  {articulo.title}
                   </option>
                 ))}
               </select>
@@ -103,7 +148,7 @@ export const ArticuloSolicitudForm: React.FC<ArticuloSolicitudFormProps> = ({ on
                 <p className="trueque-text">
                   Ofrecerás tu{' '}
                   <strong>
-                    {misArticulosParaOfrecer.find((articulo) => articulo.id === articuloOfrecidoId)?.titulo}
+                    {misArticulosParaOfrecer.find((articulo) => articulo.id === articuloOfrecidoId)?.title}
                   </strong>
                 </p>
               </div>
@@ -123,8 +168,9 @@ export const ArticuloSolicitudForm: React.FC<ArticuloSolicitudFormProps> = ({ on
           }}
           required
         />
-        <button type="submit" className="btn-enviar-negro">
-          Enviar solicitud
+        {error && <p role="alert" className="solicitud-error">{error}</p>}
+        <button type="submit" className="btn-enviar-negro" disabled={enviando || cargandoArticulos}>
+        {enviando ? 'Enviando...' : 'Enviar solicitud'}
         </button>
         {solicitudEnviada && (
           <p className="solicitud-confirmacion" role="status" aria-live="polite">

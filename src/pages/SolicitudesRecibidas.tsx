@@ -1,171 +1,170 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { ReceivedRequestCard } from '../components/ReceivedRequestCard';
 import { ExchangeConfirmModal } from '../components/ExchangeConfirmModal';
+import { SolicitudesTabs } from '../components/SolicitudesTabs';
+import {
+  actualizarEstadoSolicitud,
+  confirmarIntercambio,
+  obtenerMisSolicitudes,
+  type MisSolicitudes,
+} from '../services/solicitudService';
 import './SolicitudesRecibidas.css';
 
-interface ReceivedItem {
-  id: string;
-  type: 'DONACIÓN' | 'INTERCAMBIO';
-  author: string;
-  title: string;
-  message: string;
-  status: 'Aceptado' | 'Pendiente';
-}
-
-// Datos iniciales guardados fuera del componente para no recrearlos
-const solicitudesIniciales: ReceivedItem[] = [
-  {
-    id: '1',
-    type: 'DONACIÓN',
-    author: 'Mariana C.',
-    title: 'Diccionario bilingüe Oxford',
-    message: 'Estoy empezando inglés técnico y me sería muy útil. Puedo recogerlo cuando te quede bien.',
-    status: 'Aceptado'
-  },
-  {
-    id: '2',
-    type: 'INTERCAMBIO',
-    author: 'Julián E.',
-    title: 'Diccionario bilingüe Oxford',
-    message: 'Tengo un diccionario de francés y una gramática avanzada para intercambiar.',
-    status: 'Aceptado'
-  },
-  {
-    id: '3',
-    type: 'INTERCAMBIO',
-    author: 'Laura V.',
-    title: 'Abrigo de paño gris',
-    message: 'Ofrezco una chaqueta impermeable talla M en buen estado.',
-    status: 'Aceptado'
-  },
-  {
-    id: '4',
-    type: 'INTERCAMBIO',
-    author: 'Luna P.',
-    title: 'Repisa de madera de 60cm',
-    message: 'Ofrezco una repisa de madera de abedúl de 60cm.',
-    status: 'Pendiente' // Esta es la que podremos aceptar o rechazar
-  }
-];
+const solicitudesVacias: MisSolicitudes = {
+  enviadas: [],
+  recibidas: [],
+  historial: [],
+  favoritos: 0,
+};
 
 export const SolicitudesRecibidas: React.FC = () => {
-  // 1. Memoria del componente (Sesión 2): Pasamos el arreglo al estado
-  const [solicitudes, setSolicitudes] = useState<ReceivedItem[]>(solicitudesIniciales);
+  const navigate = useNavigate();
+  const [datos, setDatos] = useState(solicitudesVacias);
+  const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [solicitudEnProceso, setSolicitudEnProceso] = useState<string | null>(null);
   const [modalIntercambioAbierto, setModalIntercambioAbierto] = useState(false);
+  const [solicitudAConfirmar, setSolicitudAConfirmar] = useState<string | null>(null);
   const [usuarioACalificar, setUsuarioACalificar] = useState('');
-  const [idSolicitudActual, setIdSolicitudActual] = useState<string | null>(null);
 
-  // 2. Función inmutable para ACEPTAR 
-  const manejarAceptar = (id: string) => {
-    setSolicitudes((solicitudesActuales) =>
-      solicitudesActuales.map((req) =>
-        req.id === id ? { ...req, status: 'Aceptado' } : req
-      )
-    );
+  useEffect(() => {
+    let cancelled = false;
+    if (!localStorage.getItem('token')) {
+      navigate('/login');
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    obtenerMisSolicitudes()
+      .then((solicitudes) => {
+        if (!cancelled) setDatos(solicitudes);
+      })
+      .catch((requestError: unknown) => {
+        if (!cancelled) {
+          setLoadFailed(true);
+          setError(requestError instanceof Error ? requestError.message : 'No se pudieron cargar tus solicitudes.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
+
+  const moverAlHistorial = (solicitud: MisSolicitudes['recibidas'][number]) => {
+    setDatos((actuales) => ({
+      ...actuales,
+      recibidas: actuales.recibidas.filter((item) => item.id !== solicitud.id),
+      historial: [solicitud, ...actuales.historial],
+    }));
   };
 
-  // 3. Función inmutable para RECHAZAR 
-  const manejarRechazar = (id: string) => {
-    // Usamos .filter() para crear un nuevo arreglo descartando el que rechazamos
-    setSolicitudes((solicitudesActuales) =>
-      solicitudesActuales.filter((req) => req.id !== id)
-    );
+  const manejarEstado = async (id: string, status: 'Aceptado' | 'Rechazado' | 'Donado') => {
+    setSolicitudEnProceso(id);
+    setError(null);
+    try {
+      const actualizada = await actualizarEstadoSolicitud(id, status);
+      if (status === 'Rechazado' || status === 'Donado') {
+        moverAlHistorial(actualizada);
+      } else {
+        setDatos((actuales) => ({
+          ...actuales,
+          recibidas: actuales.recibidas.map((item) => item.id === id ? actualizada : item),
+        }));
+      }
+    } catch (requestError: unknown) {
+      setError(requestError instanceof Error ? requestError.message : 'No se pudo actualizar la solicitud.');
+    } finally {
+      setSolicitudEnProceso(null);
+    }
   };
 
-  const iniciarConfirmacionIntercambio = (idSolicitud: string, nombreUsuario: string) => {
-    setIdSolicitudActual(idSolicitud);
+  const iniciarConfirmacionIntercambio = (id: string, nombreUsuario: string) => {
+    setSolicitudAConfirmar(id);
     setUsuarioACalificar(nombreUsuario);
     setModalIntercambioAbierto(true);
   };
 
-  const finalizarIntercambio = (calificacionOtorgada: number) => {
-    if (idSolicitudActual === null) return;
+  const finalizarIntercambio = async (calificacion: number) => {
+    if (!solicitudAConfirmar) return;
+    setSolicitudEnProceso(solicitudAConfirmar);
+    try {
+      const completada = await confirmarIntercambio(solicitudAConfirmar, calificacion);
+      moverAlHistorial(completada);
+      setModalIntercambioAbierto(false);
+      setSolicitudAConfirmar(null);
+      setUsuarioACalificar('');
+    } finally {
+      setSolicitudEnProceso(null);
+    }
+  };
 
-    console.log(
-      `Intercambio confirmado. Calificación para ${usuarioACalificar}: ${calificacionOtorgada} estrellas`
-    );
-    manejarAceptar(idSolicitudActual);
+  const cerrarModalIntercambio = () => {
     setModalIntercambioAbierto(false);
-    setIdSolicitudActual(null);
+    setSolicitudAConfirmar(null);
     setUsuarioACalificar('');
   };
 
   return (
     <div className="solicitudes-page">
       <Navbar />
-
       <main className="solicitudes-content">
         <header className="solicitudes-header">
           <h1 className="solicitudes-title">Mis Solicitudes</h1>
-          <p className="solicitudes-subtitle">
-            Lo que has pedido y lo que otros te han pedido.
-          </p>
+          <p className="solicitudes-subtitle">Lo que has pedido y lo que otros te han pedido.</p>
         </header>
 
-        <nav className="solicitudes-tabs">
-          <NavLink 
-            to="/solicitudes" 
-            end 
-            className={({ isActive }) => `tab-pill ${isActive ? 'active' : ''}`}
-          >
-            Enviadas (3)
-          </NavLink>
-          <NavLink 
-            to="/solicitudes/recibidas" 
-            className={({ isActive }) => `tab-pill ${isActive ? 'active' : ''}`}
-          >
-            Recibidos ({solicitudes.length}) {/* El contador ahora reacciona al estado real */}
-          </NavLink>
-          <NavLink 
-            to="/solicitudes/favoritos" 
-            className={({ isActive }) => `tab-pill ${isActive ? 'active' : ''}`}
-          >
-            Favoritos
-          </NavLink>
-          <NavLink 
-            to="/solicitudes/historial" 
-            className={({ isActive }) => `tab-pill ${isActive ? 'active' : ''}`}
-          >
-            Historial
-          </NavLink>
-        </nav>
+        <SolicitudesTabs counts={{
+          enviadas: datos.enviadas.length,
+          recibidas: datos.recibidas.length,
+          favoritos: datos.favoritos,
+          historial: datos.historial.length,
+        }} />
 
-        <section className="solicitudes-list">
-          {/* 4. Iteramos sobre el estado (solicitudes) en lugar del arreglo estático */}
-          {solicitudes.map((req) => (
-            <ReceivedRequestCard
-              key={req.id}
-              id={req.id}
-              type={req.type}
-              author={req.author}
-              title={req.title}
-              message={req.message}
-              status={req.status}
-              onAccept={() => {
-                if (req.type === 'INTERCAMBIO') {
-                  iniciarConfirmacionIntercambio(req.id, req.author);
-                } else {
-                  manejarAceptar(req.id);
-                }
-              }}
-              onReject={() => manejarRechazar(req.id)}
-            />
-          ))}
-        </section>
+        {error && <p role="alert">{error}</p>}
+        {loading ? (
+          <p role="status">Cargando solicitudes...</p>
+        ) : loadFailed ? null : datos.recibidas.length === 0 ? (
+          <p className="solicitudes-empty">Todavía no has recibido solicitudes.</p>
+        ) : (
+          <section className="solicitudes-list">
+            {datos.recibidas.map((solicitud) => (
+              <ReceivedRequestCard
+                key={solicitud.id}
+                id={solicitud.id}
+                articleId={solicitud.articuloId}
+                type={solicitud.type}
+                author={solicitud.author}
+                title={solicitud.title}
+                message={solicitud.message}
+                status={solicitud.status === 'Aceptado' ? 'Aceptado' : 'Pendiente'}
+                actionPending={solicitudEnProceso === solicitud.id}
+                onAccept={() => {
+                  if (solicitud.type === 'INTERCAMBIO') {
+                    iniciarConfirmacionIntercambio(solicitud.id, solicitud.author);
+                  } else {
+                    void manejarEstado(solicitud.id, 'Aceptado');
+                  }
+                }}
+                onReject={() => void manejarEstado(solicitud.id, 'Rechazado')}
+                onComplete={() => void manejarEstado(solicitud.id, 'Donado')}
+              />
+            ))}
+          </section>
+        )}
       </main>
-
       <Footer />
-
       <ExchangeConfirmModal
         isOpen={modalIntercambioAbierto}
-        onClose={() => {
-          setModalIntercambioAbierto(false);
-          setIdSolicitudActual(null);
-          setUsuarioACalificar('');
-        }}
+        onClose={cerrarModalIntercambio}
         onConfirm={finalizarIntercambio}
         nombreOtroUsuario={usuarioACalificar}
       />
