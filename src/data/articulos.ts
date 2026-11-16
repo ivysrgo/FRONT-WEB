@@ -214,29 +214,14 @@ export function agregarArticulo(articulo: Articulo) {
   notifyArticulosChanged();
 }
 
-export const addDaysToExpiration = (id: string, daysToAdd: number) => {
-  if (!Number.isInteger(daysToAdd) || daysToAdd <= 0) {
-    throw new Error('Los días que se agregan a la caducidad deben ser un entero positivo.');
-  }
-
-  const articulo = articulosActuales.find((item) => item.id === id);
-  if (!articulo) {
-    throw new Error(`No se encontró el artículo con ID ${id}.`);
-  }
-
+export function actualizarArticuloLocal(id: string, cambios: Partial<Articulo>) {
   articulosActuales = articulosActuales.map((item) =>
-    item.id === id
-      ? { ...item, expirationDays: (item.expirationDays ?? 30) + daysToAdd }
-      : item
+    item.id === id ? { ...item, ...cambios } : item
   );
   notifyArticulosChanged();
-};
+}
 
 export const removeArticulo = (id: string) => {
-  if (!articulosActuales.some((item) => item.id === id)) {
-    throw new Error(`No se encontró el artículo con ID ${id}.`);
-  }
-
   articulosActuales = articulosActuales.filter((item) => item.id !== id);
   notifyArticulosChanged();
 };

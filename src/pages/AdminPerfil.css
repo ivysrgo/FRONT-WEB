@@ -197,3 +197,46 @@
     margin-left: 0;
   }
 }
+.admin-perfil-mensaje {
+  color: #8A8A8A;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-perfil-error,
+.perfil-suspendido {
+  color: #D5473A !important;
+  font-weight: 700;
+}
+
+.avatar-placeholder-gray {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-inicial {
+  color: #FFFFFF;
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.btn-reactivar {
+  padding: 14px 22px;
+  border: 0;
+  border-radius: 20px;
+  background-color: #85DAFF;
+  color: #000000;
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-reactivar:disabled,
+.btn-suspender-rojo:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}

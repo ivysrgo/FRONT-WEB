@@ -37,10 +37,10 @@ export const Login: React.FC = () => {
       setCargando(true);
       
       // Petición HTTP al Backend
-      await login({ correo, contrasena });
-      
-      // Redirigir
-      navigate('/explorar');
+      const { usuario } = await login({ correo, contrasena });
+
+      // El administrador entra a su propia versión del sistema
+      navigate(usuario.role === 'admin' ? '/admin/explorar' : '/explorar');
 
     } catch (error) {
       // Manejo de Códigos de Error (4xx, 5xx, Red)

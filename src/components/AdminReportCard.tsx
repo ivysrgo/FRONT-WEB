@@ -9,7 +9,7 @@ interface AdminReportCardProps {
   description: string;
   onViewReport?: () => void;
   onViewProfile?: () => void;
-  statusBadge?: 'Eliminada' | 'Rechazada' | string;
+  statusBadge?: string;
 }
 
 export const AdminReportCard: React.FC<AdminReportCardProps> = ({
@@ -25,7 +25,7 @@ export const AdminReportCard: React.FC<AdminReportCardProps> = ({
 
   const getBadgeClass = (status?: string) => {
     if (status === 'Eliminada') return 'badge-eliminada';
-    if (status === 'Rechazada') return 'badge-rechazada';
+    if (status === 'Rechazada' || status === 'Ignorado') return 'badge-rechazada';
     return 'badge-default';
   };
 

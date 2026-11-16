@@ -91,3 +91,9 @@
     margin-left: 0; /* En celulares reseteamos el margen */
   }
 }
+.admin-users-empty {
+  color: #8A8A8A;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+}

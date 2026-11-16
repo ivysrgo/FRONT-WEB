@@ -16,7 +16,8 @@
   align-items: center;
 }
 
-.tag-modality {
+.detalle-tags-left .tag-modality {
+  position: static;
   padding: 6px 16px;
   border-radius: 16px;
   font-family: var(--font-secundaria, 'Montserrat', sans-serif);

@@ -112,3 +112,8 @@
   .detalle-grid { grid-template-columns: 1fr; }
   .detalle-image-box { height: 350px; }
 }
+.detalle-admin-error {
+  margin: 0 0 12px;
+  color: #D5473A;
+  font-weight: 600;
+}

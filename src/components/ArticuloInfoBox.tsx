@@ -5,6 +5,7 @@ import { EditExpirationForm } from './EditExpirationForm';
 import './ArticuloInfoBox.css';
 
 export interface ArticuloInfoProps {
+  articuloId?: string;
   category: string;
   title: string;
   modality: 'Donación' | 'Intercambio';
@@ -16,11 +17,12 @@ export interface ArticuloInfoProps {
   expirationDays?: number;
   isAdmin?: boolean;
   onDelete?: () => void;
-  onAddExpirationDays?: (daysToAdd: number) => void;
+  onSetExpirationDays?: (diasRestantes: number) => Promise<void> | void;
   evidenceImageUrl?: string;
 }
 
 export const ArticuloInfoBox: React.FC<ArticuloInfoProps> = ({
+  articuloId,
   category,
   title,
   modality,
@@ -32,7 +34,7 @@ export const ArticuloInfoBox: React.FC<ArticuloInfoProps> = ({
   expirationDays = 30,
   isAdmin = false,
   onDelete,
-  onAddExpirationDays,
+  onSetExpirationDays,
   evidenceImageUrl
 }) => {
   const navigate = useNavigate();
@@ -73,6 +75,7 @@ export const ArticuloInfoBox: React.FC<ArticuloInfoProps> = ({
           isOpen={reporteAbierto}
           onClose={() => setReporteAbierto(false)}
           onContinue={() => navigate('/explorar')}
+          publicacionId={articuloId}
         />
       )}
 
@@ -120,11 +123,11 @@ export const ArticuloInfoBox: React.FC<ArticuloInfoProps> = ({
       <div className="days-alert-box">
         <span className="days-number">{diasRestantes}</span>
         <p className="days-text">
-          Días restantes en circulación local antes de habilitarse para donación al Minuto de Dios.
+          Días restantes en circulación local antes de habilitarse para donación a Unidona.
         </p>
       </div>
 
-      {isAdmin && onAddExpirationDays && (
+      {isAdmin && onSetExpirationDays && (
         <div className="expiration-editor-section">
           {!expirationEditorOpen ? (
             <button
@@ -136,8 +139,9 @@ export const ArticuloInfoBox: React.FC<ArticuloInfoProps> = ({
             </button>
           ) : (
             <EditExpirationForm
-              onConfirm={(daysToAdd) => {
-                onAddExpirationDays(daysToAdd);
+              initialDays={diasRestantes}
+              onConfirm={async (dias) => {
+                await onSetExpirationDays(dias);
                 setExpirationEditorOpen(false);
               }}
             />

@@ -40,9 +40,11 @@ export const AdminHistoryCard: React.FC<AdminHistoryCardProps> = ({
       </div>
 
       <div className="history-action-col">
-        <button className="btn-ver-articulo" onClick={onViewArticle}>
-          Ver Artículo
-        </button>
+        {onViewArticle && (
+          <button className="btn-ver-articulo" onClick={onViewArticle}>
+            Ver Artículo
+          </button>
+        )}
       </div>
     </article>
   );

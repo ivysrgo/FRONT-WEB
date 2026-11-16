@@ -7,7 +7,10 @@ import { ArticuloInfoBox } from '../components/ArticuloInfoBox';
 import { ArticuloSolicitudForm } from '../components/ArticuloSolicitudForm';
 import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
 import { ExpirationUpdatedModal } from '../components/ExpirationUpdatedModal';
-import { addDaysToExpiration, removeArticulo, useArticulos } from '../data/articulos';
+import { SuccessModal } from '../components/SuccessModal';
+import { actualizarArticuloLocal, removeArticulo, useArticulos } from '../data/articulos';
+import { actualizarCaducidad, eliminarPublicacionAdmin } from '../services/adminService';
+import { ApiError } from '../services/api';
 import { crearSolicitud } from '../services/solicitudService';
 import flechaVolverNegra from '../assets/flechavolvernegra.svg';
 import './DetalleArticulo.css';
@@ -22,6 +25,8 @@ export const DetalleArticulo: React.FC<DetalleArticuloProps> = ({ isAdmin = fals
   const articulos = useArticulos();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isExpirationUpdatedOpen, setIsExpirationUpdatedOpen] = useState(false);
+  const [isDeletedOpen, setIsDeletedOpen] = useState(false);
+  const [adminError, setAdminError] = useState<string | null>(null);
   const [indiceImagen, setIndiceImagen] = useState(0);
   const articulo = articulos.find((item) => item.id === id);
   const imagenes = articulo?.imageUrls?.length
@@ -47,16 +52,32 @@ export const DetalleArticulo: React.FC<DetalleArticuloProps> = ({ isAdmin = fals
     });
   };
 
-  const handleEliminarArticulo = () => {
+  const handleEliminarArticulo = async () => {
     if (!id) return;
-    removeArticulo(id);
-    setIsDeleteModalOpen(false);
-    navigate('/admin/todos');
+    setAdminError(null);
+    try {
+      await eliminarPublicacionAdmin(id);
+      setIsDeleteModalOpen(false);
+      setIsDeletedOpen(true);
+    } catch (error) {
+      setIsDeleteModalOpen(false);
+      setAdminError(error instanceof ApiError ? error.message : 'No se pudo eliminar la publicación.');
+    }
   };
 
-  const handleAgregarDias = (daysToAdd: number) => {
+  const cerrarEliminada = () => {
+    if (id) removeArticulo(id);
+    setIsDeletedOpen(false);
+    navigate('/admin/dashboard');
+  };
+
+  const handleCambiarCaducidad = async (diasRestantes: number) => {
     if (!id) return;
-    addDaysToExpiration(id, daysToAdd);
+    const actualizada = await actualizarCaducidad(id, diasRestantes);
+    actualizarArticuloLocal(id, {
+      expirationDays: actualizada.expirationDays,
+      daysElapsed: actualizada.daysElapsed,
+    });
     setIsExpirationUpdatedOpen(true);
   };
 
@@ -106,7 +127,9 @@ export const DetalleArticulo: React.FC<DetalleArticuloProps> = ({ isAdmin = fals
             </div>
 
             <div className="detalle-col-right">
+              {adminError && <p className="detalle-admin-error" role="alert">{adminError}</p>}
               <ArticuloInfoBox
+                articuloId={articulo.id}
                 category={articulo.category}
                 title={articulo.title}
                 modality={articulo.modality}
@@ -118,7 +141,7 @@ export const DetalleArticulo: React.FC<DetalleArticuloProps> = ({ isAdmin = fals
                 expirationDays={articulo.expirationDays}
                 isAdmin={isAdmin}
                 onDelete={isAdmin ? () => setIsDeleteModalOpen(true) : undefined}
-                onAddExpirationDays={isAdmin ? handleAgregarDias : undefined}
+                onSetExpirationDays={isAdmin ? handleCambiarCaducidad : undefined}
               />
 
               {!isAdmin && <ArticuloSolicitudForm onEnviarSolicitud={procesarEnvioSolicitud} />}
@@ -146,11 +169,20 @@ export const DetalleArticulo: React.FC<DetalleArticuloProps> = ({ isAdmin = fals
           <DeleteConfirmationModal
             isOpen={isDeleteModalOpen}
             onClose={() => setIsDeleteModalOpen(false)}
-            onConfirm={handleEliminarArticulo}
+            onConfirm={() => void handleEliminarArticulo()}
+          />
+          <SuccessModal
+            isOpen={isDeletedOpen}
+            variant="danger"
+            title="Publicación eliminada"
+            buttonText="Volver a administrar"
+            onButtonClick={cerrarEliminada}
+            onClose={cerrarEliminada}
           />
           <ExpirationUpdatedModal
             isOpen={isExpirationUpdatedOpen}
             onClose={() => setIsExpirationUpdatedOpen(false)}
+            onBackToAdmin={() => navigate('/admin/dashboard')}
           />
         </>
       )}

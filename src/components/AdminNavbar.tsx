@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { SearchPanel } from './SearchPanel'; // Reutilizamos el panel de búsqueda
 import { NotificationsPopover } from './NotificationsPopover';
 import { ProfilePopover } from './ProfilePopover';
+import { listarReportes } from '../services/adminService';
 import './Navbar.css'; // Podemos reutilizar los estilos del Navbar de usuario
 
 import logoHeader from '../assets/logoheader.svg';
@@ -15,13 +16,30 @@ type OpenPanel = 'search' | 'notifications' | 'profile' | null;
 
 export const AdminNavbar: React.FC = () => {
   const location = useLocation();
-  const [hasNotifications, setHasNotifications] = useState(true);
+  const [hasNotifications, setHasNotifications] = useState(false);
+  const [reportesPendientes, setReportesPendientes] = useState(0);
   const [openPanel, setOpenPanel] = useState<OpenPanel>(
     (location.state as { searchOpen?: boolean } | null)?.searchOpen ? 'search' : null,
   );
   const headerRef = useRef<HTMLElement>(null);
 
   const closePanel = () => setOpenPanel(null);
+
+  useEffect(() => {
+    let activo = true;
+    listarReportes('pendientes')
+      .then((reportes) => {
+        if (!activo) return;
+        setReportesPendientes(reportes.length);
+        setHasNotifications(reportes.length > 0);
+      })
+      .catch(() => {
+        // Sin conexión con el backend la campana simplemente queda inactiva
+      });
+    return () => {
+      activo = false;
+    };
+  }, [location.pathname]);
 
   const togglePanel = (panel: Exclude<OpenPanel, null>) => {
     if (panel === 'notifications') setHasNotifications(false);
@@ -107,7 +125,7 @@ export const AdminNavbar: React.FC = () => {
         </button>
 
         {openPanel === 'notifications' && (
-          <NotificationsPopover onClose={closePanel} isAdmin />
+          <NotificationsPopover onClose={closePanel} isAdmin reportesPendientes={reportesPendientes} />
         )}
         {openPanel === 'profile' && <ProfilePopover onClose={closePanel} isAdmin />}
       </div>

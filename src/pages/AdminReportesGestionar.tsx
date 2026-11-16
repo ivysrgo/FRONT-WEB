@@ -1,44 +1,87 @@
-import React, { useState } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AdminNavbar } from '../components/AdminNavbar';
 import { Footer } from '../components/Footer';
 import { ArticuloInfoBox } from '../components/ArticuloInfoBox';
 import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
-import { reportesPendientes } from '../data/adminReports';
+import { SuccessModal } from '../components/SuccessModal';
 import { removeArticulo } from '../data/articulos';
+import {
+  eliminarPublicacionReportada,
+  formatearFechaLarga,
+  formatearHora,
+  ignorarReporte,
+  obtenerReporte,
+  tipoDeModalidad,
+  type ReporteDetalle,
+} from '../services/adminService';
+import { ApiError } from '../services/api';
 import flechaVolverNegra from '../assets/flechavolvernegra.svg';
 import './AdminReportesGestionar.css';
+
+const valorODesconocido = (valor: number | null) => (valor === null ? 'Sin datos' : valor);
 
 export const AdminReportesGestionar: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const [reporte, setReporte] = useState<ReporteDetalle | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [procesando, setProcesando] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const reporte = reportesPendientes.find((item) => item.id === id);
+  const [isDeletedOpen, setIsDeletedOpen] = useState(false);
 
-  if (!reporte) {
-    return <Navigate to="/admin/reportes" replace />;
-  }
+  useEffect(() => {
+    if (!id) return;
+    let activo = true;
+    obtenerReporte(id)
+      .then((detalle) => {
+        if (activo) setReporte(detalle);
+      })
+      .catch((err: unknown) => {
+        if (activo) setError(err instanceof ApiError ? err.message : 'No se pudo cargar el reporte.');
+      });
+    return () => {
+      activo = false;
+    };
+  }, [id]);
 
-  const handleIgnorar = () => {
-    console.log('Reporte ignorado');
-    navigate('/admin/reportes');
-  };
+  const volverAReportes = () => navigate('/admin/reportes');
 
-  const handleEliminar = () => {
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleCerrarModal = () => {
-    setIsDeleteModalOpen(false);
-  };
-
-  const handleConfirmarEliminacion = () => {
-    if (reporte.articleId) {
-      removeArticulo(reporte.articleId);
+  const handleIgnorar = async () => {
+    if (!reporte) return;
+    setProcesando(true);
+    setError(null);
+    try {
+      await ignorarReporte(reporte.id);
+      volverAReportes();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'No se pudo ignorar el reporte.');
+    } finally {
+      setProcesando(false);
     }
-    setIsDeleteModalOpen(false);
-    navigate('/admin/reportes');
   };
+
+  const handleConfirmarEliminacion = async () => {
+    if (!reporte) return;
+    setProcesando(true);
+    setError(null);
+    try {
+      await eliminarPublicacionReportada(reporte.id);
+      if (reporte.publicacionId) removeArticulo(reporte.publicacionId);
+      setIsDeleteModalOpen(false);
+      setIsDeletedOpen(true);
+    } catch (err) {
+      setIsDeleteModalOpen(false);
+      setError(err instanceof ApiError ? err.message : 'No se pudo eliminar la publicación.');
+    } finally {
+      setProcesando(false);
+    }
+  };
+
+  const pendiente = reporte?.estado === 'Pendiente';
+  const pub = reporte?.publicacion;
+  const diasTranscurridos = reporte?.publicacionActual?.daysElapsed ?? 0;
+  const diasCaducidad = reporte?.publicacionActual?.expirationDays ?? 30;
 
   return (
     <div className="admin-gestionar-layout">
@@ -46,84 +89,124 @@ export const AdminReportesGestionar: React.FC = () => {
 
       <main className="admin-gestionar-content">
         <div className="detalle-back-row">
-          <button className="btn-volver-texto" onClick={() => navigate(-1)}>
+          <button className="btn-volver-texto" onClick={volverAReportes}>
             <img src={flechaVolverNegra} alt="Volver" className="icon-volver" />
             <span>Volver al Administrar</span>
           </button>
         </div>
 
-        <section className="detalle-grid">
-          
-          {/* COLUMNA IZQUIERDA: Tarjeta del Reporte */}
-          <div className="detalle-col-left">
-            <div className="reporte-panel-admin">
-              <h2 className="reporte-panel-title">Reporte</h2>
+        {error && <p className="gestionar-error" role="alert">{error}</p>}
 
-              <div className="reporte-section">
-                <h3 className="reporte-section-title">Usuario Reportante</h3>
-                <p className="reporte-text">Reportado por {reporte.reporter.name}</p>
-                <p className="reporte-text">Hora: {reporte.reporter.time}</p>
-                <p className="reporte-text">Fecha: {reporte.reporter.date}</p>
-              </div>
+        {!reporte || !pub ? (
+          !error && <p className="gestionar-cargando">Cargando reporte…</p>
+        ) : (
+          <section className="detalle-grid">
+            <div className="detalle-col-left">
+              <div className="reporte-panel-admin">
+                <h2 className="reporte-panel-title">Reporte</h2>
 
-              <div className="reporte-section">
-                <h3 className="reporte-section-title">Motivo</h3>
-                {/* Mostramos la categoría (default) en negrita y luego la descripción */}
-                <p className="reporte-text">
-                  <strong>{reporte.reason.category}: </strong> 
-                  {reporte.reason.description}
-                </p>
-              </div>
+                <div className="reporte-section">
+                  <h3 className="reporte-section-title">Usuario Reportante</h3>
+                  <p className="reporte-text">Reportado por {reporte.reportante?.nombre ?? 'Usuario eliminado'}</p>
+                  <p className="reporte-text">Hora: {formatearHora(reporte.createdAt)}</p>
+                  <p className="reporte-text">Fecha: {formatearFechaLarga(reporte.createdAt)}</p>
+                </div>
 
-              <div className="reporte-section">
-                <h3 className="reporte-section-title">Usuario Reportado</h3>
-                <p className="reporte-text">Reportan a {reporte.author}</p>
-                <p className="reporte-text">Publicaciones activas: {reporte.reportedUser.activePosts}</p>
-                <p className="reporte-text">Reportes previos: {reporte.reportedUser.previousReports}</p>
-                <p className="reporte-text">Activo desde: {reporte.reportedUser.activeSince}</p>
-              </div>
+                <div className="reporte-section">
+                  <h3 className="reporte-section-title">Motivo</h3>
+                  <p className="reporte-text">
+                    <strong>{reporte.motivo}</strong>
+                    {reporte.descripcion ? `: ${reporte.descripcion}` : ''}
+                  </p>
+                </div>
 
-              <div className="reporte-actions">
-                <button className="btn-ignorar" onClick={handleIgnorar}>
-                  Ignorar Reporte
-                </button>
-                <button className="btn-eliminar-rojo" onClick={handleEliminar}>
-                  Eliminar Publicación
-                </button>
+                <div className="reporte-section">
+                  <h3 className="reporte-section-title">Usuario Reportado</h3>
+                  <p className="reporte-text">
+                    Reportan a{' '}
+                    {reporte.reportado.id ? (
+                      <button
+                        type="button"
+                        className="reporte-link-perfil"
+                        onClick={() => navigate(`/admin/perfil/${reporte.reportado.id}`)}
+                      >
+                        {reporte.reportado.nombre}
+                      </button>
+                    ) : (
+                      reporte.reportado.nombre
+                    )}
+                  </p>
+                  <p className="reporte-text">
+                    Publicaciones activas: {valorODesconocido(reporte.reportado.publicacionesActivas)}
+                  </p>
+                  <p className="reporte-text">
+                    Reportes previos: {valorODesconocido(reporte.reportado.reportesPrevios)}
+                  </p>
+                  <p className="reporte-text">
+                    Activo desde: {reporte.reportado.activoDesde ? formatearFechaLarga(reporte.reportado.activoDesde) : 'Sin datos'}
+                  </p>
+                </div>
+
+                {pendiente ? (
+                  <div className="reporte-actions">
+                    <button className="btn-ignorar" onClick={() => void handleIgnorar()} disabled={procesando}>
+                      Ignorar Reporte
+                    </button>
+                    <button
+                      className="btn-eliminar-rojo"
+                      onClick={() => setIsDeleteModalOpen(true)}
+                      disabled={procesando || !reporte.publicacionExiste}
+                    >
+                      Eliminar Publicación
+                    </button>
+                  </div>
+                ) : (
+                  <p className="reporte-resuelto">
+                    Reporte resuelto: {reporte.estado === 'Eliminada' ? 'publicación eliminada' : 'ignorado'}
+                    {reporte.resueltoEn ? ` el ${formatearFechaLarga(reporte.resueltoEn)}` : ''}.
+                  </p>
+                )}
               </div>
             </div>
-          </div>
 
-          {/* COLUMNA DERECHA: Evidencia (Imagen + ArticuloInfoBox) */}
-          <div className="detalle-col-right">
-            
-            {/* Si quieres que la imagen esté arriba de la info, como en el diseño de usuario, la ponemos aquí.
-                Si prefieres la imagen dentro de la misma caja de info, ajusta según necesites. */}
-            <div className="evidencia-container">
-               <ArticuloInfoBox 
-                  category={reporte.article.category}
-                  title={reporte.title}
-                  modality={reporte.type === 'DONACIÓN' ? 'Donación' : 'Intercambio'}
-                  description={reporte.description}
-                  condition={reporte.article.condition}
-                  author={reporte.author}
-                  tags={reporte.article.tags}
-                  daysElapsed={reporte.article.daysElapsed}
-                  evidenceImageUrl={reporte.article.imageUrl}
+            <div className="detalle-col-right">
+              <div className="evidencia-container">
+                {!reporte.publicacionExiste && (
+                  <p className="gestionar-aviso">Esta publicación ya no existe en el sistema.</p>
+                )}
+                <ArticuloInfoBox
+                  category={pub.category || 'OTROS'}
+                  title={pub.title}
+                  modality={tipoDeModalidad(pub.modality) === 'INTERCAMBIO' ? 'Intercambio' : 'Donación'}
+                  description={pub.description}
+                  condition={pub.condition}
+                  author={pub.author}
+                  tags={pub.tags}
+                  daysElapsed={diasTranscurridos}
+                  expirationDays={diasCaducidad}
+                  evidenceImageUrl={pub.imageUrl || undefined}
                   isAdmin
                 />
+              </div>
             </div>
-           
-          </div>
-        </section>
+          </section>
+        )}
       </main>
 
       <Footer />
 
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
-        onClose={handleCerrarModal}
-        onConfirm={handleConfirmarEliminacion}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => void handleConfirmarEliminacion()}
+      />
+      <SuccessModal
+        isOpen={isDeletedOpen}
+        variant="danger"
+        title="Publicación eliminada"
+        buttonText="Volver a administrar"
+        onButtonClick={volverAReportes}
+        onClose={volverAReportes}
       />
     </div>
   );

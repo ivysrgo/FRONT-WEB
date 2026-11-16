@@ -41,7 +41,7 @@ export const SuspendAccountModal: React.FC<SuspendAccountModalProps> = ({
           ¿Estás a punto de suspender esta cuenta?
         </h2>
         <p className="suspend-modal-description">
-          Si suspendes la cuenta de {accountName}, el usuario perderá temporalmente el acceso y sus publicaciones dejarán de estar disponibles.
+          Si suspendes la cuenta de {accountName}, no podrá iniciar sesión en Eco-Golgi hasta que reactives su cuenta.
         </p>
 
         <div className="suspend-modal-icon-container">

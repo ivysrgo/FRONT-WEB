@@ -7,11 +7,13 @@ import { ModalCloseButton } from './ModalCloseButton';
 interface ExpirationUpdatedModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onBackToAdmin?: () => void;
 }
 
 export const ExpirationUpdatedModal: React.FC<ExpirationUpdatedModalProps> = ({
   isOpen,
-  onClose
+  onClose,
+  onBackToAdmin
 }) => {
   if (!isOpen) return null;
 
@@ -36,7 +38,7 @@ export const ExpirationUpdatedModal: React.FC<ExpirationUpdatedModalProps> = ({
           Caducidad actualizada correctamente
         </h2>
         <img className="expiration-updated-icon" src={isotipoEcoGolgi} alt="" />
-        <button className="expiration-updated-button" type="button" onClick={onClose}>
+        <button className="expiration-updated-button" type="button" onClick={onBackToAdmin ?? onClose}>
           Volver a Administrar
         </button>
       </div>

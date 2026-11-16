@@ -8,9 +8,11 @@ import { ModalCloseButton } from './ModalCloseButton';
 interface SuccessModalProps {
   isOpen: boolean;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   buttonText: string;
-  redirectPath: string;
+  redirectPath?: string;
+  onButtonClick?: () => void;
+  variant?: 'default' | 'danger';
   onClose: () => void;
 }
 
@@ -20,6 +22,8 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
   subtitle,
   buttonText,
   redirectPath,
+  onButtonClick,
+  variant = 'default',
   onClose
 }) => {
   const navigate = useNavigate();
@@ -29,10 +33,10 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className={`modal-content ${variant === 'danger' ? 'modal-content-danger' : ''}`}>
         <ModalCloseButton onClose={onClose} />
         <h2 className="modal-title">{title}</h2>
-        <p className="modal-subtitle">{subtitle}</p>
+        {subtitle && <p className="modal-subtitle">{subtitle}</p>}
         
         <div className="modal-logo-container">
           <img src={logoSol} alt="Eco-Golgi Sol" className="modal-logo" />
@@ -40,7 +44,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
 
         <button 
           className="modal-btn-blue" 
-          onClick={() => navigate(redirectPath)}
+          onClick={() => (onButtonClick ? onButtonClick() : redirectPath && navigate(redirectPath))}
         >
           {buttonText}
         </button>

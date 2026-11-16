@@ -89,3 +89,28 @@
     margin-top: -30px;
   }
 }
+.admin-user-card-button {
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-user-card-button:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 3px;
+}
+
+.user-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.user-rating-text {
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B6B6B;
+}

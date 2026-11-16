@@ -76,3 +76,12 @@
 .modal-btn-blue:active {
   transform: scale(0.98);
 }
+/* Variante usada por el administrador al eliminar una publicación */
+.modal-content-danger .modal-title {
+  color: #E63B2E;
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}

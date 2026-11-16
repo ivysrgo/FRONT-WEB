@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { reportesPendientes } from '../data/adminReports';
 import { useArticulos } from '../data/articulos';
 import type { NotificacionItem } from '../services/notificacionService';
 import './NotificationsPopover.css';
@@ -11,6 +10,8 @@ interface NotificationsPopoverProps {
   // Notificaciones del usuario (las carga el Navbar); null mientras cargan
   notificaciones?: NotificacionItem[] | null;
   error?: string | null;
+  // Solo admin: cantidad de reportes pendientes (la carga el AdminNavbar)
+  reportesPendientes?: number;
 }
 
 const PencilIcon = () => (
@@ -43,16 +44,21 @@ export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
   isAdmin = false,
   notificaciones = null,
   error = null,
+  reportesPendientes = 0,
 }) => {
   const navigate = useNavigate();
   const articulos = useArticulos();
   const adminNotifications: NotificacionItem[] = [
-    ...(reportesPendientes.length > 0
+    ...(reportesPendientes > 0
       ? [{
           id: 'admin-reports',
           type: 'reporte' as const,
           title: 'Reportes pendientes',
-          details: [`${reportesPendientes.length} reportes requieren revisión`],
+          details: [
+            reportesPendientes === 1
+              ? '1 reporte requiere revisión'
+              : `${reportesPendientes} reportes requieren revisión`,
+          ],
           path: '/admin/reportes'
         }]
       : []),

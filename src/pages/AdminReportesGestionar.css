@@ -136,3 +136,43 @@
   .detalle-grid { grid-template-columns: 1fr; }
   .reporte-actions { flex-direction: column; }
 }
+.gestionar-error,
+.gestionar-cargando,
+.gestionar-aviso {
+  margin: 0 0 16px;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.gestionar-error,
+.gestionar-aviso {
+  color: #D5473A;
+}
+
+.gestionar-cargando {
+  color: #8A8A8A;
+}
+
+.reporte-link-perfil {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.reporte-resuelto {
+  margin-top: auto;
+  color: #555555;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.reporte-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

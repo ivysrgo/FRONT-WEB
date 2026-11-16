@@ -130,7 +130,7 @@
   font-size: 12px;
   font-weight: 600;
   color: #666666;
-  width: 110px;
+  width: 140px;
   text-align: center;
 }
 
@@ -166,4 +166,26 @@
   }
   .filter-group { flex-direction: column; align-items: flex-start; gap: 8px; }
   .filter-label { min-width: auto; }
+}
+.filter-pill.is-active {
+  background-color: #000000;
+  border-color: #000000;
+  color: #FFFFFF;
+}
+
+.filter-inputs {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-clear {
+  padding: 4px 10px;
+  border: 0;
+  background: none;
+  color: #2A7FBA;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
 }

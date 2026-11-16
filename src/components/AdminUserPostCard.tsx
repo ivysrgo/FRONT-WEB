@@ -11,6 +11,7 @@ interface AdminUserPostCardProps {
   status: 'Disponible' | 'Reservado' | 'Donado' | 'Caducado';
   daysElapsed: number;
   imageUrl: string;
+  totalDays?: number;
   onEdit?: () => void;
 }
 
@@ -22,6 +23,7 @@ export const AdminUserPostCard: React.FC<AdminUserPostCardProps> = ({
   status,
   daysElapsed,
   imageUrl,
+  totalDays = 30,
   onEdit
 }) => {
   const isExpired = status === 'Caducado';
@@ -60,7 +62,7 @@ export const AdminUserPostCard: React.FC<AdminUserPostCardProps> = ({
       {/* Sección inferior: Barra de progreso */}
       {isActive && (
         <div className="post-bottom-section">
-          <ProgressBar daysElapsed={daysElapsed} totalDays={30} />
+          <ProgressBar daysElapsed={daysElapsed} totalDays={totalDays} />
         </div>
       )}
     </div>

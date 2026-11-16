@@ -30,6 +30,7 @@ import { Configuracion } from './pages/Configuracion';
 import { CambiarContrasena } from './pages/CambiarContrasena';
 import { SolicitudesHistorial } from './pages/SolicitudesHistorial';
 import { EditarPublicacion } from './pages/EditarPublicacion';
+import { AdminRoute, UserRoute } from './components/AdminRoute';
 
 export function App() {
   return (
@@ -38,24 +39,24 @@ export function App() {
         <Route path="/" element={<Navigate to="/explorar" replace />} />
         
         {/* Vistas Principales */}
-        <Route path="/explorar" element={<ExploreHome />} />
-        <Route path="/admin/explorar" element={<AdminExploreHome />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/todos" element={<TodosLosArticulos />} />
-        <Route path="/articulo/:id" element={<DetalleArticulo />} />
-        <Route path="/admin/todos" element={<TodosLosArticulos isAdmin />} />
-        <Route path="/admin/articulo/:id" element={<DetalleArticulo isAdmin />} />
+        <Route path="/explorar" element={<UserRoute><ExploreHome /></UserRoute>} />
+        <Route path="/admin/explorar" element={<AdminRoute><AdminExploreHome /></AdminRoute>} />
+        <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/todos" element={<UserRoute><TodosLosArticulos /></UserRoute>} />
+        <Route path="/articulo/:id" element={<UserRoute><DetalleArticulo /></UserRoute>} />
+        <Route path="/admin/todos" element={<AdminRoute><TodosLosArticulos isAdmin /></AdminRoute>} />
+        <Route path="/admin/articulo/:id" element={<AdminRoute><DetalleArticulo isAdmin /></AdminRoute>} />
         <Route path="/publicar" element={<Publicar />} />
         <Route path="/publicaciones" element={<Publicaciones />} />
-        <Route path="/admin/metricas" element={<AdminMetricas />} />
-        <Route path="/admin/historial" element={<AdminDonaciones />} />
-        <Route path="/admin/usuarios" element={<AdminUsuarios />} />
-        <Route path="/admin/reportes" element={<AdminReportes />} />
-        <Route path="/admin/reportes/gestionar/:id" element={<AdminReportesGestionar />} />
-        <Route path="/admin/perfil/:userId" element={<AdminPerfil />} />
+        <Route path="/admin/metricas" element={<AdminRoute><AdminMetricas /></AdminRoute>} />
+        <Route path="/admin/historial" element={<AdminRoute><AdminDonaciones /></AdminRoute>} />
+        <Route path="/admin/usuarios" element={<AdminRoute><AdminUsuarios /></AdminRoute>} />
+        <Route path="/admin/reportes" element={<AdminRoute><AdminReportes /></AdminRoute>} />
+        <Route path="/admin/reportes/gestionar/:id" element={<AdminRoute><AdminReportesGestionar /></AdminRoute>} />
+        <Route path="/admin/perfil/:userId" element={<AdminRoute><AdminPerfil /></AdminRoute>} />
         <Route path="/admin/perfil" element={<Navigate to="/admin/mi-perfil" replace />} />
-        <Route path="/admin/mi-perfil" element={<MiPerfil isAdmin />} />
-        <Route path="/admin/cambiar-contrasena" element={<CambiarContrasena isAdmin />} />
+        <Route path="/admin/mi-perfil" element={<AdminRoute><MiPerfil isAdmin /></AdminRoute>} />
+        <Route path="/admin/cambiar-contrasena" element={<AdminRoute><CambiarContrasena isAdmin /></AdminRoute>} />
         
         {/* Sección Mis Solicitudes */}
         <Route path="/solicitudes" element={<SolicitudesEnviadas />} />
@@ -65,7 +66,7 @@ export function App() {
         <Route path="/solicitudes/historial" element={<SolicitudesHistorial />} />
 
         {/* Cuenta del usuario */}
-        <Route path="/perfil" element={<MiPerfil />} />
+        <Route path="/perfil" element={<UserRoute><MiPerfil /></UserRoute>} />
         <Route path="/perfil/cambiar-contrasena" element={<CambiarContrasena />} />
         <Route path="/perfil/:id" element={<PerfilUsuario />} />
         <Route path="/configuracion" element={<Configuracion />} />
