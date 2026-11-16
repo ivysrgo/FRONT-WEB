@@ -2,37 +2,15 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reportesPendientes } from '../data/adminReports';
 import { useArticulos } from '../data/articulos';
+import type { NotificacionItem } from '../services/notificacionService';
 import './NotificationsPopover.css';
-
-interface NotificationItem {
-  id: string;
-  type: 'intercambio' | 'caducar' | 'reporte';
-  title: string;
-  details: string[];
-  path: string;
-}
-
-// Alertas de ejemplo hasta conectar el backend
-const NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: '1',
-    type: 'intercambio',
-    title: 'Diccionario bilingüe Oxford',
-    details: ['3 solicitudes', '15 días para caducar', 'Oportunidad de intercambio'],
-    path: '/publicaciones',
-  },
-  {
-    id: '2',
-    type: 'caducar',
-    title: 'Jeans Clásicos Talla 30',
-    details: ['Sin solicitudes', 'Oportunidad de donación a Unidona'],
-    path: '/publicaciones',
-  },
-];
 
 interface NotificationsPopoverProps {
   onClose: () => void;
   isAdmin?: boolean;
+  // Notificaciones del usuario (las carga el Navbar); null mientras cargan
+  notificaciones?: NotificacionItem[] | null;
+  error?: string | null;
 }
 
 const PencilIcon = () => (
@@ -47,6 +25,12 @@ const PencilIcon = () => (
   </svg>
 );
 
+const CheckIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M20 6 9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 const AlertIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
@@ -56,11 +40,13 @@ const AlertIcon = () => (
 
 export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
   onClose,
-  isAdmin = false
+  isAdmin = false,
+  notificaciones = null,
+  error = null,
 }) => {
   const navigate = useNavigate();
   const articulos = useArticulos();
-  const adminNotifications: NotificationItem[] = [
+  const adminNotifications: NotificacionItem[] = [
     ...(reportesPendientes.length > 0
       ? [{
           id: 'admin-reports',
@@ -80,7 +66,8 @@ export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
         path: `/admin/articulo/${article.id}`
       }))
   ];
-  const notifications = isAdmin ? adminNotifications : NOTIFICATIONS;
+  const notifications = isAdmin ? adminNotifications : notificaciones ?? [];
+  const cargando = !isAdmin && notificaciones === null && !error;
 
   const goToNotification = (path: string) => {
     onClose();
@@ -91,16 +78,28 @@ export const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
     <div className="nav-popover notifications-popover" role="dialog" aria-label="Notificaciones">
       <div className="notifications-header">
         <h3>Notificaciones</h3>
-        <span className="notifications-count">{notifications.length} nuevas</span>
+        {!cargando && notifications.length > 0 && (
+          <span className="notifications-count">{notifications.length} nuevas</span>
+        )}
       </div>
 
-      {notifications.length > 0 ? (
+      {cargando ? (
+        <p className="notifications-empty">Cargando notificaciones...</p>
+      ) : error && !isAdmin ? (
+        <p className="notifications-empty">{error}</p>
+      ) : notifications.length > 0 ? (
         <ul className="notifications-list">
         {notifications.map((notification) => (
           <li key={notification.id}>
             <button type="button" className="notification-item" onClick={() => goToNotification(notification.path)}>
               <span className={`notification-icon icon-${notification.type}`}>
-                {notification.type === 'caducar' ? <AlertIcon /> : <PencilIcon />}
+                {notification.type === 'caducar' ? (
+                  <AlertIcon />
+                ) : notification.type === 'respuesta' ? (
+                  <CheckIcon />
+                ) : (
+                  <PencilIcon />
+                )}
               </span>
               <span className="notification-text">
                 <span className="notification-title">{notification.title}</span>

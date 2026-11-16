@@ -27,6 +27,7 @@ import { SolicitudesFavoritos } from './pages/SolicitudesFavoritos';
 import { MiPerfil } from './pages/MiPerfil';
 import { PerfilUsuario } from './pages/PerfilUsuario';
 import { Configuracion } from './pages/Configuracion';
+import { CambiarContrasena } from './pages/CambiarContrasena';
 import { SolicitudesHistorial } from './pages/SolicitudesHistorial';
 import { EditarPublicacion } from './pages/EditarPublicacion';
 
@@ -54,6 +55,7 @@ export function App() {
         <Route path="/admin/perfil/:userId" element={<AdminPerfil />} />
         <Route path="/admin/perfil" element={<Navigate to="/admin/mi-perfil" replace />} />
         <Route path="/admin/mi-perfil" element={<MiPerfil isAdmin />} />
+        <Route path="/admin/cambiar-contrasena" element={<CambiarContrasena isAdmin />} />
         
         {/* Sección Mis Solicitudes */}
         <Route path="/solicitudes" element={<SolicitudesEnviadas />} />
@@ -64,6 +66,7 @@ export function App() {
 
         {/* Cuenta del usuario */}
         <Route path="/perfil" element={<MiPerfil />} />
+        <Route path="/perfil/cambiar-contrasena" element={<CambiarContrasena />} />
         <Route path="/perfil/:id" element={<PerfilUsuario />} />
         <Route path="/configuracion" element={<Configuracion />} />
 

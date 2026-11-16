@@ -134,6 +134,13 @@ export const MiPerfil: React.FC<MiPerfilProps> = ({ isAdmin = false }) => {
                       onChange={(e) => setDraft({ ...draft, phone: e.target.value })}
                     />
                   </label>
+                  <button
+                    type="button"
+                    className="perfil-password-link"
+                    onClick={() => navigate(isAdmin ? '/admin/cambiar-contrasena' : '/perfil/cambiar-contrasena')}
+                  >
+                    Cambiar contraseña
+                  </button>
                   <div className="perfil-form-actions">
                     <button type="button" className="perfil-btn-outline" onClick={() => setEditing(false)}>
                       Cancelar

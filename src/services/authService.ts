@@ -70,6 +70,18 @@ export async function obtenerPerfilActual(): Promise<PerfilAutenticado> {
   };
 }
 
+export interface CambioContrasena {
+  contrasenaActual: string;
+  nuevaContrasena: string;
+}
+
+export function cambiarContrasena(datos: CambioContrasena): Promise<{ mensaje: string }> {
+  return solicitar<{ mensaje: string }>('/auth/cambiar-contrasena', {
+    method: 'PATCH',
+    body: JSON.stringify(datos),
+  });
+}
+
 export function cerrarSesion() {
   localStorage.removeItem('token');
   localStorage.removeItem('usuario');

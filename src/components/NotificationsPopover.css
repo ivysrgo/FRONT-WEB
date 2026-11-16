@@ -78,6 +78,11 @@
   color: var(--color-error);
 }
 
+.icon-respuesta {
+  background-color: #E3F3DC;
+  color: #3F8A2A;
+}
+
 .icon-reporte {
   background-color: #FFF0D6;
   color: #A85D00;

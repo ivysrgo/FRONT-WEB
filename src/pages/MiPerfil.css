@@ -226,3 +226,16 @@
   gap: 10px;
   margin-top: 4px;
 }
+
+.perfil-password-link {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-principal);
+  font-size: 14px;
+  font-weight: 600;
+  color: #2E86C1;
+  text-decoration: underline;
+  cursor: pointer;
+}

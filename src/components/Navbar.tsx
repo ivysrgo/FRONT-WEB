@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { SearchPanel } from './SearchPanel';
 import { NotificationsPopover } from './NotificationsPopover';
 import { ProfilePopover } from './ProfilePopover';
+import { obtenerMisNotificaciones, type NotificacionItem } from '../services/notificacionService';
 import './Navbar.css';
 
 // Importación directa del asset SVG
@@ -16,12 +17,37 @@ type OpenPanel = 'search' | 'notifications' | 'profile' | null;
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
-  const [hasNotifications, setHasNotifications] = useState(true);
+  const [hasNotifications, setHasNotifications] = useState(false);
+  // Sin sesión no hay notificaciones que cargar
+  const [notificaciones, setNotificaciones] = useState<NotificacionItem[] | null>(() =>
+    localStorage.getItem('token') ? null : [],
+  );
+  const [errorNotificaciones, setErrorNotificaciones] = useState<string | null>(null);
   // Solo una ventana flotante abierta a la vez; la búsqueda llega abierta si se viene desde otra pantalla
   const [openPanel, setOpenPanel] = useState<OpenPanel>(
     (location.state as { searchOpen?: boolean } | null)?.searchOpen ? 'search' : null,
   );
   const headerRef = useRef<HTMLElement>(null);
+
+  // Cada usuario ve sus propias notificaciones
+  useEffect(() => {
+    let cancelado = false;
+    if (!localStorage.getItem('token')) return;
+
+    obtenerMisNotificaciones()
+      .then((lista) => {
+        if (cancelado) return;
+        setNotificaciones(lista);
+        setHasNotifications(lista.length > 0);
+      })
+      .catch(() => {
+        if (!cancelado) setErrorNotificaciones('No se pudieron cargar tus notificaciones.');
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, []);
 
   const closePanel = () => setOpenPanel(null);
 
@@ -121,7 +147,13 @@ export const Navbar: React.FC = () => {
           <img src={iconPerfil} alt="Perfil" className="nav-icon" />
         </button>
 
-        {openPanel === 'notifications' && <NotificationsPopover onClose={closePanel} />}
+        {openPanel === 'notifications' && (
+          <NotificationsPopover
+            onClose={closePanel}
+            notificaciones={notificaciones}
+            error={errorNotificaciones}
+          />
+        )}
         {openPanel === 'profile' && <ProfilePopover onClose={closePanel} />}
       </div>
 

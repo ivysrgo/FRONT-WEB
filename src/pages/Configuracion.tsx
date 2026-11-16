@@ -85,7 +85,7 @@ export const Configuracion: React.FC = () => {
               <span className="config-label">Contraseña</span>
               <span className="config-description">Actualiza la contraseña con la que ingresas.</span>
             </div>
-            <button type="button" className="perfil-btn-outline" onClick={() => navigate('/new-password')}>
+            <button type="button" className="perfil-btn-outline" onClick={() => navigate('/perfil/cambiar-contrasena')}>
               Cambiar
             </button>
           </div>
