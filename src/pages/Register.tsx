@@ -5,18 +5,48 @@ import { Button } from '../components/Button';
 import { PasswordToggleIcon } from '../components/PasswordToggleIcon';
 import './Register.css';
 
+<<<<<<< HEAD
 import logoSol from '../assets/logosol.svg';
 import { registrar, guardarSesion } from '../services/authService';
 import { ApiError } from '../services/api';
 import { evaluarSeguridadContrasena, esCorreoValido } from '../utils/validarAuth';
+=======
+import logoSol from '../assets/logosol.svg'; 
+import ojoSeguridad from '../assets/ojoseguridad.svg'; 
+import { registrar } from '../services/authService';
+import { ApiError } from '../services/api';
+
+function evaluarContrasena(contrasena: string) {
+  const requisitos = [
+    contrasena.length >= 5,
+    /[A-Z]/.test(contrasena),
+    /[a-z]/.test(contrasena),
+    /[0-9]/.test(contrasena),
+    /[^A-Za-z0-9]/.test(contrasena),
+  ];
+  const puntuacion = requisitos.filter(Boolean).length;
+  const nivel =
+    puntuacion === 0 ? 'Sin contraseña'
+    : puntuacion <= 2 ? 'Débil'
+    : puntuacion <= 4 ? 'Media'
+    : 'Fuerte';
+
+  return { puntuacion, nivel, valida: puntuacion === requisitos.length };
+}
+>>>>>>> Luisa
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
 
+<<<<<<< HEAD
+=======
+  // Estados del formulario
+>>>>>>> Luisa
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [confirmarContrasena, setConfirmarContrasena] = useState('');
+<<<<<<< HEAD
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,10 +59,20 @@ export const Register: React.FC = () => {
     e.preventDefault();
     setError(null);
 
+=======
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const seguridad = evaluarContrasena(contrasena);
+
+  const manejarRegistro = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+>>>>>>> Luisa
     if (!nombre.trim() || !correo.trim() || !contrasena || !confirmarContrasena) {
       setError('Todos los campos son obligatorios');
       return;
     }
+<<<<<<< HEAD
 
     if (!esCorreoValido(correo.trim())) {
       setError('El formato del correo electrónico no es válido.');
@@ -54,10 +94,13 @@ export const Register: React.FC = () => {
       return;
     }
 
+=======
+>>>>>>> Luisa
     if (contrasena !== confirmarContrasena) {
       setError('Las contraseñas no coinciden');
       return;
     }
+<<<<<<< HEAD
 
     try {
       setCargando(true);
@@ -75,6 +118,26 @@ export const Register: React.FC = () => {
       } else {
         setError('Ocurrió un error al registrar la cuenta. Inténtalo de nuevo.');
       }
+=======
+    if (!seguridad.valida) {
+      setError('Usa mínimo 5 caracteres, con mayúscula, minúscula, número y símbolo.');
+      return;
+    }
+
+    setError(null);
+    setCargando(true);
+    try {
+      await registrar({ nombre: nombre.trim(), correo: correo.trim(), contrasena });
+      navigate('/explorar');
+    } catch (error: unknown) {
+      setError(
+        error instanceof ApiError
+          ? error.message
+          : error instanceof Error
+            ? error.message
+            : 'No se pudo completar el registro.'
+      );
+>>>>>>> Luisa
     } finally {
       setCargando(false);
     }
@@ -83,17 +146,62 @@ export const Register: React.FC = () => {
   return (
     <div className="register-layout">
       <img src={logoSol} alt="" aria-hidden="true" className="register-floating-logo" />
+<<<<<<< HEAD
+=======
+
+      <div className="register-center-wrapper">
+>>>>>>> Luisa
 
       <div className="register-center-wrapper">
         <h2 className="register-title">Regístrate</h2>
 
         <div className="register-box">
           <form className="register-form" onSubmit={manejarRegistro}>
+<<<<<<< HEAD
             {error && (
               <span className="register-error-message" role="alert">
                 {error}
               </span>
             )}
+=======
+            
+            {error && <span className="login-error-message" style={{marginBottom: '10px'}}>{error}</span>}
+
+            <InputField 
+              label="Nombre" 
+              type="text" 
+              placeholder="Ingresa tu nombre completo"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              disabled={cargando}
+            />
+            <InputField 
+              label="Correo Electrónico" 
+              type="email" 
+              placeholder="Ej: correo@ejemplo.com"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              disabled={cargando}
+            />
+            <InputField 
+              label="Contraseña" 
+              type="password" 
+              placeholder="Ingresa tu contraseña"
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
+              rightIcon={<img src={ojoSeguridad} alt="Ver" style={{ width: '20px', height: '20px' }} />} 
+              disabled={cargando}
+            />
+            <InputField 
+              label="Confirmar Contraseña" 
+              type="password" 
+              placeholder="Confirma tu contraseña"
+              value={confirmarContrasena}
+              onChange={(e) => setConfirmarContrasena(e.target.value)}
+              rightIcon={<img src={ojoSeguridad} alt="Ver" style={{ width: '20px', height: '20px' }} />} 
+              disabled={cargando}
+            />
+>>>>>>> Luisa
 
             <InputField
               label="Nombre"
@@ -136,6 +244,7 @@ export const Register: React.FC = () => {
 
             {/* Barra de Nivel de Seguridad Coherente con los 5 Parámetros */}
             <div className="security-level">
+<<<<<<< HEAD
               <div className="security-label-row">
                 <span className="security-label">Nivel de Seguridad</span>
                 {contrasena.length > 0 && (
@@ -177,7 +286,27 @@ export const Register: React.FC = () => {
                   <span className="req-icon">{evaluacion.tieneEspecial ? '✔' : '○'}</span>
                   <span>Mínimo 1 carácter especial (!@#$...)</span>
                 </div>
+=======
+              <span className="security-label">
+                Seguridad: {contrasena ? seguridad.nivel : 'Escribe una contraseña'}
+              </span>
+              <div
+                className="security-bar"
+                role="progressbar"
+                aria-label="Nivel de seguridad de la contraseña"
+                aria-valuemin={0}
+                aria-valuemax={5}
+                aria-valuenow={seguridad.puntuacion}
+              >
+                <div
+                  className={`security-fill${seguridad.puntuacion > 0 ? ` security-fill-${seguridad.puntuacion}` : ''}`}
+                  style={{ width: `${seguridad.puntuacion * 20}%` }}
+                />
+>>>>>>> Luisa
               </div>
+              <span className="security-hint">
+                Mínimo 5 caracteres, mayúscula, minúscula, número y símbolo.
+              </span>
             </div>
 
             <div className="button-section">

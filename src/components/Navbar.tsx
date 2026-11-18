@@ -3,8 +3,12 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { SearchPanel } from './SearchPanel';
 import { NotificationsPopover } from './NotificationsPopover';
 import { ProfilePopover } from './ProfilePopover';
+<<<<<<< HEAD
 import { obtenerConteoNoLeidas } from '../services/notificacionService';
 import { estaAutenticado } from '../services/authService';
+=======
+import { obtenerMisNotificaciones, type NotificacionItem } from '../services/notificacionService';
+>>>>>>> Luisa
 import './Navbar.css';
 
 // Importación directa del asset SVG
@@ -19,12 +23,21 @@ type OpenPanel = 'search' | 'notifications' | 'profile' | null;
 export const Navbar: React.FC = () => {
   const location = useLocation();
   const [hasNotifications, setHasNotifications] = useState(false);
+<<<<<<< HEAD
+=======
+  // Sin sesión no hay notificaciones que cargar
+  const [notificaciones, setNotificaciones] = useState<NotificacionItem[] | null>(() =>
+    localStorage.getItem('token') ? null : [],
+  );
+  const [errorNotificaciones, setErrorNotificaciones] = useState<string | null>(null);
+>>>>>>> Luisa
   // Solo una ventana flotante abierta a la vez; la búsqueda llega abierta si se viene desde otra pantalla
   const [openPanel, setOpenPanel] = useState<OpenPanel>(
     (location.state as { searchOpen?: boolean } | null)?.searchOpen ? 'search' : null,
   );
   const headerRef = useRef<HTMLElement>(null);
 
+<<<<<<< HEAD
   const closePanel = () => setOpenPanel(null);
 
   const togglePanel = (panel: Exclude<OpenPanel, null>) => {
@@ -63,6 +76,35 @@ export const Navbar: React.FC = () => {
     };
   }, []);
 
+=======
+  // Cada usuario ve sus propias notificaciones
+  useEffect(() => {
+    let cancelado = false;
+    if (!localStorage.getItem('token')) return;
+
+    obtenerMisNotificaciones()
+      .then((lista) => {
+        if (cancelado) return;
+        setNotificaciones(lista);
+        setHasNotifications(lista.length > 0);
+      })
+      .catch(() => {
+        if (!cancelado) setErrorNotificaciones('No se pudieron cargar tus notificaciones.');
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  const closePanel = () => setOpenPanel(null);
+
+  const togglePanel = (panel: Exclude<OpenPanel, null>) => {
+    if (panel === 'notifications') setHasNotifications(false);
+    setOpenPanel((current) => (current === panel ? null : panel));
+  };
+
+>>>>>>> Luisa
   // Cerrar al hacer clic fuera del header o con Escape
   useEffect(() => {
     if (!openPanel) return;
@@ -154,7 +196,17 @@ export const Navbar: React.FC = () => {
           <img src={iconPerfil} alt="Perfil" className="nav-icon" />
         </button>
 
+<<<<<<< HEAD
         {openPanel === 'notifications' && <NotificationsPopover onClose={closePanel} />}
+=======
+        {openPanel === 'notifications' && (
+          <NotificationsPopover
+            onClose={closePanel}
+            notificaciones={notificaciones}
+            error={errorNotificaciones}
+          />
+        )}
+>>>>>>> Luisa
         {openPanel === 'profile' && <ProfilePopover onClose={closePanel} />}
       </div>
 

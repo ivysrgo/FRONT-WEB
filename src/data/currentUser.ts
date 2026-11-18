@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Usuario de ejemplo hasta conectar la autenticación
 export interface UserProfile {
   name: string;
@@ -16,6 +17,8 @@ export const CURRENT_USER: UserProfile = {
   rating: 3,
 };
 
+=======
+>>>>>>> Luisa
 export const getInitials = (name: string) =>
   name
     .split(' ')

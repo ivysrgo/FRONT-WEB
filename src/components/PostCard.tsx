@@ -1,6 +1,7 @@
 import React from 'react';
 import { ProgressBar } from './ProgressBar';
 import './PostCard.css';
+import { useNavigate } from 'react-router-dom';
 
 interface PostCardProps {
   id: string;
@@ -12,7 +13,10 @@ interface PostCardProps {
   daysElapsed: number;
   imageUrl: string;
   onDonate?: () => void;
+<<<<<<< HEAD
   onEdit?: () => void;
+=======
+>>>>>>> Luisa
 }
 
 export const PostCard: React.FC<PostCardProps> = ({
@@ -23,17 +27,21 @@ export const PostCard: React.FC<PostCardProps> = ({
   status,
   daysElapsed,
   imageUrl,
+<<<<<<< HEAD
   onDonate,
   onEdit,
+=======
+  onDonate
+>>>>>>> Luisa
 }) => {
   const isExpired = status === 'Caducado';
   const isDonated = status === 'Donado';
   const isActive = status === 'Disponible' || status === 'Reservado';
-
+  const navigate = useNavigate();
   return (
     <div className={`post-card-wrapper ${isExpired ? 'card-expired' : ''}`}>
       <article className="post-card">
-        {/* Lado Izquierdo: Foto y Detalles */}
+        {/* ... Lado Izquierdo (Mantenemos igual) */}
         <div className="post-info">
           <div className="post-image-box">
             <img src={imageUrl} alt={title} />
@@ -45,50 +53,53 @@ export const PostCard: React.FC<PostCardProps> = ({
           </div>
         </div>
 
-        {/* Lado Derecho: Solicitudes, Badge y Editar */}
+        {/* ... Lado Derecho (Mantenemos igual) */}
         <div className="post-actions">
           <div className="post-requests">
             <span className="request-number">{requests}</span>
             <span className="request-label">Solicitudes</span>
           </div>
-
           <div className="post-badges-row">
             <span className={`status-badge badge-${status.toLowerCase()}`}>
               {isDonated ? 'Donado - Unidona' : status}
             </span>
+<<<<<<< HEAD
             <button type="button" className="edit-btn" onClick={onEdit}>
+=======
+            <button className="edit-btn" onClick={() => navigate('/editar-publicacion')}>
+>>>>>>> Luisa
               Editar
             </button>
           </div>
         </div>
       </article>
 
-      {/* Lógica Condicional para la parte inferior de la tarjeta */}
-
-      {/* Caso 1: Normal (Disponible o Reservado) -> Muestra la barra de progreso */}
+      {/* Lógica Condicional Inferior */}
       {isActive && (
         <div className="post-bottom-section">
           <ProgressBar daysElapsed={daysElapsed} totalDays={30} />
         </div>
       )}
 
-      {/* Caso 2: Escalado/Donado -> Caja Negra */}
       {isDonated && (
         <div className="post-bottom-alert alert-black">
           <strong>Escalado a donación formal.</strong> Registrado en la red del Banco de Ropa de Unidona. El seguimiento logístico se gestiona fuera de la plataforma.
         </div>
       )}
 
-      {/* Caso 3: Caducado -> Caja Naranja con botón */}
       {isExpired && (
         <div className="post-bottom-alert alert-orange">
           <div className="alert-text">
             <strong>Sin intercambio local en 30 días</strong><br />
             Puedes escalar este artículo a la red del Banco de Ropa de Unidona para donación formal.
           </div>
+<<<<<<< HEAD
           <button type="button" className="donate-btn-orange" onClick={onDonate}>
             Donar al Unidona
           </button>
+=======
+          <button className="donate-btn-orange" onClick={onDonate}>Donar a Unidona</button>
+>>>>>>> Luisa
         </div>
       )}
     </div>

@@ -12,20 +12,32 @@ export class ApiError extends Error {
 
 export async function solicitar<T>(endpoint: string, opciones: RequestInit = {}): Promise<T> {
   const url = `${API_URL}${endpoint}`;
+<<<<<<< HEAD
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   const authHeaders: Record<string, string> = {};
   if (token) {
     authHeaders['Authorization'] = `Bearer ${token}`;
+=======
+  const headers = new Headers(opciones.headers);
+  if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  const token = localStorage.getItem('token');
+  if (token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`);
+>>>>>>> Luisa
   }
 
   const configuracion: RequestInit = {
     ...opciones,
+<<<<<<< HEAD
     headers: {
       'Content-Type': 'application/json',
       ...authHeaders,
       ...opciones.headers,
     },
+=======
+    headers,
+>>>>>>> Luisa
   };
 
   try {
@@ -46,7 +58,13 @@ export async function solicitar<T>(endpoint: string, opciones: RequestInit = {})
     return await respuesta.json();
   } catch (error) {
     if (error instanceof ApiError) throw error;
+<<<<<<< HEAD
     throw new ApiError(0, 'No se pudo conectar con el servidor. Verifica tu conexión o que el backend esté activo.');
   }
 }
 
+=======
+    throw new ApiError(0, 'No se pudo conectar con el servidor. Verifica tu conexión a internet.');
+  }
+}
+>>>>>>> Luisa

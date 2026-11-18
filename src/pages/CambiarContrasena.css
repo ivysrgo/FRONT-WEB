@@ -1,0 +1,48 @@
+.cambiar-card {
+  background-color: var(--color-blanco);
+  border-radius: 36px;
+  padding: 32px 40px;
+  max-width: 560px;
+}
+
+.cambiar-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.cambiar-error {
+  font-family: var(--font-principal);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-error);
+  margin: 0 0 16px 0;
+}
+
+.cambiar-ayuda {
+  font-family: var(--font-principal);
+  font-size: 13px;
+  color: var(--color-texto-secundario);
+  margin: -6px 0 20px 0;
+}
+
+.cambiar-exito {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.cambiar-exito-titulo {
+  font-family: var(--font-principal);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-exito);
+  margin: 0;
+}
+
+.cambiar-exito-texto {
+  font-family: var(--font-principal);
+  font-size: 14px;
+  color: var(--color-texto-secundario);
+  margin: 0 0 12px 0;
+}

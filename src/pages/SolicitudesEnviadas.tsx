@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { NavLink } from 'react-router-dom';
+=======
+import { useNavigate } from 'react-router-dom';
+>>>>>>> Luisa
 import { Navbar } from '../components/Navbar';
 import { AdminNavbar } from '../components/AdminNavbar';
 import { Footer } from '../components/Footer';
 import { RequestCard } from '../components/RequestCard';
+<<<<<<< HEAD
 import { esAdmin } from '../services/authService';
 import { obtenerSolicitudes } from '../services/solicitudService';
+=======
+import { SolicitudesTabs } from '../components/SolicitudesTabs';
+import { actualizarEstadoSolicitud, obtenerMisSolicitudes, type MisSolicitudes } from '../services/solicitudService';
+>>>>>>> Luisa
 import './SolicitudesEnviadas.css';
 
-interface RequestItem {
-  id: string;
-  type: 'DONACIÓN' | 'INTERCAMBIO';
-  title: string;
-  message: string;
-  date: string;
-  status: 'Aceptado' | 'Pendiente';
-}
+const solicitudesVacias: MisSolicitudes = {
+  enviadas: [],
+  recibidas: [],
+  historial: [],
+  favoritos: 0,
+};
 
 const FALLBACK_SENT: RequestItem[] = [
   {
@@ -45,6 +52,7 @@ const FALLBACK_SENT: RequestItem[] = [
 ];
 
 export const SolicitudesEnviadas: React.FC = () => {
+<<<<<<< HEAD
   const [sentRequests, setSentRequests] = useState<RequestItem[]>(FALLBACK_SENT);
 
   useEffect(() => {
@@ -76,14 +84,70 @@ export const SolicitudesEnviadas: React.FC = () => {
     <div className="solicitudes-page">
       {esAdmin() ? <AdminNavbar /> : <Navbar />}
 
+=======
+  const navigate = useNavigate();
+  const [datos, setDatos] = useState(solicitudesVacias);
+  const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [solicitudEnProceso, setSolicitudEnProceso] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!localStorage.getItem('token')) {
+      navigate('/login');
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    obtenerMisSolicitudes()
+      .then((solicitudes) => {
+        if (!cancelled) setDatos(solicitudes);
+      })
+      .catch((requestError: unknown) => {
+        if (!cancelled) {
+          setLoadFailed(true);
+          setError(requestError instanceof Error ? requestError.message : 'No se pudieron cargar tus solicitudes.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
+
+  const manejarCancelar = async (id: string) => {
+    setSolicitudEnProceso(id);
+    setError(null);
+    try {
+      const cancelada = await actualizarEstadoSolicitud(id, 'Cancelado');
+      setDatos((actuales) => ({
+        ...actuales,
+        enviadas: actuales.enviadas.filter((solicitud) => solicitud.id !== id),
+        historial: [cancelada, ...actuales.historial],
+      }));
+    } catch (requestError: unknown) {
+      setError(requestError instanceof Error ? requestError.message : 'No se pudo cancelar la solicitud.');
+    } finally {
+      setSolicitudEnProceso(null);
+    }
+  };
+
+  return (
+    <div className="solicitudes-page">
+      <Navbar />
+>>>>>>> Luisa
       <main className="solicitudes-content">
         <header className="solicitudes-header">
           <h1 className="solicitudes-title">Mis Solicitudes</h1>
-          <p className="solicitudes-subtitle">
-            Lo que has pedido y lo que otros te han pedido.
-          </p>
+          <p className="solicitudes-subtitle">Lo que has pedido y lo que otros te han pedido.</p>
         </header>
 
+<<<<<<< HEAD
         <nav className="solicitudes-tabs">
           <NavLink
             to="/solicitudes"
@@ -125,8 +189,38 @@ export const SolicitudesEnviadas: React.FC = () => {
             />
           ))}
         </section>
-      </main>
+=======
+        <SolicitudesTabs counts={{
+          enviadas: datos.enviadas.length,
+          recibidas: datos.recibidas.length,
+          favoritos: datos.favoritos,
+          historial: datos.historial.length,
+        }} />
 
+        {error && <p role="alert">{error}</p>}
+        {loading ? (
+          <p role="status">Cargando solicitudes...</p>
+        ) : loadFailed ? null : datos.enviadas.length === 0 ? (
+          <p className="solicitudes-empty">Todavía no has enviado solicitudes.</p>
+        ) : (
+          <section className="solicitudes-list">
+            {datos.enviadas.map((solicitud) => (
+              <RequestCard
+                key={solicitud.id}
+                id={solicitud.id}
+                type={solicitud.type}
+                title={solicitud.title}
+                message={solicitud.message}
+                date={solicitud.date}
+                status={solicitud.status === 'Aceptado' ? 'Aceptado' : 'Pendiente'}
+                actionPending={solicitudEnProceso === solicitud.id}
+                onCancel={() => void manejarCancelar(solicitud.id)}
+              />
+            ))}
+          </section>
+        )}
+>>>>>>> Luisa
+      </main>
       <Footer />
     </div>
   );

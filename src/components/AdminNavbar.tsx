@@ -1,11 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+<<<<<<< HEAD
 import { SearchPanel } from './SearchPanel';
 import { NotificationsPopover } from './NotificationsPopover';
 import { ProfilePopover } from './ProfilePopover';
 import { obtenerConteoNoLeidas } from '../services/notificacionService';
 import { estaAutenticado } from '../services/authService';
 import './Navbar.css';
+=======
+import { SearchPanel } from './SearchPanel'; // Reutilizamos el panel de búsqueda
+import { NotificationsPopover } from './NotificationsPopover';
+import { ProfilePopover } from './ProfilePopover';
+import { listarReportes } from '../services/adminService';
+import './Navbar.css'; // Podemos reutilizar los estilos del Navbar de usuario
+>>>>>>> Luisa
 
 import logoHeader from '../assets/logoheader.svg';
 import lupaBusqueda from '../assets/lupabusqueda.svg';
@@ -18,6 +26,10 @@ type OpenPanel = 'search' | 'notifications' | 'profile' | null;
 export const AdminNavbar: React.FC = () => {
   const location = useLocation();
   const [hasNotifications, setHasNotifications] = useState(false);
+<<<<<<< HEAD
+=======
+  const [reportesPendientes, setReportesPendientes] = useState(0);
+>>>>>>> Luisa
   const [openPanel, setOpenPanel] = useState<OpenPanel>(
     (location.state as { searchOpen?: boolean } | null)?.searchOpen ? 'search' : null,
   );
@@ -25,11 +37,33 @@ export const AdminNavbar: React.FC = () => {
 
   const closePanel = () => setOpenPanel(null);
 
+<<<<<<< HEAD
   const togglePanel = (panel: Exclude<OpenPanel, null>) => {
+=======
+  useEffect(() => {
+    let activo = true;
+    listarReportes('pendientes')
+      .then((reportes) => {
+        if (!activo) return;
+        setReportesPendientes(reportes.length);
+        setHasNotifications(reportes.length > 0);
+      })
+      .catch(() => {
+        // Sin conexión con el backend la campana simplemente queda inactiva
+      });
+    return () => {
+      activo = false;
+    };
+  }, [location.pathname]);
+
+  const togglePanel = (panel: Exclude<OpenPanel, null>) => {
+    if (panel === 'notifications') setHasNotifications(false);
+>>>>>>> Luisa
     setOpenPanel((current) => (current === panel ? null : panel));
   };
 
   useEffect(() => {
+<<<<<<< HEAD
     let cancelado = false;
     const actualizarConteo = async () => {
       if (!estaAutenticado()) {
@@ -61,6 +95,8 @@ export const AdminNavbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
+=======
+>>>>>>> Luisa
     if (!openPanel) return;
 
     const handlePointerDown = (e: MouseEvent) => {
@@ -83,24 +119,43 @@ export const AdminNavbar: React.FC = () => {
       {/* Logo principal */}
       <div className="navbar-brand">
         <NavLink to="/admin/explorar">
+<<<<<<< HEAD
           <img
             src={logoHeader}
             alt="ECO-GOLGI"
             className="navbar-logo"
+=======
+          <img 
+            src={logoHeader} 
+            alt="ECO-GOLGI" 
+            className="navbar-logo" 
+>>>>>>> Luisa
           />
         </NavLink>
       </div>
 
+<<<<<<< HEAD
       {/* Enlaces centrales de Administrador */}
       <nav className="navbar-links">
         <NavLink
           to="/admin/explorar"
+=======
+      {/* Enlaces centrales (Solo 2 para Admin) */}
+      <nav className="navbar-links">
+        <NavLink 
+          to="/admin/explorar" 
+>>>>>>> Luisa
           className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
         >
           Explorar
         </NavLink>
+<<<<<<< HEAD
         <NavLink
           to="/admin/dashboard"
+=======
+        <NavLink 
+          to="/admin/dashboard" // O la ruta que definas para administrar
+>>>>>>> Luisa
           className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
         >
           Administrar
@@ -138,8 +193,15 @@ export const AdminNavbar: React.FC = () => {
           <img src={iconPerfil} alt="Perfil" className="nav-icon" />
         </button>
 
+<<<<<<< HEAD
         {openPanel === 'notifications' && <NotificationsPopover onClose={closePanel} />}
         {openPanel === 'profile' && <ProfilePopover onClose={closePanel} />}
+=======
+        {openPanel === 'notifications' && (
+          <NotificationsPopover onClose={closePanel} isAdmin reportesPendientes={reportesPendientes} />
+        )}
+        {openPanel === 'profile' && <ProfilePopover onClose={closePanel} isAdmin />}
+>>>>>>> Luisa
       </div>
 
       {openPanel === 'search' && (
@@ -150,5 +212,9 @@ export const AdminNavbar: React.FC = () => {
       )}
     </header>
   );
+<<<<<<< HEAD
 };
 
+=======
+};
+>>>>>>> Luisa

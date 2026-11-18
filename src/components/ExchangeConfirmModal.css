@@ -1,0 +1,131 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(108, 108, 108, 0.85); /* Gris de Figma */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.exchange-modal-content {
+  position: relative;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  padding: 45px 50px;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  /* Aseguramos una altura mínima para que el modal no "salte" 
+     bruscamente cuando aparece el botón */
+  min-height: 280px; 
+}
+
+/* Flecha de volver */
+.modal-back-btn {
+  position: absolute;
+  top: 25px;
+  left: 30px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.modal-back-btn:hover {
+  transform: scale(1.1);
+}
+
+.modal-back-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+/* Textos */
+.modal-title {
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: 28px; /* Un poco más pequeño para acomodar textos largos si los hay */
+  font-weight: 700;
+  color: #000000;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.modal-subtitle {
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 35px 0;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Estrellas Interactivas */
+.interactive-stars-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.interactive-star {
+  width: 45px; /* Tamaño grande según el diseño */
+  height: 45px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.interactive-star:hover {
+  transform: scale(1.1);
+}
+
+/* Contenedor del Botón para manejar la aparición suave */
+.exchange-btn-container {
+  height: 50px; /* Reservamos el espacio */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.exchange-btn-container.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.exchange-btn-container.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Botón Celeste */
+.modal-btn-cyan {
+  background-color: var(--color-brand, #85DAFF); 
+  color: #000000;
+  border: none;
+  border-radius: 20px;
+  padding: 12px 35px;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.modal-btn-cyan:hover {
+  opacity: 0.9;
+}
+
+.modal-btn-cyan:active {
+  transform: scale(0.98);
+}

@@ -1,32 +1,43 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ReceivedRequestCard.css';
 
 interface ReceivedRequestCardProps {
   id: string;
+  articleId: string;
   type: 'DONACIÓN' | 'INTERCAMBIO';
   author: string;
   title: string;
   message: string;
   status: 'Aceptado' | 'Pendiente';
+  actionPending?: boolean;
   onAccept?: () => void;
   onReject?: () => void;
+  onComplete?: () => void;
 }
 
 export const ReceivedRequestCard: React.FC<ReceivedRequestCardProps> = ({
+  id,
+  articleId,
   type,
   author,
   title,
   message,
   status,
+  actionPending = false,
   onAccept,
-  onReject
+  onReject,
+  onComplete
 }) => {
   const initial = author.charAt(0).toUpperCase();
+  const navigate = useNavigate();
 
   return (
-    <article className="received-card">
+    <article className="received-card" data-request-id={id}>
       <div className="received-card-left">
-        <div className="avatar-circle">{initial}</div>
+        <div className="avatar-circle">
+          {initial}
+        </div>
         
         <div className="received-info">
           <span className="received-type">
@@ -34,16 +45,26 @@ export const ReceivedRequestCard: React.FC<ReceivedRequestCardProps> = ({
           </span>
           <h3 className="received-title">{title}</h3>
           <p className="received-message">{message}</p>
+          <button type="button" className="received-view-btn" onClick={() => navigate(`/articulo/${articleId}`)}>
+            Ver artículo
+          </button>
         </div>
       </div>
 
       <div className="received-actions">
         {status === 'Aceptado' ? (
-          <span className="badge-aceptado-blue">Aceptado</span>
+          <div className="action-buttons-group">
+            <span className="badge-aceptado-blue">Aceptado</span>
+            <button className="btn-accept-solid" onClick={onComplete} disabled={actionPending}>
+              {actionPending ? 'Guardando...' : 'Marcar entregada'}
+            </button>
+          </div>
         ) : (
           <div className="action-buttons-group">
-            <button className="btn-accept-solid" onClick={onAccept}>Aceptar</button>
-            <button className="btn-reject-outline" onClick={onReject}>Rechazar</button>
+            <button className="btn-accept-solid" onClick={onAccept} disabled={actionPending}>
+              {actionPending ? 'Guardando...' : 'Aceptar'}
+            </button>
+            <button className="btn-reject-outline" onClick={onReject} disabled={actionPending}>Rechazar</button>
           </div>
         )}
       </div>

@@ -1,17 +1,27 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
+=======
+import React from 'react';
+>>>>>>> Luisa
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Button } from '../components/Button';
 import { ItemCarousel } from '../components/ItemCarousel';
+<<<<<<< HEAD
 import type { CarouselItem } from '../components/ItemCarousel';
 import { applyFilters, filtersFromParams, hasActiveFilters } from '../utils/searchFilters';
 import { CATALOGO_FALLBACK, obtenerArticulosCatalogo } from '../services/publicacionService';
+=======
+import { applyFilters, filtersFromParams } from '../utils/searchFilters';
+import { recargarArticulos, useArticulos, useEstadoArticulos } from '../data/articulos';
+>>>>>>> Luisa
 import './ExploreHome.css';
 
 export const ExploreHome: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+<<<<<<< HEAD
   const [items, setItems] = useState<CarouselItem[]>(CATALOGO_FALLBACK);
 
   useEffect(() => {
@@ -29,6 +39,13 @@ export const ExploreHome: React.FC = () => {
   const filters = filtersFromParams(searchParams);
   const filteredItems = applyFilters(items, filters);
   const filtering = hasActiveFilters(filters);
+=======
+  const articulos = useArticulos();
+  const estadoArticulos = useEstadoArticulos();
+
+  const filters = filtersFromParams(searchParams);
+  const filteredItems = applyFilters(articulos, filters);
+>>>>>>> Luisa
 
   return (
     <div className="explore-page">
@@ -58,7 +75,11 @@ export const ExploreHome: React.FC = () => {
         {/* Fila de Métricas / Estadísticas */}
         <section className="metrics-section">
           <div className="metric-card">
+<<<<<<< HEAD
             <span className="metric-number">{items.length}</span>
+=======
+            <span className="metric-number">{articulos.length}</span>
+>>>>>>> Luisa
             <span className="metric-label">Artículos<br />Disponibles</span>
           </div>
 
@@ -84,6 +105,7 @@ export const ExploreHome: React.FC = () => {
             <p className="catalog-count">
               {filteredItems.length} {filteredItems.length === 1 ? 'artículo encontrado' : 'artículos encontrados'}
             </p>
+<<<<<<< HEAD
             {filtering ? (
               <button type="button" className="catalog-link" onClick={() => navigate('/explorar')}>
                 Ver todos los artículos
@@ -96,6 +118,25 @@ export const ExploreHome: React.FC = () => {
           </div>
 
           {filteredItems.length > 0 ? (
+=======
+            <button type="button" className="catalog-link" onClick={() => navigate('/todos')}>
+              Ver todos los artículos
+            </button>
+          </div>
+
+          {estadoArticulos.estado === 'loading' ? (
+            <p role="status">Cargando publicaciones...</p>
+          ) : estadoArticulos.estado === 'error' ? (
+            <div className="catalog-empty" role="alert">
+              <p className="catalog-empty-title">No se pudieron cargar las publicaciones.</p>
+              <p className="catalog-empty-text">{estadoArticulos.error}</p>
+              <button type="button" className="catalog-link" onClick={() => void recargarArticulos()}>
+                Reintentar
+              </button>
+            </div>
+          ) : filteredItems.length > 0 ? (
+            // La key reinicia el carrusel cuando cambian los filtros
+>>>>>>> Luisa
             <ItemCarousel key={searchParams.toString()} items={filteredItems} />
           ) : (
             <div className="catalog-empty">

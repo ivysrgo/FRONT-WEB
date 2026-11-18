@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
+<<<<<<< HEAD
 import { AdminNavbar } from '../components/AdminNavbar';
 import { Footer } from '../components/Footer';
 import { cerrarSesion, esAdmin } from '../services/authService';
+=======
+import { Footer } from '../components/Footer';
+>>>>>>> Luisa
 import './MiPerfil.css';
 import './Configuracion.css';
 
@@ -43,7 +47,11 @@ export const Configuracion: React.FC = () => {
 
   return (
     <div className="perfil-page">
+<<<<<<< HEAD
       {esAdmin() ? <AdminNavbar /> : <Navbar />}
+=======
+      <Navbar />
+>>>>>>> Luisa
 
       <main className="perfil-content">
         <header className="perfil-header">
@@ -87,7 +95,11 @@ export const Configuracion: React.FC = () => {
               <span className="config-label">Contraseña</span>
               <span className="config-description">Actualiza la contraseña con la que ingresas.</span>
             </div>
+<<<<<<< HEAD
             <button type="button" className="perfil-btn-outline" onClick={() => navigate('/new-password')}>
+=======
+            <button type="button" className="perfil-btn-outline" onClick={() => navigate('/perfil/cambiar-contrasena')}>
+>>>>>>> Luisa
               Cambiar
             </button>
           </div>
@@ -96,6 +108,7 @@ export const Configuracion: React.FC = () => {
               <span className="config-label">Cerrar sesión</span>
               <span className="config-description">Salir de tu cuenta en este dispositivo.</span>
             </div>
+<<<<<<< HEAD
             <button
               type="button"
               className="config-logout"
@@ -104,6 +117,9 @@ export const Configuracion: React.FC = () => {
                 navigate('/login');
               }}
             >
+=======
+            <button type="button" className="config-logout" onClick={() => navigate('/login')}>
+>>>>>>> Luisa
               Cerrar Sesión
             </button>
           </div>

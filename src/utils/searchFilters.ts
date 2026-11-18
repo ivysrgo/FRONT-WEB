@@ -64,7 +64,11 @@ export const hasActiveFilters = (filters: SearchFilters) =>
 const normalize = (text: string) =>
   text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
+<<<<<<< HEAD
 export const applyFilters = (items: CarouselItem[], filters: SearchFilters): CarouselItem[] => {
+=======
+export const applyFilters = <T extends CarouselItem>(items: T[], filters: SearchFilters): T[] => {
+>>>>>>> Luisa
   const query = normalize(filters.query.trim());
 
   const result = items.filter((item) => {

@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { Link } from 'react-router-dom';
+=======
+import { useNavigate } from 'react-router-dom';
+>>>>>>> Luisa
 import { Navbar } from '../components/Navbar';
 import { AdminNavbar } from '../components/AdminNavbar';
 import { Footer } from '../components/Footer';
 import { PostCard } from '../components/PostCard';
 import { DonateConfirmModal } from '../components/DonateConfirmModal';
+<<<<<<< HEAD
 import { esAdmin } from '../services/authService';
 import {
   obtenerMisPublicaciones,
@@ -15,6 +20,27 @@ import { ApiError } from '../services/api';
 import './Publicaciones.css';
 
 export const Publicaciones: React.FC = () => {
+=======
+import './Publicaciones.css';
+
+import { obtenerMisPublicaciones } from '../services/publicacionService';
+import { ApiError } from '../services/api';
+
+export interface PostItem {
+  id: string;
+  category: string;
+  title: string;
+  details: string;
+  requests: number;
+  status: 'Disponible' | 'Reservado' | 'Donado' | 'Caducado';
+  daysElapsed: number;
+  imageUrl: string;
+}
+
+export const Publicaciones: React.FC = () => {
+  const navigate = useNavigate();
+  // 1. Estados de datos y de red (Sesión 3)
+>>>>>>> Luisa
   const [publicaciones, setPublicaciones] = useState<PostItem[]>([]);
   const [cargando, setCargando] = useState(true);
   const [errorDeCarga, setErrorDeCarga] = useState<string | null>(null);
@@ -27,6 +53,13 @@ export const Publicaciones: React.FC = () => {
 
     const cargarDatos = async () => {
       try {
+<<<<<<< HEAD
+=======
+        if (!localStorage.getItem('token')) {
+          navigate('/login');
+          return;
+        }
+>>>>>>> Luisa
         const datos = await obtenerMisPublicaciones();
 
         if (!cancelado) {
@@ -55,13 +88,18 @@ export const Publicaciones: React.FC = () => {
     return () => {
       cancelado = true;
     };
+<<<<<<< HEAD
   }, []);
+=======
+  }, [navigate]);
+>>>>>>> Luisa
 
   const solicitarDonacion = (id: string) => {
     setIdArticuloADonar(id);
     setModalDonarAbierto(true);
   };
 
+<<<<<<< HEAD
   const confirmarDonacion = async () => {
     if (idArticuloADonar) {
       try {
@@ -69,6 +107,10 @@ export const Publicaciones: React.FC = () => {
       } catch (err) {
         console.error('Error al actualizar donación en MongoDB Atlas:', err);
       }
+=======
+  const confirmarDonacion = () => {
+    if (idArticuloADonar) {
+>>>>>>> Luisa
       setPublicaciones((publicacionesActuales) =>
         publicacionesActuales.map((post) =>
           post.id === idArticuloADonar ? { ...post, status: 'Donado' } : post
@@ -91,6 +133,7 @@ export const Publicaciones: React.FC = () => {
           </p>
         </header>
 
+<<<<<<< HEAD
         {cargando && (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
             <h3 style={{ color: '#0070BA', fontSize: '18px' }}>
@@ -99,10 +142,22 @@ export const Publicaciones: React.FC = () => {
           </div>
         )}
 
+=======
+        {/* 3. Renderizado Condicional: Estado de Carga */}
+        {cargando && (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <h3 style={{ color: '#0070BA' }}>Cargando inventario...</h3>
+            {/* Aquí se puede insertar el componente <Spinner /> visual más adelante */}
+          </div>
+        )}
+
+        {/* 4. Renderizado Condicional: Estado de Error */}
+>>>>>>> Luisa
         {errorDeCarga && !cargando && (
           <div style={{ backgroundColor: '#fee2e2', padding: '20px', borderRadius: '12px', textAlign: 'center', margin: '20px 0' }}>
             <h3 style={{ color: '#D5473A', margin: '0 0 10px 0' }}>¡Uy! Algo salió mal</h3>
             <p style={{ color: '#000', marginBottom: '15px' }}>{errorDeCarga}</p>
+<<<<<<< HEAD
             <button
               type="button"
               onClick={() => window.location.reload()}
@@ -115,12 +170,18 @@ export const Publicaciones: React.FC = () => {
                 cursor: 'pointer',
                 fontWeight: 'bold',
               }}
+=======
+            <button 
+              onClick={() => window.location.reload()} 
+              style={{ padding: '10px 20px', backgroundColor: '#D5473A', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+>>>>>>> Luisa
             >
               Reintentar
             </button>
           </div>
         )}
 
+<<<<<<< HEAD
         {!cargando && !errorDeCarga && (
           <section className="publicaciones-list">
             {publicaciones.length === 0 ? (
@@ -146,6 +207,16 @@ export const Publicaciones: React.FC = () => {
             ) : (
               publicaciones.map((post) => (
                 <PostCard
+=======
+        {/* 5. Renderizado Condicional: Éxito (Lista de Tarjetas) */}
+        {!cargando && !errorDeCarga && (
+          <section className="publicaciones-list">
+            {publicaciones.length === 0 ? (
+              <p style={{ textAlign: 'center' }}>No tienes publicaciones activas en este momento.</p>
+            ) : (
+              publicaciones.map((post) => (
+                <PostCard 
+>>>>>>> Luisa
                   key={post.id}
                   id={post.id}
                   category={post.category}

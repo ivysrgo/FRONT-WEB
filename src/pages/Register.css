@@ -89,6 +89,7 @@
   flex-direction: column;
   gap: clamp(4px, 0.6vw, 8px);
   margin-bottom: clamp(10px, 1.4vw, 22px);
+<<<<<<< HEAD
 }
 
 .security-label-row {
@@ -96,13 +97,20 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 clamp(4px, 0.9vw, 12px);
+=======
+>>>>>>> Luisa
 }
 
 .security-label {
   font-family: var(--font-principal);
   font-size: clamp(12px, 1.05vw, 16px);
+<<<<<<< HEAD
   font-weight: 500;
+=======
+  font-weight: 400;
+>>>>>>> Luisa
   color: var(--color-tinta);
+  padding-left: clamp(4px, 0.9vw, 12px);
 }
 
 .security-status {
@@ -114,9 +122,15 @@
 
 .security-bar {
   width: 100%;
+<<<<<<< HEAD
   height: clamp(8px, 0.9vw, 12px);
   background-color: #E5E7EB;
   border: 1px solid #71717A;
+=======
+  height: clamp(6px, 0.8vw, 10px);
+  background-color: #F2F2F2;
+  border: 1px solid #5A5A5A;
+>>>>>>> Luisa
   border-radius: 9999px;
   overflow: hidden;
   padding: 1px;
@@ -124,6 +138,7 @@
 
 .security-fill {
   height: 100%;
+<<<<<<< HEAD
   border-radius: 9999px;
   transition: width 0.35s ease, background-color 0.35s ease;
 }
@@ -174,6 +189,26 @@
   font-weight: 600;
   color: var(--color-error, #D5473A);
   margin-bottom: 12px;
+=======
+  background-color: #D5473A;
+  transition: width 180ms ease, background-color 180ms ease;
+}
+
+.security-fill-2,
+.security-fill-3 {
+  background-color: #E8A72C;
+}
+
+.security-fill-4,
+.security-fill-5 {
+  background-color: #2E9D62;
+}
+
+.security-hint {
+  font-family: var(--font-principal);
+  font-size: clamp(11px, 0.95vw, 14px);
+  color: var(--color-tinta);
+>>>>>>> Luisa
   padding-left: clamp(4px, 0.9vw, 12px);
 }
 
@@ -201,4 +236,8 @@
 .login-link a {
   color: #2F5BEA;
   text-decoration: underline;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> Luisa

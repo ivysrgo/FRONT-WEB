@@ -1,4 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+<<<<<<< HEAD
+=======
+import { useNavigate } from 'react-router-dom';
+>>>>>>> Luisa
 import './ItemCarousel.css';
 
 export interface CarouselItem {
@@ -17,12 +21,26 @@ export interface CarouselItem {
 interface ItemCarouselProps {
   items: CarouselItem[];
   autoPlayMs?: number;
+<<<<<<< HEAD
+=======
+  isAdmin?: boolean;
+>>>>>>> Luisa
 }
 
 // Distancia mínima (px) de arrastre para cambiar de tarjeta
 const SWIPE_THRESHOLD = 50;
 
+<<<<<<< HEAD
 export const ItemCarousel: React.FC<ItemCarouselProps> = ({ items, autoPlayMs = 3500 }) => {
+=======
+export const ItemCarousel: React.FC<ItemCarouselProps> = ({
+  items,
+  autoPlayMs = 3500,
+  isAdmin = false
+}) => {
+  const navigate = useNavigate();
+  const getDetailPath = (id: string) => isAdmin ? `/admin/articulo/${id}` : `/articulo/${id}`;
+>>>>>>> Luisa
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
@@ -111,6 +129,16 @@ export const ItemCarousel: React.FC<ItemCarouselProps> = ({ items, autoPlayMs = 
                 <span className={`carousel-badge ${item.modality === 'Donación' ? 'badge-donacion' : 'badge-intercambio'}`}>
                   {item.modality}
                 </span>
+<<<<<<< HEAD
+=======
+                <button
+                  type="button"
+                  className="carousel-image-link"
+                  onClick={() => navigate(getDetailPath(item.id))}
+                  aria-label={`Ver detalle de ${item.title}`}
+                  tabIndex={isActive ? 0 : -1}
+                />
+>>>>>>> Luisa
                 {item.imageUrl && !brokenImages[item.id] ? (
                   <img
                     src={item.imageUrl}

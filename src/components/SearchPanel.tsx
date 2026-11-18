@@ -9,7 +9,10 @@ import {
   filtersToParams,
 } from '../utils/searchFilters';
 import type { SearchFilters } from '../utils/searchFilters';
+<<<<<<< HEAD
 import { esAdmin } from '../services/authService';
+=======
+>>>>>>> Luisa
 import './SearchPanel.css';
 
 export const SearchPanel: React.FC = () => {
@@ -18,21 +21,35 @@ export const SearchPanel: React.FC = () => {
   const [searchParams] = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
 
+<<<<<<< HEAD
   const targetExplorePath = esAdmin() || location.pathname.startsWith('/admin')
     ? '/admin/explorar'
     : '/explorar';
   const onExplore = location.pathname === targetExplorePath;
+=======
+  const isAdmin = location.pathname.startsWith('/admin/');
+  const onExplore = location.pathname === '/todos' || location.pathname === '/admin/todos';
+  const catalogPath = isAdmin ? '/admin/todos' : '/todos';
+>>>>>>> Luisa
   const filters = onExplore ? filtersFromParams(searchParams) : DEFAULT_FILTERS;
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
+<<<<<<< HEAD
   // Cada cambio se refleja en la URL de explorar correspondiente al rol; desde otra pantalla, lleva a Explorar con el panel abierto
   const update = (changes: Partial<SearchFilters>) => {
     const next = { ...filters, ...changes };
     navigate(
       { pathname: targetExplorePath, search: filtersToParams(next).toString() },
+=======
+  // Cada cambio se refleja en /todos; desde otra pantalla, abre Todos con el panel abierto
+  const update = (changes: Partial<SearchFilters>) => {
+    const next = { ...filters, ...changes };
+    navigate(
+      { pathname: catalogPath, search: filtersToParams(next).toString() },
+>>>>>>> Luisa
       { replace: onExplore, state: { searchOpen: true } },
     );
   };

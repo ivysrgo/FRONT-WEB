@@ -73,6 +73,7 @@
   color: var(--color-tinta);
 }
 
+<<<<<<< HEAD
 .icon-donacion {
   background-color: #E8F8F5;
   color: #117A65;
@@ -83,11 +84,14 @@
   color: #1B4F72;
 }
 
+=======
+>>>>>>> Luisa
 .icon-caducar {
   background-color: #FBE3E1;
   color: var(--color-error);
 }
 
+<<<<<<< HEAD
 .icon-sistema {
   background-color: #F4F6F6;
   color: #5D6D7E;
@@ -122,6 +126,24 @@
 
 .notifications-mark-all:hover {
   text-decoration: underline;
+=======
+.icon-respuesta {
+  background-color: #E3F3DC;
+  color: #3F8A2A;
+}
+
+.icon-reporte {
+  background-color: #FFF0D6;
+  color: #A85D00;
+}
+
+.notifications-empty {
+  margin: 18px 0;
+  color: var(--color-texto-secundario);
+  font-family: var(--font-principal);
+  font-size: 13px;
+  text-align: center;
+>>>>>>> Luisa
 }
 
 .notification-text {
