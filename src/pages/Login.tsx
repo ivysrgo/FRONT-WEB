@@ -1,48 +1,102 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InputField } from '../components/InputField';
 import { Button } from '../components/Button';
+import { PasswordToggleIcon } from '../components/PasswordToggleIcon';
 import './Login.css';
+import './LoginError.css';
 
-// Importación de los SVGs desde la carpeta assets
-import logoFull from '../assets/logofull.svg'; 
-import ojoSeguridad from '../assets/ojoseguridad.svg'; 
+import logoFull from '../assets/logofull.svg';
+
+import { login, guardarSesion } from '../services/authService';
+import { ApiError } from '../services/api';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const [correo, setCorreo] = useState('');
+  const [contrasena, setContrasena] = useState('');
+  const [mostrarContrasena, setMostrarContrasena] = useState(false);
+
+  const [cargando, setCargando] = useState(false);
+  const [mensajeError, setMensajeError] = useState<string | null>(null);
+
+  const manejarEnvio = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí puedes simular la autenticación o navegar al home
+    setMensajeError(null);
+
+    if (correo.trim() === '' || contrasena.trim() === '') {
+      setMensajeError('Por favor, completa todos los campos.');
+      return;
+    }
+
+    try {
+      setCargando(true);
+
+      const respuesta = await login({ correo, contrasena });
+      guardarSesion(respuesta.token, respuesta.usuario);
+
+      if (respuesta.usuario.role === 'admin' || respuesta.usuario.role === 'Administrador') {
+        navigate('/admin/explorar');
+      } else {
+        navigate('/explorar');
+      }
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.status === 403) {
+          navigate('/login-block');
+        } else if (error.status === 401 || error.status === 400) {
+          setMensajeError('Correo o Contraseña incorrectas');
+        } else if (error.status === 500) {
+          setMensajeError('Error en los servidores de Eco-Golgi. Intenta más tarde.');
+        } else {
+          setMensajeError(error.message);
+        }
+      } else {
+        setMensajeError('Ocurrió un error inesperado.');
+      }
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
     <div className="login-layout">
-      {/* Columna Izquierda: Logo */}
       <div className="login-left">
-        <div className="logo-placeholder">
-           <img src={logoFull} alt="Eco-Golgi Logo" style={{ maxWidth: '400px', width: '100%' }} /> 
-        </div>
+        <img src={logoFull} alt="Eco-Golgi Logo" className="login-logo" />
       </div>
 
-      {/* Columna Derecha: Formulario */}
       <div className="login-right">
         <div className="login-form-container">
           <p className="login-welcome">BIENVENID@</p>
-          <h2 className="login-title">Inicia<br/>Sesión</h2>
+          <h2 className="login-title">Inicia<br />Sesión</h2>
 
-          <form className="login-form" onSubmit={handleLoginSubmit}>
-            <InputField 
-              label="Correo Electrónico" 
-              type="email" 
+          <form className="login-form" onSubmit={manejarEnvio}>
+            {mensajeError && (
+              <span className="login-error-alert" role="alert">
+                {mensajeError}
+              </span>
+            )}
+
+            <InputField
+              label="Correo Electrónico"
+              type="email"
               placeholder="Ej: correo@ejemplo.com"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              disabled={cargando}
             />
-            
-            <InputField 
-              label="Contraseña" 
-              type="password" 
+
+            <InputField
+              label="Contraseña"
+              type={mostrarContrasena ? 'text' : 'password'}
               placeholder="Ingresa tu contraseña"
-              rightIcon={<img src={ojoSeguridad} alt="Ver contraseña" style={{ width: '20px', height: '20px' }} />} 
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
+              rightIcon={<PasswordToggleIcon visible={mostrarContrasena} />}
+              onRightIconClick={() => setMostrarContrasena((prev) => !prev)}
+              rightIconAriaLabel={mostrarContrasena ? 'Ocultar contraseña' : 'Ver contraseña'}
+              disabled={cargando}
             />
 
             <div className="forgot-password-link">
@@ -52,8 +106,8 @@ export const Login: React.FC = () => {
             </div>
 
             <div className="button-section">
-              <Button variant="solid" type="submit">
-                Iniciar Sesión
+              <Button variant="solid" type="submit" disabled={cargando}>
+                {cargando ? 'Iniciando...' : 'Iniciar Sesión'}
               </Button>
 
               <p className="register-link">

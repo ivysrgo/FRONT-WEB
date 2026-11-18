@@ -1,7 +1,7 @@
 .input-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Clave para alinear los textos (labels) a la izquierda */
+  align-items: flex-start;
   text-align: left;
   gap: 8px;
   width: 100%;
@@ -23,7 +23,12 @@
   border-radius: 12px;
   padding: 0 16px;
   height: 50px;
-  width: 100%; /* Asegura que el input tome todo el ancho disponible */
+  width: 100%;
+  transition: border-color 0.2s ease;
+}
+
+.input-container:focus-within {
+  border-color: #0070F3;
 }
 
 .ui-input {
@@ -34,6 +39,7 @@
   font-size: 16px;
   outline: none;
   color: var(--color-tinta);
+  min-width: 0;
 }
 
 .input-icon-btn {
@@ -44,4 +50,17 @@
   align-items: center;
   justify-content: center;
   color: var(--color-tinta);
+  padding: 6px;
+  margin-left: 8px;
+  border-radius: 8px;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  user-select: none;
+}
+
+.input-icon-btn:hover {
+  opacity: 0.7;
+}
+
+.input-icon-btn:active {
+  transform: scale(0.92);
 }

@@ -1,60 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { InputField } from '../components/InputField';
 import { Button } from '../components/Button';
+import { PasswordToggleIcon } from '../components/PasswordToggleIcon';
+import './Login.css';
 import './LoginError.css';
 
-// Importación de los SVGs desde la carpeta assets
-import logoFull from '../assets/logofull.svg'; 
-import ojoSeguridad from '../assets/ojoseguridad.svg'; 
+import logoFull from '../assets/logofull.svg';
 
-export const LoginError: React.FC = () => {
+export const LoginBlock: React.FC = () => {
+  const navigate = useNavigate();
+  const [mostrarContrasena, setMostrarContrasena] = useState(false);
+
   return (
-    <div className="login-error-layout">
-      {/* Columna Izquierda: Logo */}
-      <div className="login-error-left">
-        <div className="logo-placeholder">
-           <img src={logoFull} alt="Eco-Golgi Logo" style={{ maxWidth: '400px', width: '100%' }} /> 
-        </div>
+    <div className="login-layout">
+      <div className="login-left">
+        <img src={logoFull} alt="Eco-Golgi Logo" className="login-logo" />
       </div>
 
-      {/* Columna Derecha: Formulario */}
-      <div className="login-error-right">
-        <div className="login-error-form-container">
-          <p className="login-error-welcome">BIENVENID@</p>
-          <h2 className="login-error-title">Inicia<br/>Sesión</h2>
+      <div className="login-right">
+        <div className="login-form-container">
+          <p className="login-welcome">BIENVENID@</p>
+          <h2 className="login-title">Inicia<br />Sesión</h2>
 
-          <form className="login-error-form">
-            
-            {/* Mensaje de error en rojo institucional */}
-            <span className="login-error-alert">Demasiados intentos, intenta más tarde</span>
+          <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+            <span className="login-error-alert" role="alert">
+              Demasiados intentos, intenta más tarde
+            </span>
 
-            <InputField 
-              label="Correo Electrónico" 
-              type="email" 
+            <InputField
+              label="Correo Electrónico"
+              type="email"
               placeholder="Ej: correo@ejemplo.com"
             />
-            
-            <InputField 
-              label="Contraseña" 
-              type="password" 
+
+            <InputField
+              label="Contraseña"
+              type={mostrarContrasena ? 'text' : 'password'}
               placeholder="Ingresa tu contraseña"
-              rightIcon={<img src={ojoSeguridad} alt="Ver contraseña" style={{ width: '20px', height: '20px' }} />} 
+              rightIcon={<PasswordToggleIcon visible={mostrarContrasena} />}
+              onRightIconClick={() => setMostrarContrasena((prev) => !prev)}
+              rightIconAriaLabel={mostrarContrasena ? 'Ocultar contraseña' : 'Ver contraseña'}
             />
 
-            <div className="login-error-forgot">
-              <a href="#">¿Olvidaste tu Contraseña?</a>
+            <div className="forgot-password-link">
+              <a href="#forgot" onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}>
+                ¿Olvidaste tu Contraseña?
+              </a>
             </div>
 
-            <div className="login-error-button-section">
-              <Button variant="solid" type="submit">
+            <div className="button-section">
+              <Button variant="solid" type="submit" disabled>
                 Iniciar Sesión
               </Button>
 
-              <p className="login-error-register">
-                ¿No tienes una cuenta aún? <a href="#">Registrarse</a>
+              <p className="register-link">
+                ¿No tienes una cuenta aún? <a href="#register" onClick={(e) => { e.preventDefault(); navigate('/register'); }}>Registrarse</a>
               </p>
             </div>
-
           </form>
         </div>
       </div>

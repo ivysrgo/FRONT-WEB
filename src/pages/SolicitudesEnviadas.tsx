@@ -1,8 +1,11 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom'; // <-- Aquí está la magia de navegación
+import React, { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
+import { AdminNavbar } from '../components/AdminNavbar';
 import { Footer } from '../components/Footer';
 import { RequestCard } from '../components/RequestCard';
+import { esAdmin } from '../services/authService';
+import { obtenerSolicitudes } from '../services/solicitudService';
 import './SolicitudesEnviadas.css';
 
 interface RequestItem {
@@ -14,37 +17,64 @@ interface RequestItem {
   status: 'Aceptado' | 'Pendiente';
 }
 
+const FALLBACK_SENT: RequestItem[] = [
+  {
+    id: '1',
+    type: 'DONACIÓN',
+    title: 'Silla de escritorio',
+    message: 'Ofrezco una lámpara de escritorio LED en muy buen estado.',
+    date: '2 sep',
+    status: 'Aceptado',
+  },
+  {
+    id: '2',
+    type: 'INTERCAMBIO',
+    title: 'Harry Potter y la Piedra Filosofal',
+    message: 'Lo necesito para el curso de este semestre, puedo recogerlo en la sede claustro.',
+    date: '24 ago',
+    status: 'Pendiente',
+  },
+  {
+    id: '3',
+    type: 'INTERCAMBIO',
+    title: 'Diccionario bilingüe Oxford',
+    message: 'Lo necesito para el curso de este semestre, lo ofrezco a cambio de las camisas de hombre',
+    date: '16 sep',
+    status: 'Pendiente',
+  },
+];
+
 export const SolicitudesEnviadas: React.FC = () => {
-  const sentRequests: RequestItem[] = [
-    {
-      id: '1',
-      type: 'DONACIÓN',
-      title: 'Silla de escritorio',
-      message: 'Ofrezco una lámpara de escritorio LED en muy buen estado.',
-      date: '2 sep',
-      status: 'Aceptado'
-    },
-    {
-      id: '2',
-      type: 'INTERCAMBIO',
-      title: 'Harry Potter y la Piedra Filosofal',
-      message: 'Lo necesito para el curso de este semestre, puedo recogerlo en la sede claustro.',
-      date: '24 ago',
-      status: 'Pendiente'
-    },
-    {
-      id: '3',
-      type: 'INTERCAMBIO',
-      title: 'Diccionario bilingüe Oxford',
-      message: 'Lo necesito para el curso de este semestre, lo ofrezco a cambio de las camisas de hombre',
-      date: '16 sep',
-      status: 'Pendiente'
-    }
-  ];
+  const [sentRequests, setSentRequests] = useState<RequestItem[]>(FALLBACK_SENT);
+
+  useEffect(() => {
+    let cancelado = false;
+    obtenerSolicitudes()
+      .then((datos) => {
+        if (cancelado || !datos || datos.length === 0) return;
+        const activas = datos
+          .filter((s) => s.status === 'Pendiente' || s.status === 'Aceptado')
+          .map((s) => ({
+            id: s.id,
+            type: (String(s.type).toUpperCase().includes('INTER') ? 'INTERCAMBIO' : 'DONACIÓN') as RequestItem['type'],
+            title: s.title,
+            message: s.message,
+            date: s.date || 'Reciente',
+            status: (s.status === 'Aceptado' ? 'Aceptado' : 'Pendiente') as RequestItem['status'],
+          }));
+        if (activas.length > 0) setSentRequests(activas);
+      })
+      .catch(() => {
+        // Mantiene respaldo local si el backend está apagado
+      });
+    return () => {
+      cancelado = true;
+    };
+  }, []);
 
   return (
     <div className="solicitudes-page">
-      <Navbar />
+      {esAdmin() ? <AdminNavbar /> : <Navbar />}
 
       <main className="solicitudes-content">
         <header className="solicitudes-header">
@@ -54,38 +84,34 @@ export const SolicitudesEnviadas: React.FC = () => {
           </p>
         </header>
 
-        {/* Pestañas con NavLink para navegar */}
         <nav className="solicitudes-tabs">
-          <NavLink 
-            to="/solicitudes" 
-            end 
+          <NavLink
+            to="/solicitudes"
+            end
             className={({ isActive }) => `tab-pill ${isActive ? 'active' : ''}`}
           >
-            Enviadas (3)
+            Enviadas ({sentRequests.length})
           </NavLink>
-          <NavLink 
-            to="/solicitudes/recibidas" 
+          <NavLink
+            to="/solicitudes/recibidas"
             className={({ isActive }) => `tab-pill ${isActive ? 'active' : ''}`}
           >
-            Recibidos (2)
+            Recibidos
           </NavLink>
-          <NavLink 
-            to="/solicitudes/favoritos" 
+          <NavLink
+            to="/solicitudes/favoritos"
             className={({ isActive }) => `tab-pill ${isActive ? 'active' : ''}`}
           >
             Favoritos
           </NavLink>
-          <NavLink 
-            to="/solicitudes/historial" 
+          <NavLink
+            to="/solicitudes/historial"
             className={({ isActive }) => `tab-pill ${isActive ? 'active' : ''}`}
           >
             Historial
           </NavLink>
         </nav>
 
-
-
-        {/* Lista de Tarjetas */}
         <section className="solicitudes-list">
           {sentRequests.map((req) => (
             <RequestCard

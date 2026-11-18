@@ -1,64 +1,52 @@
+// src/services/api.ts
 export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 
 export class ApiError extends Error {
   status: number;
-  errores: string[];
-
-  constructor(status: number, mensaje: string, errores: string[] = []) {
+  constructor(status: number, mensaje: string) {
     super(mensaje);
     this.name = 'ApiError';
     this.status = status;
-    this.errores = errores;
   }
 }
 
-interface RespuestaDeError {
-  mensaje?: string;
-  errores?: string[];
-}
+export async function solicitar<T>(endpoint: string, opciones: RequestInit = {}): Promise<T> {
+  const url = `${API_URL}${endpoint}`;
 
-export async function solicitar<T>(ruta: string, opciones: RequestInit = {}): Promise<T> {
-  let respuesta: Response;
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const authHeaders: Record<string, string> = {};
+  if (token) {
+    authHeaders['Authorization'] = `Bearer ${token}`;
+  }
+
+  const configuracion: RequestInit = {
+    ...opciones,
+    headers: {
+      'Content-Type': 'application/json',
+      ...authHeaders,
+      ...opciones.headers,
+    },
+  };
 
   try {
-    respuesta = await fetch(`${API_URL}${ruta}`, {
-      ...opciones,
-      headers: {
-        'Content-Type': 'application/json',
-        ...opciones.headers,
-      },
-    });
-  } catch {
-    throw new ApiError(
-      0,
-      'No se pudo conectar con el servidor. Verifica tu conexión o que el backend esté encendido.',
-    );
+    const respuesta = await fetch(url, configuracion);
+
+    if (respuesta.status === 204) return {} as T;
+
+    if (!respuesta.ok) {
+      let mensajeServidor = 'Error desconocido del servidor';
+      try {
+        const errorData = await respuesta.json();
+        mensajeServidor = errorData.mensaje || errorData.error || mensajeServidor;
+      } catch {
+        mensajeServidor = `Error del servidor (${respuesta.status})`;
+      }
+      throw new ApiError(respuesta.status, mensajeServidor);
+    }
+    return await respuesta.json();
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError(0, 'No se pudo conectar con el servidor. Verifica tu conexión o que el backend esté activo.');
   }
-
-  if (respuesta.status === 204) {
-    return undefined as T;
-  }
-
-  let cuerpo: unknown = null;
-  try {
-    cuerpo = await respuesta.json();
-  } catch {
-    cuerpo = null;
-  }
-
-  if (!respuesta.ok) {
-    const datosError = (cuerpo ?? {}) as RespuestaDeError;
-    const mensaje = datosError.mensaje ?? `Error HTTP ${respuesta.status}`;
-    const errores = Array.isArray(datosError.errores) ? datosError.errores : [];
-    throw new ApiError(respuesta.status, mensaje, errores);
-  }
-
-  return cuerpo as T;
-}
-
-export function obtenerMensajeDeError(error: unknown): string {
-  if (error instanceof ApiError) return error.message;
-  if (error instanceof Error) return error.message;
-  return 'Ocurrió un error inesperado.';
 }
 
