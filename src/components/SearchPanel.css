@@ -1,0 +1,187 @@
+.search-panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1140px, 94%);
+  background-color: var(--color-blanco);
+  border-radius: 0 0 28px 28px;
+  padding: 18px 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+  animation: search-panel-in 0.25s ease;
+  z-index: 2;
+}
+
+@keyframes search-panel-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Barra de búsqueda gris con botón Limpiar dentro */
+.search-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-neutro);
+  border-radius: 9999px;
+  padding: 6px 6px 6px 26px;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-principal);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: var(--color-tinta);
+}
+
+.search-input::placeholder {
+  color: #6B6B6B;
+}
+
+.search-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-borde);
+  background-color: var(--color-blanco);
+  font-family: var(--font-principal);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  color: var(--color-tinta);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.search-clear-btn:hover,
+.search-clear-btn:focus-visible {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 1px var(--color-brand);
+  outline: none;
+}
+
+/* Selectores en píldora con flecha */
+.search-select {
+  appearance: none;
+  font-family: var(--font-principal);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  color: var(--color-tinta);
+  background-color: var(--color-blanco);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M0 0h12L6 8z' fill='%23000'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  border: 1px solid #A3A3A3;
+  border-radius: 9999px;
+  padding: 9px 32px 9px 14px;
+  background-position: right 12px center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-select:hover {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 1px var(--color-brand);
+}
+
+.search-select:focus-visible {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 1px var(--color-brand);
+}
+
+/* Fila de filtros: categorías, recientes y selectores */
+.search-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* En escritorio todos los filtros van en una sola fila, como en el diseño */
+@media (min-width: 1100px) {
+  .search-chips {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+}
+
+.search-chip {
+  font-family: var(--font-principal);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  color: var(--color-tinta);
+  background-color: var(--color-blanco);
+  border: 1px solid #A3A3A3;
+  border-radius: 9999px;
+  padding: 9px 18px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Al pasar el mouse o seleccionar: delineado azul */
+.search-chip:hover,
+.search-chip:focus-visible,
+.search-chip.is-active {
+  background-color: var(--color-blanco);
+  color: var(--color-tinta);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 1px var(--color-brand);
+  outline: none;
+}
+
+@media (max-width: 768px) {
+  .search-panel {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .search-select {
+    flex: 1 1 160px;
+  }
+
+  .search-chips {
+    gap: 8px;
+  }
+
+  .search-chip {
+  font-family: var(--font-principal);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  color: var(--color-tinta);
+  background-color: var(--color-blanco);
+  border: 1px solid #A3A3A3;
+  border-radius: 9999px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-panel {
+    animation: none;
+  }
+}

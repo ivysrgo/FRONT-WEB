@@ -1,0 +1,169 @@
+/* Login según Figma: título en una sola línea y formulario compacto centrado en el panel azul */
+.login-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Mitad izquierda: logo completo */
+.login-left {
+  flex: 1;
+  background-color: #FFFFFF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.login-logo {
+  height: min(62vh, 44vw);
+  width: auto;
+  max-width: 100%;
+}
+
+/* Mitad derecha: panel azul con el formulario */
+.login-right {
+  flex: 1.45;
+  background-color: var(--color-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px clamp(24px, 6vw, 96px);
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-welcome {
+  font-family: var(--font-principal);
+  font-weight: 500;
+  font-size: clamp(14px, 1.5vw, 22px);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.login-title {
+  font-family: var(--font-principal);
+  font-weight: 600;
+  font-size: clamp(38px, 5vw, 76px);
+  line-height: 1;
+  white-space: nowrap;
+  margin: clamp(4px, 0.6vw, 10px) 0 clamp(40px, 7vh, 88px);
+}
+
+.login-form {
+  width: 100%;
+  max-width: 480px;
+  margin-left: clamp(0px, 2vw, 30px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Campos de correo y contraseña */
+.login-form .input-wrapper {
+  gap: 4px;
+  margin-bottom: clamp(16px, 2.4vh, 26px);
+}
+
+.login-form .input-label {
+  font-size: var(--fs-body-sm);
+  font-weight: 400;
+  padding-left: 0;
+}
+
+.login-form .input-container {
+  height: clamp(46px, 4vw, 56px);
+  border-radius: 16px;
+  background-color: #F2F2F2;
+  border: 1px solid #1E1E1E;
+  padding: 0 18px;
+}
+
+.login-form .ui-input {
+  font-size: var(--fs-body-lg);
+}
+
+.login-form .input-icon-btn img {
+  width: 22px;
+  height: 22px;
+}
+
+/* La contraseña queda pegada al enlace de "¿Olvidaste...?" */
+.login-form .input-wrapper:has(+ .forgot-password-link) {
+  margin-bottom: 6px;
+}
+
+.forgot-password-link {
+  text-align: right;
+  width: 100%;
+}
+
+.forgot-password-link a {
+  font-family: var(--font-principal);
+  font-size: var(--fs-body-sm);
+  color: var(--color-tinta);
+  text-decoration: none;
+}
+
+.forgot-password-link a:hover {
+  text-decoration: underline;
+}
+
+.login-form .button-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(24px, 3.4vh, 40px);
+}
+
+.login-form .ui-btn-solid {
+  width: min(280px, 70%);
+  height: clamp(48px, 4.6vw, 68px);
+  font-size: clamp(15px, 1.4vw, 19px);
+  background-color: #1E1E1E;
+  border-color: #1E1E1E;
+}
+
+.register-link {
+  text-align: center;
+  margin: 12px 0 0 0;
+  width: 100%;
+  font-family: var(--font-principal);
+  font-size: var(--fs-body-sm);
+}
+
+.register-link a {
+  color: #2F5BEA;
+  text-decoration: underline;
+}
+
+@media (max-width: 760px) {
+  .login-layout {
+    flex-direction: column;
+  }
+
+  .login-left {
+    padding: 32px 16px;
+  }
+
+  .login-logo {
+    height: 200px;
+  }
+
+  .login-right {
+    padding: 40px 16px;
+  }
+
+  .login-title {
+    white-space: normal;
+  }
+
+  .login-form {
+    margin-left: 0;
+  }
+}

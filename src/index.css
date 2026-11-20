@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Paleta de Colores */
+  --color-brand: #85DAFF;
+  --color-brand-claro: #C0ECFF;
+  --color-acento: #FF9600;
+  --color-tinta: #000000;
+  --color-blanco: #FFFFFF;
+  --color-texto-secundario: #A3A3A3;
+  --color-borde: #000000;
+  --color-error: #D5473A;
+  --color-exito: #22794C;
+  --color-advertencia: #B87C15;
+  --color-neutro: #D9D9D9;
+  --color-fondo: #F4F5F3;
+  --color-superficie: #E7ECF7;
+  
+  /* Sistema Tipográfico (Poppins) */
+  --font-principal: 'Poppins', sans-serif;
+  --font-secundaria: var(--font-principal);
+  
+  /* Escala tipográfica: la jerarquía se marca con el tamaño, no con el grosor.
+     Todos los estilos usan estos valores; para ajustar un nivel basta cambiarlo aquí. */
+  --fs-caption: 11px;   /* etiquetas, metadatos */
+  --fs-small: 12px;     /* textos de apoyo */
+  --fs-body-sm: 13px;   /* botones, chips, descripciones cortas */
+  --fs-body: 14px;      /* texto general */
+  --fs-body-lg: 16px;   /* texto destacado */
+  --fs-lead: 18px;      /* títulos de tarjeta */
+  --fs-h4: 20px;
+  --fs-h3: 24px;        /* subtítulos de sección */
+  --fs-h2: 28px;
+  --fs-h1-sm: 34px;
+  --fs-h1: 44px;        /* título de página */
+  --fs-display: 52px;
+  --fs-hero: 64px;
+
+  /* Tamaños base según UI Kit */
+  --text-h1: 120px;
+  --text-h2: 45px;
+  --text-h3: 35px;
+  --text-body: 30px;
+  --text-desc: 25px;
+}
+
+body {
+  font-family: var(--font-principal);
+  background-color: var(--color-fondo);
+  color: var(--color-tinta);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}

@@ -1,0 +1,244 @@
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Navbar } from '../components/Navbar';
+import { AdminNavbar } from '../components/AdminNavbar';
+import { Footer } from '../components/Footer';
+import { ArticuloInfoBox } from '../components/ArticuloInfoBox';
+import { ArticuloSolicitudForm } from '../components/ArticuloSolicitudForm';
+import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
+import { ExpirationUpdatedModal } from '../components/ExpirationUpdatedModal';
+import { SuccessModal } from '../components/SuccessModal';
+import { actualizarArticuloLocal, removeArticulo, useArticulos } from '../data/articulos';
+import { actualizarCaducidad, eliminarPublicacionAdmin } from '../services/adminService';
+import { ApiError } from '../services/api';
+import { crearSolicitud } from '../services/solicitudService';
+import { agregarFavorito, obtenerFavoritos, quitarFavorito } from '../services/favoritoService';
+import flechaVolverNegra from '../assets/flechavolvernegra.svg';
+import './DetalleArticulo.css';
+
+interface DetalleArticuloProps {
+  isAdmin?: boolean;
+}
+
+export const DetalleArticulo: React.FC<DetalleArticuloProps> = ({ isAdmin = false }) => {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const articulos = useArticulos();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isExpirationUpdatedOpen, setIsExpirationUpdatedOpen] = useState(false);
+  const [isDeletedOpen, setIsDeletedOpen] = useState(false);
+  const [adminError, setAdminError] = useState<string | null>(null);
+  const [indiceImagen, setIndiceImagen] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoritePending, setFavoritePending] = useState(false);
+  const articulo = articulos.find((item) => item.id === id);
+  const usuarioStorage = JSON.parse(localStorage.getItem('usuario') ?? 'null') as { id?: string; nombre?: string } | null;
+  const isOwnPublication = Boolean(
+    (articulo?.usuarioId && usuarioStorage?.id && String(articulo.usuarioId) === String(usuarioStorage.id)) ||
+    (articulo?.author && usuarioStorage?.nombre && articulo.author.trim().toLowerCase() === usuarioStorage.nombre.trim().toLowerCase())
+  );
+  const imagenes = articulo?.imageUrls?.length
+    ? articulo.imageUrls
+    : articulo?.imageUrl
+      ? [articulo.imageUrl]
+      : [];
+  const indiceVisible = imagenes.length > 0 ? indiceImagen % imagenes.length : 0;
+
+  React.useEffect(() => {
+    if (isAdmin || !id || !localStorage.getItem('token')) return;
+    let cancelled = false;
+    obtenerFavoritos()
+      .then((items) => {
+        if (!cancelled) {
+          const esFav = items.some((item) => item.articleId === id || item.id === id);
+          setIsFavorite(esFav);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [id, isAdmin]);
+
+  const handleToggleFavorite = async () => {
+    if (!id) return;
+    if (!localStorage.getItem('token')) {
+      navigate('/login');
+      return;
+    }
+    if (favoritePending) return;
+
+    setFavoritePending(true);
+    try {
+      if (isFavorite) {
+        await quitarFavorito(id);
+        setIsFavorite(false);
+      } else {
+        await agregarFavorito(id);
+        setIsFavorite(true);
+      }
+    } catch {
+      // Manejo silencioso
+    } finally {
+      setFavoritePending(false);
+    }
+  };
+
+  // Función que recibe los datos desde el componente hijo ArticuloSolicitudForm
+  const procesarEnvioSolicitud = async (
+    tipoSolicitud: 'Donación' | 'Intercambio',
+    mensaje: string,
+    articuloOfrecidoId?: string
+  ) => {
+    if (!articulo) throw new Error('No se encontró el artículo solicitado.');
+    await crearSolicitud({
+      type: tipoSolicitud === 'Intercambio' ? 'INTERCAMBIO' : 'DONACIÓN',
+      title: articulo.title,
+      message: mensaje,
+      articuloId: articulo.id,
+      ...(articuloOfrecidoId ? { articuloOfrecidoId } : {}),
+    });
+  };
+
+  const handleEliminarArticulo = async () => {
+    if (!id) return;
+    setAdminError(null);
+    try {
+      await eliminarPublicacionAdmin(id);
+      setIsDeleteModalOpen(false);
+      setIsDeletedOpen(true);
+    } catch (error) {
+      setIsDeleteModalOpen(false);
+      setAdminError(error instanceof ApiError ? error.message : 'No se pudo eliminar la publicación.');
+    }
+  };
+
+  const cerrarEliminada = () => {
+    if (id) removeArticulo(id);
+    setIsDeletedOpen(false);
+    navigate('/admin/dashboard');
+  };
+
+  const handleCambiarCaducidad = async (diasRestantes: number) => {
+    if (!id) return;
+    const actualizada = await actualizarCaducidad(id, diasRestantes);
+    actualizarArticuloLocal(id, {
+      expirationDays: actualizada.expirationDays,
+      daysElapsed: actualizada.daysElapsed,
+    });
+    setIsExpirationUpdatedOpen(true);
+  };
+
+  return (
+    <div className="detalle-layout">
+      {isAdmin ? <AdminNavbar /> : <Navbar />}
+
+      <main className="detalle-content">
+        <div className="detalle-back-row">
+          <button className="btn-volver-texto" onClick={() => navigate(isAdmin ? '/admin/todos' : '/todos')}>
+            <img src={flechaVolverNegra} alt="Volver" className="icon-volver" />
+            <span>Volver al Catálogo</span>
+          </button>
+        </div>
+
+        {articulo ? (
+          <section className="detalle-grid">
+            <div className="detalle-col-left">
+              <div className="detalle-image-box" aria-label="Fotos del artículo">
+                {imagenes.length > 0 ? (
+                  <>
+                    <img src={imagenes[indiceVisible]} alt={`${articulo.title}, foto ${indiceVisible + 1} de ${imagenes.length}`} />
+                    {imagenes.length > 1 && (
+                      <div className="detalle-carousel-controls">
+                        <button
+                          type="button"
+                          aria-label="Ver foto anterior"
+                          onClick={() => setIndiceImagen((actual) => (actual - 1 + imagenes.length) % imagenes.length)}
+                        >
+                          ‹
+                        </button>
+                        <span>{indiceVisible + 1} / {imagenes.length}</span>
+                        <button
+                          type="button"
+                          aria-label="Ver foto siguiente"
+                          onClick={() => setIndiceImagen((indiceVisible + 1) % imagenes.length)}
+                        >
+                          ›
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p>Este artículo no tiene fotografías.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="detalle-col-right">
+              {adminError && <p className="detalle-admin-error" role="alert">{adminError}</p>}
+              <ArticuloInfoBox
+                articuloId={articulo.id}
+                category={articulo.category}
+                title={articulo.title}
+                modality={articulo.modality}
+                description={articulo.description}
+                condition={articulo.condition}
+                author={articulo.author}
+                tags={articulo.tags}
+                daysElapsed={articulo.daysElapsed}
+                expirationDays={articulo.expirationDays}
+                isAdmin={isAdmin}
+                authorId={articulo.usuarioId}
+                onDelete={isAdmin ? () => setIsDeleteModalOpen(true) : undefined}
+                onSetExpirationDays={isAdmin ? handleCambiarCaducidad : undefined}
+                isFavorite={isFavorite}
+                favoritePending={favoritePending}
+                onToggleFavorite={() => void handleToggleFavorite()}
+                isOwnPublication={isOwnPublication}
+              />
+
+              {!isAdmin && <ArticuloSolicitudForm onEnviarSolicitud={procesarEnvioSolicitud} />}
+            </div>
+          </section>
+        ) : (
+          <div className="detalle-not-found">
+            <h1>Artículo no encontrado</h1>
+            <p>El artículo que buscas no está disponible en el catálogo.</p>
+            <button
+              type="button"
+              className="btn-publicar-negro"
+              onClick={() => navigate(isAdmin ? '/admin/todos' : '/todos')}
+            >
+              Volver al catálogo
+            </button>
+          </div>
+        )}
+      </main>
+
+      <Footer />
+
+      {isAdmin && (
+        <>
+          <DeleteConfirmationModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={() => void handleEliminarArticulo()}
+          />
+          <SuccessModal
+            isOpen={isDeletedOpen}
+            variant="danger"
+            title="Publicación eliminada"
+            buttonText="Volver a administrar"
+            onButtonClick={cerrarEliminada}
+            onClose={cerrarEliminada}
+          />
+          <ExpirationUpdatedModal
+            isOpen={isExpirationUpdatedOpen}
+            onClose={() => setIsExpirationUpdatedOpen(false)}
+            onBackToAdmin={() => navigate('/admin/dashboard')}
+          />
+        </>
+      )}
+    </div>
+  );
+};

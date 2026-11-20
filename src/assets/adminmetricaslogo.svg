@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Documento con gráfica -->
+  <path d="M24 12h50l14 14v74H24z" fill="#FBE36A" stroke="#A97A22" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M74 12v14h14" fill="#F2C94C" stroke="#A97A22" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M34 26h30M34 34h44M34 42h44" stroke="#A97A22" stroke-width="3" stroke-linecap="round"/>
+  <rect x="34" y="72" width="8" height="18" fill="#F2C94C" stroke="#A97A22" stroke-width="2.5"/>
+  <rect x="48" y="62" width="8" height="28" fill="#F2C94C" stroke="#A97A22" stroke-width="2.5"/>
+  <rect x="62" y="68" width="8" height="22" fill="#F2C94C" stroke="#A97A22" stroke-width="2.5"/>
+  <path d="m36 62 14-10 12 6 16-14" stroke="#A97A22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="36" cy="62" r="3" fill="#FBE36A" stroke="#A97A22" stroke-width="2.5"/>
+  <circle cx="50" cy="52" r="3" fill="#FBE36A" stroke="#A97A22" stroke-width="2.5"/>
+  <circle cx="62" cy="58" r="3" fill="#FBE36A" stroke="#A97A22" stroke-width="2.5"/>
+  <circle cx="78" cy="44" r="3" fill="#FBE36A" stroke="#A97A22" stroke-width="2.5"/>
+  <!-- Velocímetro -->
+  <path d="M66 108a22 22 0 0 1 44 0z" fill="#FBE36A" stroke="#A97A22" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M74 108a14 14 0 0 1 28 0" stroke="#A97A22" stroke-width="2.5"/>
+  <path d="m88 108 8-12" stroke="#A97A22" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="88" cy="108" r="3.5" fill="#A97A22"/>
+</svg>

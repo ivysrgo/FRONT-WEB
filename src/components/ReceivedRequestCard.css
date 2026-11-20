@@ -1,0 +1,172 @@
+.received-card {
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  padding: 22px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.received-card-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 75%;
+}
+
+.avatar-circle-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.avatar-circle-btn:hover {
+  transform: scale(1.06);
+  opacity: 0.9;
+}
+
+.avatar-circle-btn:disabled {
+  cursor: default;
+  transform: none;
+  opacity: 1;
+}
+
+.avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--color-brand-claro, #C0ECFF);
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: var(--fs-lead);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.avatar-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.received-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.received-type {
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  color: #0070BA;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.received-author {
+  color: #0070BA;
+}
+
+.received-title {
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: var(--fs-lead);
+  font-weight: 500;
+  color: #000000;
+  margin: 0 0 4px 0;
+}
+
+/* Descripción con peso ligero (500) y color gris #A3A3A3 */
+.received-message {
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  color: #A3A3A3;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.received-view-btn {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0070BA;
+  font: inherit;
+  font-size: var(--fs-small);
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.received-actions {
+  display: flex;
+  align-items: center;
+}
+
+.badge-aceptado-blue {
+  background-color: var(--color-brand, #85DAFF);
+  color: #000000;
+  padding: 6px 16px;
+  border-radius: 14px;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-buttons-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-accept-solid {
+  background-color: #000000;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 14px;
+  padding: 8px 18px;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn-accept-solid:hover {
+  opacity: 0.85;
+}
+
+.btn-reject-outline {
+  background-color: transparent;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 14px;
+  padding: 8px 18px;
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-reject-outline:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}

@@ -1,0 +1,86 @@
+/* Importamos y unificamos con DeleteConfirmModal */
+@import './DeleteConfirmModal.css';
+
+/* Aliases para compatibilidad */
+.btn-confirmar-eliminacion {
+  background-color: #FF3326;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 9999px;
+  padding: 14px 44px;
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: var(--fs-body-lg);
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  width: auto;
+  min-width: 240px;
+  box-shadow: 0 4px 14px rgba(255, 51, 38, 0.3);
+}
+
+.btn-confirmar-eliminacion:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 51, 38, 0.4);
+}
+
+.btn-confirmar-eliminacion:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.delete-modal-back {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.delete-modal-back:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.delete-modal-back img {
+  width: 20px;
+  height: 20px;
+}
+
+.delete-modal-title {
+  font-family: var(--font-principal, 'Poppins', sans-serif);
+  font-size: var(--fs-h1-sm);
+  font-weight: 800;
+  color: #000000;
+  margin: 6px 0 10px 0;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.delete-modal-description {
+  font-family: var(--font-secundaria, 'Montserrat', sans-serif);
+  font-size: var(--fs-body-lg);
+  font-weight: 500;
+  color: #000000;
+  margin: 0 0 32px 0;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.delete-modal-icon-container {
+  margin-bottom: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-modal-icon {
+  width: 110px;
+  height: auto;
+  object-fit: contain;
+}

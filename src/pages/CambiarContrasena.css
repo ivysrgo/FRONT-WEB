@@ -1,0 +1,84 @@
+.cambiar-card {
+  background-color: var(--color-blanco);
+  border-radius: 36px;
+  padding: 32px 40px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto; /* Tarjeta centrada en la página */
+}
+
+/* Encabezado en columna y centrado sobre la tarjeta: el título arriba y la
+   indicación gris justo debajo, alineada con el texto del título (no con la flecha) */
+.perfil-header.cambiar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto 28px;
+}
+
+.cambiar-header .perfil-title {
+  white-space: nowrap;
+}
+
+.cambiar-subtitle {
+  margin-left: calc(36px + 14px);
+}
+
+@media (max-width: 600px) {
+  .cambiar-card {
+    padding: 24px 20px;
+  }
+
+  .cambiar-subtitle {
+    margin-left: 0;
+  }
+
+  .cambiar-header .perfil-title {
+    white-space: normal;
+  }
+}
+
+.cambiar-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.cambiar-error {
+  font-family: var(--font-principal);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: var(--color-error);
+  margin: 0 0 16px 0;
+}
+
+.cambiar-ayuda {
+  font-family: var(--font-principal);
+  font-size: var(--fs-body-sm);
+  color: var(--color-texto-secundario);
+  margin: -6px 0 20px 0;
+}
+
+.cambiar-exito {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.cambiar-exito-titulo {
+  font-family: var(--font-principal);
+  font-size: var(--fs-lead);
+  font-weight: 500;
+  color: var(--color-exito);
+  margin: 0;
+}
+
+.cambiar-exito-texto {
+  font-family: var(--font-principal);
+  font-size: var(--fs-body);
+  color: var(--color-texto-secundario);
+  margin: 0 0 12px 0;
+}
